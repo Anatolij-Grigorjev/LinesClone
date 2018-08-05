@@ -6,25 +6,31 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.tiem625.lines.assets.Assets
+import com.tiem625.lines.stages.TilesGrid
 
 class LinesGame : ApplicationAdapter() {
-    lateinit var batch: SpriteBatch
+
+    companion object {
+        const val WORLD_WIDTH = 640.0f
+        const val WORDL_HEIGHT = 480.0f
+    }
+
+    val tilesGrid = TilesGrid(8, 8)
 
     override fun create() {
-        batch = SpriteBatch()
+
+
 
     }
 
     override fun render() {
         Gdx.gl.glClearColor(1f, 0f, 0f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-        batch.begin()
-
-        batch.end()
+        tilesGrid.draw()
     }
 
     override fun dispose() {
-        batch.dispose()
+        tilesGrid.dispose()
         Assets.manager.dispose()
     }
 }
