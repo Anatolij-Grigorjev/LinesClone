@@ -1,24 +1,33 @@
 package com.tiem625.lines.actors
 
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.tiem625.lines.assets.Assets
 
-class Tile(width: Float, height: Float): Actor() {
+class Ball(width: Float,
+           height: Float,
+           color: Color,
+           gridPoxX: Int,
+           gridPosY: Int) : Actor() {
 
-    private val texture: Texture
+    val texture: Texture
 
-    var ball: Ball? = null
+    var gridPos = Pair(gridPoxX, gridPosY)
 
     init {
-        setWidth(width)
-        setHeight(height)
-        Assets.manager.finishLoadingAsset(Assets.tile)
-        texture = Assets.manager.get(Assets.tile)
+        this.color = color
+        this.width = width
+        this.height = height
+
+        this.x = gridPoxX * width
+        this.y = gridPosY * height
+
+        Assets.manager.finishLoadingAsset(Assets.ball)
+        texture = Assets.manager.get(Assets.ball)
         setBounds(x, y, width, height)
     }
-
 
     override fun draw(batch: Batch?, parentAlpha: Float) {
 
@@ -40,7 +49,6 @@ class Tile(width: Float, height: Float): Actor() {
                 false,
                 false
         )
-
     }
 
 

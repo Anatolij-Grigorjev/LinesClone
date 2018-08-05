@@ -13,15 +13,25 @@ class LinesGame : ApplicationAdapter() {
     companion object {
         const val WORLD_WIDTH = 640.0f
         const val WORDL_HEIGHT = 480.0f
+
+        const val GRID_ROWS = 8;
+        const val GRID_COLS = 8;
     }
 
     lateinit var tilesGrid: TilesGrid
 
+    //all ball positions used during the game. when this list runs out, its over
+    //disappearing groups add their positions back into this
+    val ballPositions = (0..GRID_ROWS).map { rIdx ->
+        (0..GRID_COLS).map { cIdx ->
+            rIdx to cIdx
+        }
+    }.flatten().toMutableList().shuffled()
 
     override fun create() {
 
-        Assets.manager.load(Assets.tile, Texture::class.java)
-        tilesGrid = TilesGrid(8, 8)
+        Assets.load()
+        tilesGrid = TilesGrid(GRID_ROWS, GRID_COLS)
     }
 
     override fun render() {
