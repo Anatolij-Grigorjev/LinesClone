@@ -7,7 +7,7 @@ import com.tiem625.lines.assets.Assets
 
 class Tile(width: Float, height: Float): Actor() {
 
-    lateinit var texture: Texture
+    private val texture: Texture
 
     init {
         setWidth(width)

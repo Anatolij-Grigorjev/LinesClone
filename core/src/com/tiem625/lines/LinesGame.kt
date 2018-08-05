@@ -15,12 +15,13 @@ class LinesGame : ApplicationAdapter() {
         const val WORDL_HEIGHT = 480.0f
     }
 
-    val tilesGrid = TilesGrid(8, 8)
+    lateinit var tilesGrid: TilesGrid
+
 
     override fun create() {
 
-
-
+        Assets.manager.load(Assets.tile, Texture::class.java)
+        tilesGrid = TilesGrid(8, 8)
     }
 
     override fun render() {
