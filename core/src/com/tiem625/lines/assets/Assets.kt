@@ -8,8 +8,8 @@ class Assets {
     companion object {
         val manager: AssetManager = AssetManager()
 
-        val tile = "img/badlogic.jpg"
-        val ball = "img/whiteball.png"
+        val tile = "img/tile.png"
+        val ball = "img/ball.png"
 
         val assetTypeMappings = mapOf(
                 tile to Texture::class.java,

@@ -3,9 +3,10 @@ package com.tiem625.lines.actors
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.Group
 import com.tiem625.lines.assets.Assets
 
-class Tile(width: Float, height: Float): Actor() {
+class Tile(width: Float, height: Float): Group() {
 
     private val texture: Texture
 
@@ -40,7 +41,7 @@ class Tile(width: Float, height: Float): Actor() {
                 false,
                 false
         )
-
+        super.draw(batch, parentAlpha)
     }
 
 
