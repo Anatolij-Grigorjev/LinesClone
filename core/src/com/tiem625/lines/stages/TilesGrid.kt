@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.tiem625.lines.*
 import com.tiem625.lines.actors.Ball
 import com.tiem625.lines.actors.Tile
+import com.tiem625.lines.actors.TileBallGroup
 
 class TilesGrid(val numRows: Int,
                 val numCols: Int) : Stage(ExtendViewport(GridConfig.WORLD_WIDTH, GridConfig.WORLD_HEIGHT)) {
@@ -13,11 +14,13 @@ class TilesGrid(val numRows: Int,
     val tileWidth: Float = viewport.worldWidth / numRows
     val tileHeight: Float = viewport.worldHeight / numCols
 
-    val grid: Array<Array<Tile>> = (tileWidth to tileHeight).let { (tileWidth, tileHeight) ->
+    val grid: Array<Array<TileBallGroup>> = (tileWidth to tileHeight).let { (tileWidth, tileHeight) ->
 
         Array(numRows) { rowIdx ->
             Array(numCols) { colIdx ->
-                Tile(tileWidth, tileHeight).apply {
+                TileBallGroup(Tile(tileWidth, tileHeight).apply {
+                    zIndex = 0
+                }).apply {
                     x = tileWidth * colIdx
                     y = tileHeight * rowIdx
                     this@TilesGrid.addActor(this)
@@ -28,19 +31,22 @@ class TilesGrid(val numRows: Int,
 
     fun addNewBalls() {
 
+        //take first N new ball positions
         val newPositions = GridConfig.ballPositions.pop(GridConfig.TURN_NUM_BALLS)
-        //reshuffle new list
+        //reshuffle smaller list
         GridConfig.ballPositions.shuffled()
 
         newPositions.forEach { pos ->
 
-            grid[pos.first][pos.second].addActor(Ball(
+            grid[pos.first][pos.second].ball = Ball(
                     width = tileWidth - GridConfig.TILE_BALL_GUTTER,
                     height = tileHeight - GridConfig.TILE_BALL_GUTTER,
                     color = GridConfig.BALL_COLORS.random(),
                     gridPoxX = pos.first,
                     gridPosY = pos.second
-            ))
+            ).apply {
+                zIndex = 999
+            }
         }
 
     }

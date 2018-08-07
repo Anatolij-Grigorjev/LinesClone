@@ -21,11 +21,9 @@ class Ball(width: Float,
         this.width = width
         this.height = height
 
-        this.x = gridPoxX * width
-        this.y = gridPosY * height
-
         Assets.manager.finishLoadingAsset(Assets.ball)
         texture = Assets.manager.get(Assets.ball)
+
         setBounds(x, y, width, height)
     }
 

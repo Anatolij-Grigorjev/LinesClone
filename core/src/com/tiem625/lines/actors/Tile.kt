@@ -6,11 +6,9 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Group
 import com.tiem625.lines.assets.Assets
 
-class Tile(width: Float, height: Float): Group() {
+class Tile(width: Float, height: Float): Actor() {
 
     private val texture: Texture
-
-    var ball: Ball? = null
 
     init {
         setWidth(width)
@@ -41,7 +39,6 @@ class Tile(width: Float, height: Float): Group() {
                 false,
                 false
         )
-        super.draw(batch, parentAlpha)
     }
 
 

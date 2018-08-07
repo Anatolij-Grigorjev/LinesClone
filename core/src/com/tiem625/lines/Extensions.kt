@@ -34,7 +34,7 @@ fun <T> MutableList<T>.pop(amount: Int = 1): List<T> {
  */
 fun <T> List<T>.random(): T {
     if (this.isEmpty()) {
-        throw RuntimeException("No elements in list ${this}, cant random!")
+        throw RuntimeException("No elements in list ${this}, can't random!")
     }
 
     return this[rnd.nextInt(this.size)]

@@ -10,11 +10,15 @@ class LinesGame : ApplicationAdapter() {
 
     lateinit var tilesGrid: TilesGrid
 
+    val INITIAL_WIDTH = 640
+    val INITIAL_HEIGHT = 640
+
     override fun create() {
 
         Assets.load()
         tilesGrid = TilesGrid(GridConfig.GRID_ROWS, GridConfig.GRID_COLS)
         tilesGrid.addNewBalls()
+        resize(INITIAL_WIDTH, INITIAL_HEIGHT)
     }
 
     override fun render() {

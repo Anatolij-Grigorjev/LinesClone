@@ -11,7 +11,7 @@ object GridConfig {
     const val GRID_COLS = 8
 
     const val TURN_NUM_BALLS = 5 //how many balls get added in a turn
-    const val TILE_BALL_GUTTER = 5.0f
+    const val TILE_BALL_GUTTER = 0.0f
 
     val BALL_COLORS = listOf<Color>(
             Color.RED,
