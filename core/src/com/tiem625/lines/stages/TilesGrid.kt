@@ -3,10 +3,13 @@ package com.tiem625.lines.stages
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.ExtendViewport
-import com.tiem625.lines.*
+import com.tiem625.lines.GridConfig
 import com.tiem625.lines.actors.Ball
 import com.tiem625.lines.actors.Tile
 import com.tiem625.lines.actors.TileBallGroup
+import com.tiem625.lines.pop
+import com.tiem625.lines.random
+import com.tiem625.lines.shuffled
 
 class TilesGrid(val numRows: Int,
                 val numCols: Int) : Stage(ExtendViewport(GridConfig.WORLD_WIDTH, GridConfig.WORLD_HEIGHT)) {
@@ -29,7 +32,7 @@ class TilesGrid(val numRows: Int,
         }
     }
 
-    fun addNewBalls() {
+    fun addNewBalls():Boolean {
 
         //take first N new ball positions
         val newPositions = GridConfig.ballPositions.pop(GridConfig.TURN_NUM_BALLS)
@@ -49,6 +52,8 @@ class TilesGrid(val numRows: Int,
             }
         }
 
+        //return if we had balls
+        return newPositions.size == GridConfig.TURN_NUM_BALLS
     }
 
 

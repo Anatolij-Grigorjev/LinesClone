@@ -28,25 +28,28 @@ class Ball(width: Float,
     }
 
     override fun draw(batch: Batch?, parentAlpha: Float) {
-
-        batch?.draw(
-                texture,
-                this.x,
-                this.y,
-                this.originX,
-                this.originY,
-                this.width,
-                this.height,
-                this.scaleX,
-                this.scaleY,
-                this.rotation,
-                0,
-                0,
-                texture.width,
-                texture.height,
-                false,
-                false
-        )
+        val color = this.color
+        batch?.let {
+            it.setColor(color.r, color.g, color.b, color.a * parentAlpha)
+            it.draw(
+                    texture,
+                    this.x,
+                    this.y,
+                    this.originX,
+                    this.originY,
+                    this.width,
+                    this.height,
+                    this.scaleX,
+                    this.scaleY,
+                    this.rotation,
+                    0,
+                    0,
+                    texture.width,
+                    texture.height,
+                    false,
+                    false
+            )
+        }
     }
 
 

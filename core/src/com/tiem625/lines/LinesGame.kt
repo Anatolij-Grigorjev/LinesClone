@@ -3,8 +3,11 @@ package com.tiem625.lines
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.scenes.scene2d.InputEvent
+import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.tiem625.lines.assets.Assets
 import com.tiem625.lines.stages.TilesGrid
+
 
 class LinesGame : ApplicationAdapter() {
 
@@ -17,8 +20,26 @@ class LinesGame : ApplicationAdapter() {
 
         Assets.load()
         tilesGrid = TilesGrid(GridConfig.GRID_ROWS, GridConfig.GRID_COLS)
-        tilesGrid.addNewBalls()
         resize(INITIAL_WIDTH, INITIAL_HEIGHT)
+        Gdx.input.inputProcessor = tilesGrid
+        tilesGrid.addListener(object : InputListener() {
+
+            override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
+
+                val hadBalls = tilesGrid.addNewBalls()
+                if (!hadBalls) {
+                    println("Done!")
+                    Thread.sleep(1000)
+                    Gdx.app.exit()
+                }
+
+                return true
+            }
+        })
+    }
+
+    override fun resize(width: Int, height: Int) {
+        tilesGrid.viewport.update(width, height, true)
     }
 
     override fun render() {

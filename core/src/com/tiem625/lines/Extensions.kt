@@ -21,7 +21,8 @@ fun <T> MutableList<T>.shuffled(): MutableList<T> {
  */
 fun <T> MutableList<T>.pop(amount: Int = 1): List<T> {
     val popped = mutableListOf<T>()
-    (0 until amount).map {
+    val adjustedAmount = Math.min(amount, this.size)
+    (0 until adjustedAmount).map {
         popped.add(this.removeAt(0))
     }
 

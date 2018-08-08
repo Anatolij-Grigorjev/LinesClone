@@ -7,6 +7,7 @@ import com.tiem625.lines.LinesGame;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+		config.forceExit = true;
 		new LwjglApplication(new LinesGame(), config);
 	}
 }

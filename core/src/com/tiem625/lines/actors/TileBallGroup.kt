@@ -27,7 +27,6 @@ class TileBallGroup(val tile: Tile) : Group() {
     }
 
     override fun draw(batch: Batch?, parentAlpha: Float) {
-        println("Drawing tile at ($x;$y) with ${ball?.let { "ball at ${it.gridPos}" }}")
         super.draw(batch, parentAlpha)
     }
 
