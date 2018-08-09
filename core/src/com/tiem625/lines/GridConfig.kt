@@ -1,6 +1,7 @@
 package com.tiem625.lines
 
 import com.badlogic.gdx.graphics.Color
+import com.tiem625.lines.actors.Tile
 
 object GridConfig {
 
@@ -9,6 +10,11 @@ object GridConfig {
 
     const val GRID_ROWS = 8
     const val GRID_COLS = 8
+
+    val TILE_NORMAL_COLOR = Color.WHITE
+    val TILE_SELECTED_COLOR = Color.BLUE
+
+    var selectedTile: Tile? = null
 
     const val TURN_NUM_BALLS = 5 //how many balls get added in a turn
     const val TILE_BALL_GUTTER = 0.0f

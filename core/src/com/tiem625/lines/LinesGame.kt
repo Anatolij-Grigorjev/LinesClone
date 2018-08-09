@@ -2,6 +2,7 @@ package com.tiem625.lines
 
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
@@ -24,13 +25,14 @@ class LinesGame : ApplicationAdapter() {
         Gdx.input.inputProcessor = tilesGrid
         tilesGrid.addListener(object : InputListener() {
 
-            override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
-
-                val hadBalls = tilesGrid.addNewBalls()
-                if (!hadBalls) {
-                    println("Done!")
-                    Thread.sleep(1000)
-                    Gdx.app.exit()
+            override fun keyUp(event: InputEvent?, keycode: Int): Boolean {
+                if (keycode == Input.Keys.SPACE) {
+                    val haveBalls = tilesGrid.addNewBalls()
+                    if (!haveBalls) {
+                        println("Balls done, game over...")
+                        Thread.sleep(1000)
+                        Gdx.app.exit()
+                    }
                 }
 
                 return true

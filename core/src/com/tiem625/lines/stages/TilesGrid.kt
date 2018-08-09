@@ -1,6 +1,5 @@
 package com.tiem625.lines.stages
 
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.tiem625.lines.GridConfig
@@ -21,11 +20,12 @@ class TilesGrid(val numRows: Int,
 
         Array(numRows) { rowIdx ->
             Array(numCols) { colIdx ->
-                TileBallGroup(Tile(tileWidth, tileHeight).apply {
+                TileBallGroup(this, Tile(tileWidth, tileHeight).apply {
                     zIndex = 0
                 }).apply {
                     x = tileWidth * colIdx
                     y = tileHeight * rowIdx
+                    tile.group = this
                     this@TilesGrid.addActor(this)
                 }
             }

@@ -9,6 +9,8 @@ class Tile(width: Float, height: Float): Actor() {
 
     private val texture: Texture
 
+    lateinit var group: TileBallGroup
+
     init {
         setWidth(width)
         setHeight(height)
