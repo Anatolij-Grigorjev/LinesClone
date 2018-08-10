@@ -8,29 +8,22 @@ import com.tiem625.lines.stages.TilesGrid
 
 class TileBallGroup(val grid: TilesGrid, val tile: Tile) : Group() {
 
-    var selected = false
-        set(value) {
-            if (field != value) {
-                tile.color = if (value) GridConfig.TILE_SELECTED_COLOR else GridConfig.TILE_NORMAL_COLOR
-                //started selection of this tile
-                if (value) {
-                    GridConfig.selectedTile?.let {
+    companion object {
 
+        fun sameBallState(g1: TileBallGroup, g2: TileBallGroup): Boolean =
+                (g1.ball != null && g2.ball != null) ||
+                        (g1.ball == null && g2.ball == null)
+    }
 
-
-                        //TODO: go through selection logic
-                        //
-                        //empty to balled - transfer ball
-                        //empty to empty - change selection
-                        //ball to ball - change selection
-
-                    }
-                    GridConfig.selectedTile = tile
-                }
-
-                field = value
-            }
+    private fun updateTileColor(selected: Boolean) {
+        if (selected) {
+            tile.color = GridConfig.TILE_SELECTED_COLOR
+        } else {
+            tile.color = GridConfig.TILE_NORMAL_COLOR
         }
+    }
+
+    var isSelected = false
 
     var ball: Ball? = null
         // perform actor manipulations when ball changes
@@ -44,6 +37,7 @@ class TileBallGroup(val grid: TilesGrid, val tile: Tile) : Group() {
             //add new ball
             value?.let {
                 addActor(it)
+                it.zIndex = 999
             }
 
             field = value
@@ -54,14 +48,56 @@ class TileBallGroup(val grid: TilesGrid, val tile: Tile) : Group() {
         addListener(object: InputListener() {
 
             override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
-
-                selected != selected
+                updateSelected(!isSelected)
 
 
 
                 return true
             }
         })
+    }
+
+
+    private fun updateSelected(selected: Boolean) {
+        if (this.isSelected != selected) {
+            var ballTransfered = false
+            updateTileColor(selected)
+            //started selection of this tile
+            if (selected) {
+                GridConfig.selectedTileGroup?.let {
+                    //empty to balled - transfer ball
+                    //empty to empty - change selection
+                    //ball to ball - change selection
+
+                    //if same ball state
+                    if (!TileBallGroup.sameBallState(this, it)) {
+                        //transfer ball
+                        if (this.ball == null) {
+                            this.ball = it.ball
+                            it.ball = null
+                        } else {
+                            it.ball = this.ball
+                            this.ball = null
+                        }
+                        ballTransfered = true
+                        grid.checkGridUpdates(if (this.ball != null) this else it)
+                    }
+                    //change selection
+                    it.updateSelected(false)
+                }
+                GridConfig.selectedTileGroup = this
+            } else {
+                if (this == GridConfig.selectedTileGroup) {
+                    GridConfig.selectedTileGroup = null
+                }
+            }
+
+            this.isSelected = selected
+            //clear selection
+            if (ballTransfered) {
+                updateSelected(false)
+            }
+        }
     }
 
 }

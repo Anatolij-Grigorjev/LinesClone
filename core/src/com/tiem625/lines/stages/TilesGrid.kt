@@ -1,6 +1,9 @@
 package com.tiem625.lines.stages
 
+import com.badlogic.gdx.scenes.scene2d.Action
+import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.tiem625.lines.GridConfig
 import com.tiem625.lines.actors.Ball
@@ -54,6 +57,36 @@ class TilesGrid(val numRows: Int,
 
         //return if we had balls
         return newPositions.size == GridConfig.TURN_NUM_BALLS
+    }
+
+    fun checkGridUpdates(vararg aroundBalls: TileBallGroup) {
+        aroundBalls.forEach { balledGroup ->
+            //only do things if group has ball
+            balledGroup.ball?.let { ball ->
+
+                //search area around ball
+                val markedSurroundGroups = markAroundBall(ball)
+
+                if (markedSurroundGroups.size >= GridConfig.POP_NUM_BALLS) {
+                    //create removable group
+                    Group().apply {
+                        markedSurroundGroups.forEach {
+                            this.addActor(it.ball!!)
+                            this.addAction(Actions.run {
+                                removeActor(it.ball)
+                                it.ball = null
+                            })
+                        }
+                        addAction(Actions.removeActor())
+                    }
+                }
+            }
+        }
+    }
+
+    fun markAroundBall(ball: Ball): List<TileBallGroup> {
+        //for now take first N balls from grid
+        return grid.flatten().filter { it.ball != null }.take(GridConfig.POP_NUM_BALLS)
     }
 
 
