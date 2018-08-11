@@ -41,3 +41,11 @@ fun <T> List<T>.random(): T {
     return this[rnd.nextInt(this.size)]
 }
 
+
+operator fun Pair<Int, Int>.plus(other: Pair<Int, Int>): Pair<Int, Int> {
+    return Pair(this.first + other.first, this.second + other.second)
+}
+
+operator fun Pair<Int, Int>.times(other: Int): Pair<Int, Int> {
+    return Pair(this.first * other, this.second * other)
+}

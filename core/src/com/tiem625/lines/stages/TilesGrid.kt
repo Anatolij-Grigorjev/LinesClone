@@ -1,17 +1,15 @@
 package com.tiem625.lines.stages
 
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.viewport.ExtendViewport
-import com.tiem625.lines.GridConfig
+import com.tiem625.lines.*
 import com.tiem625.lines.actors.Ball
 import com.tiem625.lines.actors.Tile
 import com.tiem625.lines.actors.TileBallGroup
-import com.tiem625.lines.pop
-import com.tiem625.lines.random
-import com.tiem625.lines.shuffled
 
 class TilesGrid(val numRows: Int,
                 val numCols: Int) : Stage(ExtendViewport(GridConfig.WORLD_WIDTH, GridConfig.WORLD_HEIGHT)) {
@@ -34,6 +32,12 @@ class TilesGrid(val numRows: Int,
             }
         }
     }
+
+    private fun tileGroupAt(point: Pair<Int, Int>): TileBallGroup? =
+            if (point.first in (0 until numRows)
+                && point.second in (0 until numCols))
+                grid[point.first][point.second]
+            else null
 
     fun addNewBalls():Boolean {
 
@@ -116,8 +120,54 @@ class TilesGrid(val numRows: Int,
      * N is the constant GridConfig.POP_NUM_BALLS
      */
     private fun markAroundBall(ball: Ball): List<TileBallGroup> {
-        //for now take first N balls from grid
-        return grid.flatten().filter { it.ball != null }.take(GridConfig.POP_NUM_BALLS)
+
+        val collectedLists = listOf(
+            //vertical
+            (
+                    collectAtOffset(ball.gridPos, 0 to 1, ball.color)
+                    + collectAtOffset(ball.gridPos, 0 to -1, ball.color)
+            ),
+            //horizontal
+            (
+                    collectAtOffset(ball.gridPos, -1 to 0, ball.color)
+                    + collectAtOffset(ball.gridPos, 1 to 0, ball.color)
+            ),
+            //slash
+            (
+                    collectAtOffset(ball.gridPos, -1 to -1, ball.color)
+                    + collectAtOffset(ball.gridPos, 1 to 1, ball.color)
+            ),
+            //reverse slash
+            (
+                    collectAtOffset(ball.gridPos, -1 to 1, ball.color)
+                    + collectAtOffset(ball.gridPos, 1 to -1, ball.color)
+            )
+        )
+        //make sure lists are at least one solution large for pop (-1 due to origin ball not here)
+        return collectedLists.filter { it.size >= GridConfig.POP_NUM_BALLS - 1 }.flatten()
+    }
+
+
+    private fun collectAtOffset(origin: Pair<Int, Int>, offset: Pair<Int, Int>, color: Color): List<TileBallGroup> {
+
+        var coef = 1
+        var keepChecking = true
+        val foundBalls = mutableListOf<TileBallGroup>()
+
+        while (keepChecking) {
+            keepChecking = false
+            tileGroupAt(origin + (offset * coef))?.let { group ->
+                group.ball?.let {
+                    if (it.color == color) {
+                        foundBalls.add(group)
+                        keepChecking = true
+                        coef++
+                    }
+                }
+            }
+        }
+
+        return foundBalls
     }
 
 
