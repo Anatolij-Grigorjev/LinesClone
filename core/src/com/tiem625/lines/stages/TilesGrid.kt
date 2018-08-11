@@ -55,8 +55,42 @@ class TilesGrid(val numRows: Int,
             }
         }
 
+        println("Empty grid positions: ${GridConfig.ballPositions.size}")
+
         //return if we had balls
         return newPositions.size == GridConfig.TURN_NUM_BALLS
+    }
+
+    private fun removePoppedBalls(markedSurroundGroups: List<TileBallGroup>) {
+        val positions: MutableList<Pair<Int, Int>> = mutableListOf()
+        //create removable group
+        Group().apply {
+            //remove ball references and create actor remove actions
+            //record ball positions
+            val removeBallActions = markedSurroundGroups.mapNotNull { group ->
+                group.ball?.let { ball ->
+                    this.addActor(ball)
+                    positions.add(ball.gridPos)
+                    Actions.run {
+                        removeActor(ball)
+                        group.ball = null
+                    }
+                }
+            }
+            //add remove actions in sequence + remove group itself
+            addAction(Actions.sequence(
+                    *removeBallActions.toTypedArray(),
+                    Actions.run {
+                        //add recorded positions back into potentials list, reshuffle
+                        GridConfig.ballPositions.addAll(positions)
+                        GridConfig.ballPositions.shuffled()
+                        //DEBUG: highlight tiles with balls on them
+                        grid.flatten().forEach { if (it.ball != null) it.tile.color = GridConfig.BALL_COLORS[2] }
+                        println("Empty grid positions: ${GridConfig.ballPositions.size}")
+                    },
+                    Actions.removeActor(this)
+            ))
+        }
     }
 
     fun checkGridUpdates(vararg aroundBalls: TileBallGroup) {
@@ -65,26 +99,23 @@ class TilesGrid(val numRows: Int,
             balledGroup.ball?.let { ball ->
 
                 //search area around ball
-                val markedSurroundGroups = markAroundBall(ball)
+                val markedSurroundGroups = (markAroundBall(ball) + balledGroup)
 
                 if (markedSurroundGroups.size >= GridConfig.POP_NUM_BALLS) {
-                    //create removable group
-                    Group().apply {
-                        markedSurroundGroups.forEach {
-                            this.addActor(it.ball!!)
-                            this.addAction(Actions.run {
-                                removeActor(it.ball)
-                                it.ball = null
-                            })
-                        }
-                        addAction(Actions.removeActor())
-                    }
+                    removePoppedBalls(markedSurroundGroups)
                 }
             }
         }
     }
 
-    fun markAroundBall(ball: Ball): List<TileBallGroup> {
+    /**
+     * Search grid tiles around supplied ball for tile-ball groups with balls of the same color.
+     * Search will greedily mark and check tiles in the same direction until either the color chain is broken or
+     * a wall is hit. At least N matching balls in a row will be required to induce a pop
+     *
+     * N is the constant GridConfig.POP_NUM_BALLS
+     */
+    private fun markAroundBall(ball: Ball): List<TileBallGroup> {
         //for now take first N balls from grid
         return grid.flatten().filter { it.ball != null }.take(GridConfig.POP_NUM_BALLS)
     }
