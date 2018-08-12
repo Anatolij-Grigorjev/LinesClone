@@ -20,7 +20,7 @@ class LinesGame : ApplicationAdapter() {
     override fun create() {
 
         Assets.load()
-        tilesGrid = TilesGrid(GridConfig.GRID_ROWS, GridConfig.GRID_COLS)
+        tilesGrid = TilesGrid(GridGlobals.GRID_ROWS, GridGlobals.GRID_COLS)
         resize(INITIAL_WIDTH, INITIAL_HEIGHT)
         Gdx.input.inputProcessor = tilesGrid
         tilesGrid.addListener(object : InputListener() {

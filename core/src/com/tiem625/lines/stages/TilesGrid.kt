@@ -1,7 +1,6 @@
 package com.tiem625.lines.stages
 
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
@@ -12,7 +11,7 @@ import com.tiem625.lines.actors.Tile
 import com.tiem625.lines.actors.TileBallGroup
 
 class TilesGrid(val numRows: Int,
-                val numCols: Int) : Stage(ExtendViewport(GridConfig.WORLD_WIDTH, GridConfig.WORLD_HEIGHT)) {
+                val numCols: Int) : Stage(ExtendViewport(GridGlobals.WORLD_WIDTH, GridGlobals.WORLD_HEIGHT)) {
 
     val tileWidth: Float = viewport.worldWidth / numRows
     val tileHeight: Float = viewport.worldHeight / numCols
@@ -21,7 +20,7 @@ class TilesGrid(val numRows: Int,
 
         Array(numRows) { rowIdx ->
             Array(numCols) { colIdx ->
-                TileBallGroup(this, Tile(tileWidth, tileHeight).apply {
+                TileBallGroup(this, Tile(rowIdx to colIdx, tileWidth, tileHeight).apply {
                     zIndex = 0
                 }).apply {
                     x = tileWidth * colIdx
@@ -35,23 +34,23 @@ class TilesGrid(val numRows: Int,
 
     private fun tileGroupAt(point: Pair<Int, Int>): TileBallGroup? =
             if (point.first in (0 until numRows)
-                && point.second in (0 until numCols))
+                    && point.second in (0 until numCols))
                 grid[point.first][point.second]
             else null
 
-    fun addNewBalls():Boolean {
+    fun addNewBalls(): Boolean {
 
         //take first N new ball positions
-        val newPositions = GridConfig.ballPositions.pop(GridConfig.TURN_NUM_BALLS)
+        val newPositions = GridGlobals.ballPositions.pop(GridGlobals.TURN_NUM_BALLS)
         //reshuffle smaller list
-        GridConfig.ballPositions.shuffled()
+        GridGlobals.ballPositions.shuffled()
 
         newPositions.forEach { pos ->
 
             grid[pos.first][pos.second].ball = Ball(
-                    width = tileWidth - GridConfig.TILE_BALL_GUTTER,
-                    height = tileHeight - GridConfig.TILE_BALL_GUTTER,
-                    color = GridConfig.BALL_COLORS.random(),
+                    width = tileWidth - GridGlobals.TILE_BALL_GUTTER,
+                    height = tileHeight - GridGlobals.TILE_BALL_GUTTER,
+                    color = GridGlobals.BALL_COLORS.random(),
                     gridPoxX = pos.first,
                     gridPosY = pos.second
             ).apply {
@@ -59,10 +58,10 @@ class TilesGrid(val numRows: Int,
             }
         }
 
-        println("Empty grid positions: ${GridConfig.ballPositions.size}")
+        println("Empty grid positions: ${GridGlobals.ballPositions.size}")
 
         //return if we had balls
-        return newPositions.size == GridConfig.TURN_NUM_BALLS
+        return newPositions.size == GridGlobals.TURN_NUM_BALLS
     }
 
     private fun removePoppedBalls(markedSurroundGroups: List<TileBallGroup>) {
@@ -86,11 +85,11 @@ class TilesGrid(val numRows: Int,
                     *removeBallActions.toTypedArray(),
                     Actions.run {
                         //add recorded positions back into potentials list, reshuffle
-                        GridConfig.ballPositions.addAll(positions)
-                        GridConfig.ballPositions.shuffled()
+                        GridGlobals.ballPositions.addAll(positions)
+                        GridGlobals.ballPositions.shuffled()
                         //DEBUG: highlight tiles with balls on them
-                        grid.flatten().forEach { if (it.ball != null) it.tile.color = GridConfig.BALL_COLORS[2] }
-                        println("Empty grid positions: ${GridConfig.ballPositions.size}")
+                        grid.flatten().forEach { if (it.ball != null) it.tile.color = GridGlobals.BALL_COLORS[2] }
+                        println("Empty grid positions: ${GridGlobals.ballPositions.size}")
                     },
                     Actions.removeActor(this)
             ))
@@ -105,7 +104,7 @@ class TilesGrid(val numRows: Int,
                 //search area around ball
                 val markedSurroundGroups = (markAroundBall(ball) + balledGroup)
 
-                if (markedSurroundGroups.size >= GridConfig.POP_NUM_BALLS) {
+                if (markedSurroundGroups.size >= GridGlobals.POP_NUM_BALLS) {
                     removePoppedBalls(markedSurroundGroups)
                 }
             }
@@ -117,34 +116,34 @@ class TilesGrid(val numRows: Int,
      * Search will greedily mark and check tiles in the same direction until either the color chain is broken or
      * a wall is hit. At least N matching balls in a row will be required to induce a pop
      *
-     * N is the constant GridConfig.POP_NUM_BALLS
+     * N is the constant GridGlobals.POP_NUM_BALLS
      */
     private fun markAroundBall(ball: Ball): List<TileBallGroup> {
 
         val collectedLists = listOf(
-            //vertical
-            (
-                    collectAtOffset(ball.gridPos, 0 to 1, ball.color)
-                    + collectAtOffset(ball.gridPos, 0 to -1, ball.color)
-            ),
-            //horizontal
-            (
-                    collectAtOffset(ball.gridPos, -1 to 0, ball.color)
-                    + collectAtOffset(ball.gridPos, 1 to 0, ball.color)
-            ),
-            //slash
-            (
-                    collectAtOffset(ball.gridPos, -1 to -1, ball.color)
-                    + collectAtOffset(ball.gridPos, 1 to 1, ball.color)
-            ),
-            //reverse slash
-            (
-                    collectAtOffset(ball.gridPos, -1 to 1, ball.color)
-                    + collectAtOffset(ball.gridPos, 1 to -1, ball.color)
-            )
+                //vertical
+                (
+                        collectAtOffset(ball.gridPos, 0 to 1, ball.color)
+                                + collectAtOffset(ball.gridPos, 0 to -1, ball.color)
+                        ),
+                //horizontal
+                (
+                        collectAtOffset(ball.gridPos, -1 to 0, ball.color)
+                                + collectAtOffset(ball.gridPos, 1 to 0, ball.color)
+                        ),
+                //slash
+                (
+                        collectAtOffset(ball.gridPos, -1 to -1, ball.color)
+                                + collectAtOffset(ball.gridPos, 1 to 1, ball.color)
+                        ),
+                //reverse slash
+                (
+                        collectAtOffset(ball.gridPos, -1 to 1, ball.color)
+                                + collectAtOffset(ball.gridPos, 1 to -1, ball.color)
+                        )
         )
         //make sure lists are at least one solution large for pop (-1 due to origin ball not here)
-        return collectedLists.filter { it.size >= GridConfig.POP_NUM_BALLS - 1 }.flatten()
+        return collectedLists.filter { it.size >= GridGlobals.POP_NUM_BALLS - 1 }.flatten()
     }
 
 

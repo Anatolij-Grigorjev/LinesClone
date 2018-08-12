@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.tiem625.lines.assets.Assets
 
-class Tile(width: Float, height: Float): Actor() {
+class Tile(val gridPos: Pair<Int, Int>, width: Float, height: Float): Actor() {
 
     private val texture: Texture
 

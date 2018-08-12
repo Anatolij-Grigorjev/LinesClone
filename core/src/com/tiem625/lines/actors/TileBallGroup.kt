@@ -3,23 +3,16 @@ package com.tiem625.lines.actors
 import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
-import com.tiem625.lines.GridConfig
+import com.tiem625.lines.GridGlobals
 import com.tiem625.lines.stages.TilesGrid
 
 class TileBallGroup(val grid: TilesGrid, val tile: Tile) : Group() {
 
-    companion object {
-
-        fun sameBallState(g1: TileBallGroup, g2: TileBallGroup): Boolean =
-                (g1.ball != null && g2.ball != null) ||
-                        (g1.ball == null && g2.ball == null)
-    }
-
     private fun updateTileColor(selected: Boolean) {
         if (selected) {
-            tile.color = GridConfig.TILE_SELECTED_COLOR
+            tile.color = GridGlobals.TILE_SELECTED_COLOR
         } else {
-            tile.color = GridConfig.TILE_NORMAL_COLOR
+            tile.color = GridGlobals.TILE_NORMAL_COLOR
         }
     }
 
@@ -60,41 +53,38 @@ class TileBallGroup(val grid: TilesGrid, val tile: Tile) : Group() {
 
     private fun updateSelected(selected: Boolean) {
         if (this.isSelected != selected) {
-            var ballTransfered = false
+            var ballTransferred = false
             updateTileColor(selected)
             //started selection of this tile
             if (selected) {
-                GridConfig.selectedTileGroup?.let {
+                GridGlobals.selectedTileGroup?.let {
                     //empty to balled - transfer ball
                     //empty to empty - change selection
                     //ball to ball - change selection
 
                     //if same ball state
-                    if (!TileBallGroup.sameBallState(this, it)) {
+                    if (!GridGlobals.sameBallState(this, it)) {
                         //transfer ball
-                        if (this.ball == null) {
-                            this.ball = it.ball
-                            it.ball = null
-                        } else {
-                            it.ball = this.ball
-                            this.ball = null
-                        }
-                        ballTransfered = true
+                        GridGlobals.transferBall(
+                                tileFrom = this,
+                                tileTo = it
+                        )
+                        ballTransferred = true
                         grid.checkGridUpdates(if (this.ball != null) this else it)
                     }
                     //change selection
                     it.updateSelected(false)
                 }
-                GridConfig.selectedTileGroup = this
+                GridGlobals.selectedTileGroup = this
             } else {
-                if (this == GridConfig.selectedTileGroup) {
-                    GridConfig.selectedTileGroup = null
+                if (this == GridGlobals.selectedTileGroup) {
+                    GridGlobals.selectedTileGroup = null
                 }
             }
 
             this.isSelected = selected
             //clear selection
-            if (ballTransfered) {
+            if (ballTransferred) {
                 updateSelected(false)
             }
         }
