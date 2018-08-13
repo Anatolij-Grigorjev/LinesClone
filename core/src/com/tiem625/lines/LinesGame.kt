@@ -22,16 +22,26 @@ class LinesGame : ApplicationAdapter() {
         Assets.load()
         tilesGrid = TilesGrid(GridGlobals.GRID_ROWS, GridGlobals.GRID_COLS)
         resize(INITIAL_WIDTH, INITIAL_HEIGHT)
+        //initialize grid with some stuff
+        (0 until 5).forEach { tilesGrid.addNewBalls() }
         Gdx.input.inputProcessor = tilesGrid
         tilesGrid.addListener(object : InputListener() {
 
             override fun keyUp(event: InputEvent?, keycode: Int): Boolean {
-                if (keycode == Input.Keys.SPACE) {
-                    val haveBalls = tilesGrid.addNewBalls()
-                    if (!haveBalls) {
-                        println("Balls done, game over...")
-                        Thread.sleep(1000)
-                        Gdx.app.exit()
+                when (keycode) {
+                    Input.Keys.SPACE -> {
+                        val haveBalls = tilesGrid.addNewBalls()
+                        if (!haveBalls) {
+                            println("Balls done, game over...")
+                            Thread.sleep(1000)
+                            Gdx.app.exit()
+                        }
+                    }
+                    Input.Keys.H -> {
+                        tilesGrid.toggleBallsHighlight()
+                    }
+                    else -> {
+                        println("No handler for key $keycode")
                     }
                 }
 
@@ -47,6 +57,7 @@ class LinesGame : ApplicationAdapter() {
     override fun render() {
         Gdx.gl.glClearColor(1f, 0f, 0f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+        tilesGrid.act(Gdx.graphics.deltaTime)
         tilesGrid.draw()
     }
 

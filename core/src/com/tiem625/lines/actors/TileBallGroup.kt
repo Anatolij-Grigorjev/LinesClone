@@ -24,11 +24,13 @@ class TileBallGroup(val grid: TilesGrid, val tile: Tile) : Group() {
 
             //remove previous ball
             field?.let {
+                println("Tile ${this.tile.gridPos} removing ball ${it.color}")
                 removeActor(it)
             }
 
             //add new ball
             value?.let {
+                println("Tile ${this.tile.gridPos} adding ball ${it.color}")
                 addActor(it)
                 it.zIndex = 999
             }

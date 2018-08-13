@@ -16,6 +16,8 @@ class TilesGrid(val numRows: Int,
     val tileWidth: Float = viewport.worldWidth / numRows
     val tileHeight: Float = viewport.worldHeight / numCols
 
+    var highlightOn = false
+
     val grid: Array<Array<TileBallGroup>> = (tileWidth to tileHeight).let { (tileWidth, tileHeight) ->
 
         Array(numRows) { rowIdx ->
@@ -29,6 +31,21 @@ class TilesGrid(val numRows: Int,
                     this@TilesGrid.addActor(this)
                 }
             }
+        }
+    }
+
+    fun toggleBallsHighlight() {
+        highlightOn = !highlightOn
+        if (highlightOn) {
+            grid.flatten()
+                    .forEach {
+                        if (it.ball != null) it.tile.color = GridGlobals.BALL_COLORS[2]
+                    }
+        } else {
+            grid.flatten()
+                    .forEach {
+                        if (it.ball != null) it.tile.color = GridGlobals.TILE_NORMAL_COLOR
+                    }
         }
     }
 
@@ -65,6 +82,7 @@ class TilesGrid(val numRows: Int,
     }
 
     private fun removePoppedBalls(markedSurroundGroups: List<TileBallGroup>) {
+        println("Found remove sequence: ${markedSurroundGroups.joinToString { it.tile.gridPos.toString() }}")
         val positions: MutableList<Pair<Int, Int>> = mutableListOf()
         //create removable group
         Group().apply {
@@ -75,6 +93,7 @@ class TilesGrid(val numRows: Int,
                     this.addActor(ball)
                     positions.add(ball.gridPos)
                     Actions.run {
+                        println("Removing ball ${ball.gridPos}(${ball.color})...")
                         removeActor(ball)
                         group.ball = null
                     }
@@ -87,12 +106,11 @@ class TilesGrid(val numRows: Int,
                         //add recorded positions back into potentials list, reshuffle
                         GridGlobals.ballPositions.addAll(positions)
                         GridGlobals.ballPositions.shuffled()
-                        //DEBUG: highlight tiles with balls on them
-                        grid.flatten().forEach { if (it.ball != null) it.tile.color = GridGlobals.BALL_COLORS[2] }
                         println("Empty grid positions: ${GridGlobals.ballPositions.size}")
                     },
                     Actions.removeActor(this)
             ))
+            this@TilesGrid.addActor(this)
         }
     }
 
