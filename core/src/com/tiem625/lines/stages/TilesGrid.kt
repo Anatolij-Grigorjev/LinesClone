@@ -18,6 +18,15 @@ class TilesGrid(val numRows: Int,
 
     var highlightOn = false
 
+
+    companion object {
+        lateinit var thisGrid: TilesGrid
+    }
+
+    init {
+        TilesGrid.thisGrid = this
+    }
+
     val grid: Array<Array<TileBallGroup>> = (tileWidth to tileHeight).let { (tileWidth, tileHeight) ->
 
         Array(numRows) { rowIdx ->
@@ -114,6 +123,9 @@ class TilesGrid(val numRows: Int,
         }
     }
 
+    /**
+     * Check if the grid has a pop-ready ball alignment in any direction by length
+     */
     fun checkGridUpdates(vararg aroundBalls: TileBallGroup) {
         aroundBalls.forEach { balledGroup ->
             //only do things if group has ball

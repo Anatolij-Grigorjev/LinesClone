@@ -49,3 +49,6 @@ operator fun Pair<Int, Int>.plus(other: Pair<Int, Int>): Pair<Int, Int> {
 operator fun Pair<Int, Int>.times(other: Int): Pair<Int, Int> {
     return Pair(this.first * other, this.second * other)
 }
+
+fun Pair<Int, Int>.toIndex(): Int =
+        first * 10 + second

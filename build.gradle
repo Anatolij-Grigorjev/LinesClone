@@ -53,6 +53,7 @@ project(":core") {
 
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+        compile "com.badlogicgames.gdx:gdx-ai:1.8.1"
         compile "net.dermetfan.libgdx-utils:libgdx-utils:0.13.4"
         compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     }

@@ -1,7 +1,13 @@
 package com.tiem625.lines
 
+import com.badlogic.gdx.ai.pfa.*
+import com.badlogic.gdx.ai.pfa.indexed.IndexedAStarPathFinder
+import com.badlogic.gdx.ai.pfa.indexed.IndexedGraph
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.utils.Array
+import com.tiem625.lines.actors.Tile
 import com.tiem625.lines.actors.TileBallGroup
+import com.tiem625.lines.stages.TilesGrid
 
 object GridGlobals {
 
@@ -47,6 +53,25 @@ object GridGlobals {
         if (tileFrom.ball == null && tileTo.ball != null) {
             return transferBall(tileTo, tileFrom)
         }
+
+        val aStar = IndexedAStarPathFinder<TileBallGroup>(object: IndexedGraph<TileBallGroup> {
+
+            override fun getConnections(fromNode: TileBallGroup?): Array<Connection<TileBallGroup>> {
+
+                TODO("not done yet")
+            }
+
+            override fun getIndex(node: TileBallGroup?): Int {
+
+                return node?.tile?.gridPos?.toIndex() ?: -1
+            }
+
+            override fun getNodeCount(): Int {
+
+                return TilesGrid.thisGrid.grid.size * TilesGrid.thisGrid.grid[0].size
+            }
+
+        })
 
         //move ball and update positions
         val theBall = tileFrom.ball!!
