@@ -18,20 +18,11 @@ class TilesGrid(val numRows: Int,
 
     var highlightOn = false
 
-
-    companion object {
-        lateinit var thisGrid: TilesGrid
-    }
-
-    init {
-        TilesGrid.thisGrid = this
-    }
-
     val grid: Array<Array<TileBallGroup>> = (tileWidth to tileHeight).let { (tileWidth, tileHeight) ->
 
         Array(numRows) { rowIdx ->
             Array(numCols) { colIdx ->
-                TileBallGroup(this, Tile(rowIdx to colIdx, tileWidth, tileHeight).apply {
+                TileBallGroup(this, rowIdx to colIdx, Tile(tileWidth, tileHeight).apply {
                     zIndex = 0
                 }).apply {
                     x = tileWidth * colIdx
@@ -42,6 +33,8 @@ class TilesGrid(val numRows: Int,
             }
         }
     }
+
+    val gridGraph = IndexedGridGraph(numRows, numCols, grid)
 
     fun toggleBallsHighlight() {
         highlightOn = !highlightOn
@@ -91,7 +84,7 @@ class TilesGrid(val numRows: Int,
     }
 
     private fun removePoppedBalls(markedSurroundGroups: List<TileBallGroup>) {
-        println("Found remove sequence: ${markedSurroundGroups.joinToString { it.tile.gridPos.toString() }}")
+        println("Found remove sequence: ${markedSurroundGroups.joinToString { it.gridPos.toString() }}")
         val positions: MutableList<Pair<Int, Int>> = mutableListOf()
         //create removable group
         Group().apply {

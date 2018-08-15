@@ -50,5 +50,5 @@ operator fun Pair<Int, Int>.times(other: Int): Pair<Int, Int> {
     return Pair(this.first * other, this.second * other)
 }
 
-fun Pair<Int, Int>.toIndex(): Int =
-        first * 10 + second
+fun Pair<Int, Int>.toIndex(base: Int = 10): Int =
+        first * base + second

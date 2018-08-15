@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.tiem625.lines.GridGlobals
 import com.tiem625.lines.stages.TilesGrid
 
-class TileBallGroup(val grid: TilesGrid, val tile: Tile) : Group() {
+class TileBallGroup(val grid: TilesGrid, val gridPos: Pair<Int, Int>, val tile: Tile) : Group() {
 
     private fun updateTileColor(selected: Boolean) {
         if (selected) {
@@ -24,13 +24,13 @@ class TileBallGroup(val grid: TilesGrid, val tile: Tile) : Group() {
 
             //remove previous ball
             field?.let {
-                println("Tile ${this.tile.gridPos} removing ball ${it.color}")
+                println("Tile ${this.gridPos} removing ball ${it.color}")
                 removeActor(it)
             }
 
             //add new ball
             value?.let {
-                println("Tile ${this.tile.gridPos} adding ball ${it.color}")
+                println("Tile ${this.gridPos} adding ball ${it.color}")
                 addActor(it)
                 it.zIndex = 999
             }
