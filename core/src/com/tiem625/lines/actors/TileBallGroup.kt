@@ -1,5 +1,6 @@
 package com.tiem625.lines.actors
 
+import com.badlogic.gdx.ai.pfa.DefaultGraphPath
 import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
@@ -66,11 +67,29 @@ class TileBallGroup(val grid: TilesGrid, val gridPos: Pair<Int, Int>, val tile: 
 
                     //if same ball state
                     if (!GridGlobals.sameBallState(this, it)) {
+
+                        val nodePath = DefaultGraphPath<TileBallGroup>()
+
+                        if (grid.pathFinder.searchNodePath(
+                                        this,
+                                        it,
+                        { startNode, endNode ->
+                            if (endNode.ball != null)
+                                Float.MAX_VALUE
+                            else 1.0f
+                        }, nodePath)) {
+
+                            grid.toggleBallsHighlight(nodePath.toList())
+                        } else {
+
+                            println("Path from ${this.gridPos} to ${it.gridPos} not found... :(")
+                        }
+
                         //transfer ball
-                        GridGlobals.transferBall(
-                                tileFrom = this,
-                                tileTo = it
-                        )
+//                        GridGlobals.transferBall(
+//                                tileFrom = this,
+//                                tileTo = it
+//                        )
                         ballTransferred = true
                         grid.checkGridUpdates(if (this.ball != null) this else it)
                     }

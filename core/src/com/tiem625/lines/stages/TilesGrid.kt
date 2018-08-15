@@ -1,5 +1,6 @@
 package com.tiem625.lines.stages
 
+import com.badlogic.gdx.ai.pfa.indexed.IndexedAStarPathFinder
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.Stage
@@ -35,19 +36,21 @@ class TilesGrid(val numRows: Int,
     }
 
     val gridGraph = IndexedGridGraph(numRows, numCols, grid)
+    val pathFinder = IndexedAStarPathFinder(gridGraph)
 
-    fun toggleBallsHighlight() {
+    fun toggleBallsHighlight(balls: List<TileBallGroup> = listOf()) {
+        if (balls.isEmpty()) {
+            toggleBallsHighlight(grid.flatten())
+        }
         highlightOn = !highlightOn
         if (highlightOn) {
-            grid.flatten()
-                    .forEach {
-                        if (it.ball != null) it.tile.color = GridGlobals.BALL_COLORS[2]
-                    }
+            balls.forEach {
+                if (it.ball != null) it.tile.color = GridGlobals.BALL_COLORS[2]
+            }
         } else {
-            grid.flatten()
-                    .forEach {
-                        if (it.ball != null) it.tile.color = GridGlobals.TILE_NORMAL_COLOR
-                    }
+            balls.forEach {
+                if (it.ball != null) it.tile.color = GridGlobals.TILE_NORMAL_COLOR
+            }
         }
     }
 
@@ -120,6 +123,7 @@ class TilesGrid(val numRows: Int,
      * Check if the grid has a pop-ready ball alignment in any direction by length
      */
     fun checkGridUpdates(vararg aroundBalls: TileBallGroup) {
+
         aroundBalls.forEach { balledGroup ->
             //only do things if group has ball
             balledGroup.ball?.let { ball ->
