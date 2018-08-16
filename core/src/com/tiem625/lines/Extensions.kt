@@ -52,3 +52,6 @@ operator fun Pair<Int, Int>.times(other: Int): Pair<Int, Int> {
 
 fun Pair<Int, Int>.toIndex(base: Int = 10): Int =
         first * base + second
+
+fun Pair<Int, Int>.distanceTo(other: Pair<Int, Int>): Pair<Int, Int> =
+        Pair(Math.abs(first - other.first), Math.abs(second - other.second))

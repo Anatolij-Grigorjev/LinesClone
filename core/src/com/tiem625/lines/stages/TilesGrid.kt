@@ -40,7 +40,7 @@ class TilesGrid(val numRows: Int,
 
     fun toggleBallsHighlight(balls: List<TileBallGroup> = listOf()) {
         if (balls.isEmpty()) {
-            toggleBallsHighlight(grid.flatten().filter { it.ball != null })
+            return toggleBallsHighlight(grid.flatten().filter { it.ball != null })
         }
         highlightOn = !highlightOn
         if (highlightOn) {
@@ -82,6 +82,11 @@ class TilesGrid(val numRows: Int,
 
         println("Empty grid positions: ${GridGlobals.ballPositions.size}")
 
+        //change in topology, redoing paths
+        if (newPositions.size > 0) {
+            gridGraph.invalidateConnections()
+        }
+
         //return if we had balls
         return newPositions.size == GridGlobals.TURN_NUM_BALLS
     }
@@ -112,6 +117,7 @@ class TilesGrid(val numRows: Int,
                         GridGlobals.ballPositions.addAll(positions)
                         GridGlobals.ballPositions.shuffled()
                         println("Empty grid positions: ${GridGlobals.ballPositions.size}")
+                        gridGraph.invalidateConnections()
                     },
                     Actions.removeActor(this)
             ))

@@ -5,7 +5,9 @@ import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.tiem625.lines.GridGlobals
+import com.tiem625.lines.distanceTo
 import com.tiem625.lines.stages.TilesGrid
+import com.tiem625.lines.toIndex
 
 class TileBallGroup(val grid: TilesGrid, val gridPos: Pair<Int, Int>, val tile: Tile) : Group() {
 
@@ -20,7 +22,7 @@ class TileBallGroup(val grid: TilesGrid, val gridPos: Pair<Int, Int>, val tile: 
     var isSelected = false
 
     var ball: Ball? = null
-        // perform actor manipulations when ball changes
+    // perform actor manipulations when ball changes
         set(value) {
 
             //remove previous ball
@@ -41,7 +43,7 @@ class TileBallGroup(val grid: TilesGrid, val gridPos: Pair<Int, Int>, val tile: 
 
     init {
         addActor(tile)
-        addListener(object: InputListener() {
+        addListener(object : InputListener() {
 
             override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
                 updateSelected(!isSelected)
@@ -73,11 +75,12 @@ class TileBallGroup(val grid: TilesGrid, val gridPos: Pair<Int, Int>, val tile: 
                         if (grid.pathFinder.searchNodePath(
                                         this,
                                         it,
-                        { startNode, endNode ->
-                            if (endNode.ball != null)
-                                Float.MAX_VALUE
-                            else 1.0f
-                        }, nodePath)) {
+                                        { start, end ->
+                                            start.gridPos.distanceTo(end.gridPos).toIndex().toFloat()
+                                        },
+                                        nodePath
+                                )
+                        ) {
 
                             grid.toggleBallsHighlight(nodePath.toList())
                         } else {

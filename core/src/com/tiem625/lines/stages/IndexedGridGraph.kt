@@ -10,6 +10,13 @@ typealias GraphArray = com.badlogic.gdx.utils.Array<Connection<TileBallGroup>>
 class IndexedGridGraph(val numRows: Int, val numCols: Int, val grid: Array<Array<TileBallGroup>>):
         IndexedGraph<TileBallGroup> {
 
+    class DescriptiveDefaultConnection(from: TileBallGroup, to: TileBallGroup):
+            DefaultConnection<TileBallGroup>(from, to) {
+        override fun toString(): String {
+            return "${fromNode.gridPos} -> ${toNode.gridPos}"
+        }
+    }
+
 
     private val nodesTotal: Int = numRows * numCols
 
@@ -19,45 +26,62 @@ class IndexedGridGraph(val numRows: Int, val numCols: Int, val grid: Array<Array
         val connections = GraphArray(9)
 
         val pos = tileBallGroup.gridPos
+
         //connection left
         if (pos.first > 0) {
-            connections.add(DefaultConnection<TileBallGroup>(
-                    tileBallGroup,
-                    grid[pos.first - 1][pos.second]
-            ))
+            val neighbour = grid[pos.first - 1][pos.second]
+            if (neighbour.ball == null) {
+                connections.add(DescriptiveDefaultConnection(
+                        tileBallGroup,
+                        neighbour
+                ))
+            }
         }
         //connection right
         if (pos.first < (numRows - 1)) {
-            connections.add(DefaultConnection<TileBallGroup>(
-                    tileBallGroup,
-                    grid[pos.first + 1][pos.second]
-            ))
+            val neighbour = grid[pos.first + 1][pos.second]
+            if (neighbour.ball == null) {
+                connections.add(DescriptiveDefaultConnection(
+                        tileBallGroup,
+                        neighbour
+                ))
+            }
         }
         //connection below
         if(pos.second > 0) {
-            connections.add(DefaultConnection<TileBallGroup>(
-                    tileBallGroup,
-                    grid[pos.first][pos.second - 1]
-            ))
+            val neighbour = grid[pos.first][pos.second - 1]
+            if (neighbour.ball == null) {
+                connections.add(DescriptiveDefaultConnection(
+                        tileBallGroup,
+                        neighbour
+                ))
+            }
         }
         //connection above
         if (pos.second < (numCols - 1)) {
-            connections.add(DefaultConnection<TileBallGroup>(
-                    tileBallGroup,
-                    grid[pos.first][pos.second + 1]
-            ))
+            val neighbour = grid[pos.first][pos.second + 1]
+            if (neighbour.ball == null) {
+                connections.add(DescriptiveDefaultConnection(
+                        tileBallGroup,
+                        neighbour
+                ))
+            }
         }
 
         return connections
     }
 
-    private val connectionsMap = grid.flatten().associate { tileBallGroup ->
+    private var connectionsMap = generateNewConnectionsMap()
 
-        Pair(
-                tileBallGroup,
-                //generate tile ball group connections
-                generateNearestConnections(tileBallGroup)
-        )
+    private fun generateNewConnectionsMap(): Map<TileBallGroup, GraphArray> {
+        return grid.flatten().associate { tileBallGroup ->
+
+            Pair(
+                    tileBallGroup,
+                    //generate tile ball group connections
+                    generateNearestConnections(tileBallGroup)
+            )
+        }
     }
 
     val emptyArray: GraphArray = GraphArray()
@@ -74,5 +98,26 @@ class IndexedGridGraph(val numRows: Int, val numCols: Int, val grid: Array<Array
     }
 
     override fun getNodeCount(): Int = nodesTotal
+
+    /**
+     * Force graph to generate a new connections map,
+     * should be done after changes in ball graph topology
+     */
+    fun invalidateConnections() {
+        println("invalidating connections...")
+        val now = System.currentTimeMillis()
+        connectionsMap = generateNewConnectionsMap()
+        println("Regen graph connections took ${System.currentTimeMillis() - now}ms, created ${connectionsMap.size} connections")
+        dumpConnections()
+    }
+
+    fun dumpConnections() {
+
+        connectionsMap.forEach {group, array->
+
+            println("${group.gridPos}: $array")
+
+        }
+    }
 
 }
