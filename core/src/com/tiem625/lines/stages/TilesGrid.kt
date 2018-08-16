@@ -40,16 +40,16 @@ class TilesGrid(val numRows: Int,
 
     fun toggleBallsHighlight(balls: List<TileBallGroup> = listOf()) {
         if (balls.isEmpty()) {
-            toggleBallsHighlight(grid.flatten())
+            toggleBallsHighlight(grid.flatten().filter { it.ball != null })
         }
         highlightOn = !highlightOn
         if (highlightOn) {
             balls.forEach {
-                if (it.ball != null) it.tile.color = GridGlobals.BALL_COLORS[2]
+                it.tile.color = GridGlobals.BALL_COLORS[2]
             }
         } else {
             balls.forEach {
-                if (it.ball != null) it.tile.color = GridGlobals.TILE_NORMAL_COLOR
+                it.tile.color = GridGlobals.TILE_NORMAL_COLOR
             }
         }
     }
