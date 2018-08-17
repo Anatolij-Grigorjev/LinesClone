@@ -27,6 +27,11 @@ class Ball(width: Float,
         setBounds(x, y, width, height)
     }
 
+    fun resetPosition() {
+        x = 0.0f
+        y = 0.0f
+    }
+
     override fun draw(batch: Batch?, parentAlpha: Float) {
         val color = this.color
         batch?.let {

@@ -83,7 +83,7 @@ class TilesGrid(val numRows: Int,
         println("Empty grid positions: ${GridGlobals.ballPositions.size}")
 
         //change in topology, redoing paths
-        if (newPositions.size > 0) {
+        if (newPositions.isNotEmpty()) {
             gridGraph.invalidateConnections()
         }
 

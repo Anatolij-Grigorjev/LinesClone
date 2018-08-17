@@ -34,6 +34,9 @@ object GridGlobals {
         }
     }.flatten().toMutableList().shuffled()
 
+    /**
+     * Test if two tileballgroups both either have or dont have a ball
+     */
     fun sameBallState(g1: TileBallGroup, g2: TileBallGroup): Boolean =
             (g1.ball != null && g2.ball != null) ||
                     (g1.ball == null && g2.ball == null)
@@ -50,6 +53,7 @@ object GridGlobals {
 
         //move ball and update positions
         val theBall = tileFrom.ball!!
+        theBall.resetPosition()
         tileTo.ball = theBall
         tileFrom.ball = null
         tileTo.ball!!.gridPos = tileTo.gridPos

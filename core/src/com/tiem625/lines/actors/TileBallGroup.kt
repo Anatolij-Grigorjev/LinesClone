@@ -1,9 +1,13 @@
 package com.tiem625.lines.actors
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.ai.pfa.DefaultGraphPath
+import com.badlogic.gdx.math.Interpolation
+import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
+import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.tiem625.lines.GridGlobals
 import com.tiem625.lines.distanceTo
 import com.tiem625.lines.stages.TilesGrid
@@ -53,6 +57,7 @@ class TileBallGroup(val grid: TilesGrid, val gridPos: Pair<Int, Int>, val tile: 
                 return true
             }
         })
+        cullingArea = Rectangle(0.0f, 0.0f, grid.numRows * tile.width, grid.numCols * tile.height)
     }
 
 
@@ -73,8 +78,8 @@ class TileBallGroup(val grid: TilesGrid, val gridPos: Pair<Int, Int>, val tile: 
                         val nodePath = DefaultGraphPath<TileBallGroup>()
 
                         if (grid.pathFinder.searchNodePath(
-                                        this,
                                         it,
+                                        this,
                                         { start, end ->
                                             start.gridPos.distanceTo(end.gridPos).toIndex().toFloat()
                                         },
@@ -82,17 +87,37 @@ class TileBallGroup(val grid: TilesGrid, val gridPos: Pair<Int, Int>, val tile: 
                                 )
                         ) {
 
-                            grid.toggleBallsHighlight(nodePath.toList())
+                            val ball = this.ball ?: it.ball!!
+
+                            println("Moving ball ${ball.color} between ${it.gridPos} and ${this.gridPos} via ${nodePath.joinToString { it.gridPos.toString() }}")
+
+                            ball.addAction(Actions.sequence(
+                                    Actions.run {
+                                        it.removeActor(ball)
+                                        grid.addActor(ball)
+                                    },
+                                    *nodePath.map { node ->
+                                        Actions.moveTo(
+                                                node.tile.width * node.gridPos.first.toFloat(),
+                                                node.tile.height * node.gridPos.second.toFloat(),
+                                                Gdx.graphics.deltaTime * 5,
+                                                Interpolation.linear
+                                        )
+                                    }.toTypedArray(),
+                                    Actions.run {
+                                        //transfer ball
+                                        GridGlobals.transferBall(
+                                                tileFrom = this,
+                                                tileTo = it
+                                        )
+                                    }
+                            ))
+
                         } else {
 
-                            println("Path from ${this.gridPos} to ${it.gridPos} not found... :(")
+                            println("Path from ${it.gridPos} to ${this.gridPos} not found... :(")
                         }
 
-                        //transfer ball
-//                        GridGlobals.transferBall(
-//                                tileFrom = this,
-//                                tileTo = it
-//                        )
                         ballTransferred = true
                         grid.checkGridUpdates(if (this.ball != null) this else it)
                     }

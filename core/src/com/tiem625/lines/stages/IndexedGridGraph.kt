@@ -3,6 +3,7 @@ package com.tiem625.lines.stages
 import com.badlogic.gdx.ai.pfa.Connection
 import com.badlogic.gdx.ai.pfa.DefaultConnection
 import com.badlogic.gdx.ai.pfa.indexed.IndexedGraph
+import com.tiem625.lines.GridGlobals
 import com.tiem625.lines.actors.TileBallGroup
 import com.tiem625.lines.toIndex
 
@@ -30,7 +31,7 @@ class IndexedGridGraph(val numRows: Int, val numCols: Int, val grid: Array<Array
         //connection left
         if (pos.first > 0) {
             val neighbour = grid[pos.first - 1][pos.second]
-            if (neighbour.ball == null) {
+            if (neighbour.ball == null || tileBallGroup.ball == null) {
                 connections.add(DescriptiveDefaultConnection(
                         tileBallGroup,
                         neighbour
@@ -40,7 +41,7 @@ class IndexedGridGraph(val numRows: Int, val numCols: Int, val grid: Array<Array
         //connection right
         if (pos.first < (numRows - 1)) {
             val neighbour = grid[pos.first + 1][pos.second]
-            if (neighbour.ball == null) {
+            if (neighbour.ball == null || tileBallGroup.ball == null) {
                 connections.add(DescriptiveDefaultConnection(
                         tileBallGroup,
                         neighbour
@@ -50,7 +51,7 @@ class IndexedGridGraph(val numRows: Int, val numCols: Int, val grid: Array<Array
         //connection below
         if(pos.second > 0) {
             val neighbour = grid[pos.first][pos.second - 1]
-            if (neighbour.ball == null) {
+            if (neighbour.ball == null || tileBallGroup.ball == null) {
                 connections.add(DescriptiveDefaultConnection(
                         tileBallGroup,
                         neighbour
@@ -60,7 +61,7 @@ class IndexedGridGraph(val numRows: Int, val numCols: Int, val grid: Array<Array
         //connection above
         if (pos.second < (numCols - 1)) {
             val neighbour = grid[pos.first][pos.second + 1]
-            if (neighbour.ball == null) {
+            if (neighbour.ball == null || tileBallGroup.ball == null) {
                 connections.add(DescriptiveDefaultConnection(
                         tileBallGroup,
                         neighbour
@@ -108,7 +109,7 @@ class IndexedGridGraph(val numRows: Int, val numCols: Int, val grid: Array<Array
         val now = System.currentTimeMillis()
         connectionsMap = generateNewConnectionsMap()
         println("Regen graph connections took ${System.currentTimeMillis() - now}ms, created ${connectionsMap.size} connections")
-        dumpConnections()
+//        dumpConnections()
     }
 
     fun dumpConnections() {
