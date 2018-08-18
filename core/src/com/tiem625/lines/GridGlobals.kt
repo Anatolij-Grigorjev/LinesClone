@@ -1,7 +1,9 @@
 package com.tiem625.lines
 
 import com.badlogic.gdx.graphics.Color
+import com.tiem625.lines.actors.Ball
 import com.tiem625.lines.actors.TileBallGroup
+import com.tiem625.lines.stages.TilesGrid
 
 object GridGlobals {
 
@@ -41,25 +43,39 @@ object GridGlobals {
             (g1.ball != null && g2.ball != null) ||
                     (g1.ball == null && g2.ball == null)
 
-    fun transferBall(tileFrom: TileBallGroup, tileTo: TileBallGroup) {
-        //no balls on the tiles or balls on all tiles - cant do nuthin'
-        if (sameBallState(tileFrom, tileTo))
+    fun attachBall(theBall: Ball, tileTo: TileBallGroup) {
+        //if this tile already has a ball we log and return
+        tileTo.ball?.let {
+            println("TILE ${tileTo.gridPos} already has BALL ${it.color}! doing nothing!")
             return
-
-        //if ball on other side before call - flip arguments
-        if (tileFrom.ball == null && tileTo.ball != null) {
-            return transferBall(tileTo, tileFrom)
         }
 
         //move ball and update positions
-        val theBall = tileFrom.ball!!
         theBall.resetPosition()
         tileTo.ball = theBall
-        tileFrom.ball = null
         tileTo.ball!!.gridPos = tileTo.gridPos
 
         ballPositions.remove(tileTo.gridPos)
-        ballPositions.add(tileFrom.gridPos)
+        ballPositions.shuffled()
+    }
+
+    fun removeBall(fromTile: TileBallGroup, toStage: TilesGrid) {
+        //if the tile doesn't have a ball, we log and return
+        if (fromTile.ball == null) {
+            println("TILE ${fromTile.gridPos} HAS NO BALL")
+            return
+        }
+
+        val ball = fromTile.ball!!
+
+        ball.setPosition(
+                fromTile.gridPos.second * fromTile.tile.height,
+                fromTile.gridPos.first * fromTile.tile.width
+        )
+        fromTile.ball = null
+        toStage.addActor(ball)
+
+        ballPositions.add(fromTile.gridPos)
         ballPositions.shuffled()
     }
 }

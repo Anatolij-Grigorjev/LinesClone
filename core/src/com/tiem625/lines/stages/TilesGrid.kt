@@ -38,19 +38,45 @@ class TilesGrid(val numRows: Int,
     val gridGraph = IndexedGridGraph(numRows, numCols, grid)
     val pathFinder = IndexedAStarPathFinder(gridGraph)
 
-    fun toggleBallsHighlight(balls: List<TileBallGroup> = listOf()) {
-        if (balls.isEmpty()) {
-            return toggleBallsHighlight(grid.flatten().filter { it.ball != null })
-        }
+
+    fun toggleConnectionsHighlight() {
+        val groups = gridGraph
+                .connectionsMap
+                .values
+                .flatten()
+                .map { con ->
+                    listOf<TileBallGroup>(con.fromNode, con.toNode)
+                }.flatten()
+                .toSet()
+
         highlightOn = !highlightOn
         if (highlightOn) {
-            balls.forEach {
-                it.tile.color = GridGlobals.BALL_COLORS[2]
-            }
+            highlightTileGroups(groups)
         } else {
-            balls.forEach {
-                it.tile.color = GridGlobals.TILE_NORMAL_COLOR
-            }
+            clearHighlight()
+        }
+    }
+
+    fun toggleBallsHighlight() {
+        val groups = grid.flatten().filter { it.ball != null }
+
+        highlightOn = !highlightOn
+        if (highlightOn) {
+            highlightTileGroups(groups)
+        } else {
+            clearHighlight()
+        }
+    }
+
+    private fun highlightTileGroups(tileGroups: Iterable<TileBallGroup>) {
+        tileGroups.forEach {
+            it.tile.color = GridGlobals.BALL_COLORS[2]
+        }
+    }
+
+    private fun clearHighlight() {
+        grid.flatten().forEach {
+            it.tile.color = GridGlobals.TILE_NORMAL_COLOR
         }
     }
 

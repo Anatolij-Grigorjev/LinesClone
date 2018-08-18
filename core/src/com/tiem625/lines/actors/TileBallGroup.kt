@@ -52,12 +52,9 @@ class TileBallGroup(val grid: TilesGrid, val gridPos: Pair<Int, Int>, val tile: 
             override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
                 updateSelected(!isSelected)
 
-
-
                 return true
             }
         })
-        cullingArea = Rectangle(0.0f, 0.0f, grid.numRows * tile.width, grid.numCols * tile.height)
     }
 
 
@@ -93,22 +90,24 @@ class TileBallGroup(val grid: TilesGrid, val gridPos: Pair<Int, Int>, val tile: 
 
                             ball.addAction(Actions.sequence(
                                     Actions.run {
-                                        it.removeActor(ball)
-                                        grid.addActor(ball)
+                                        GridGlobals.removeBall(
+                                                it,
+                                                grid
+                                        )
                                     },
                                     *nodePath.map { node ->
                                         Actions.moveTo(
-                                                node.tile.width * node.gridPos.first.toFloat(),
-                                                node.tile.height * node.gridPos.second.toFloat(),
-                                                Gdx.graphics.deltaTime * 5,
+                                                node.tile.width * node.gridPos.second.toFloat(),
+                                                node.tile.height * node.gridPos.first.toFloat(),
+                                                Gdx.graphics.deltaTime * 10,
                                                 Interpolation.linear
                                         )
                                     }.toTypedArray(),
                                     Actions.run {
                                         //transfer ball
-                                        GridGlobals.transferBall(
-                                                tileFrom = this,
-                                                tileTo = it
+                                        GridGlobals.attachBall(
+                                                ball,
+                                                tileTo = this
                                         )
                                     }
                             ))

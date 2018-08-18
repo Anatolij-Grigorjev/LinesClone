@@ -40,6 +40,9 @@ class LinesGame : ApplicationAdapter() {
                     Input.Keys.H -> {
                         tilesGrid.toggleBallsHighlight()
                     }
+                    Input.Keys.C -> {
+                        tilesGrid.toggleConnectionsHighlight()
+                    }
                     else -> {
                         println("No handler for key $keycode")
                     }

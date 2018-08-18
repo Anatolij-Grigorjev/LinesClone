@@ -72,7 +72,7 @@ class IndexedGridGraph(val numRows: Int, val numCols: Int, val grid: Array<Array
         return connections
     }
 
-    private var connectionsMap = generateNewConnectionsMap()
+    var connectionsMap = generateNewConnectionsMap()
 
     private fun generateNewConnectionsMap(): Map<TileBallGroup, GraphArray> {
         return grid.flatten().associate { tileBallGroup ->
