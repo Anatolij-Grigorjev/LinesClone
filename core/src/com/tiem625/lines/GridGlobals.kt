@@ -69,8 +69,8 @@ object GridGlobals {
         val ball = fromTile.ball!!
 
         ball.setPosition(
-                fromTile.gridPos.second * fromTile.tile.height,
-                fromTile.gridPos.first * fromTile.tile.width
+                fromTile.gridPos.second * fromTile.tile.width,
+                fromTile.gridPos.first * fromTile.tile.height
         )
         fromTile.ball = null
         toStage.addActor(ball)

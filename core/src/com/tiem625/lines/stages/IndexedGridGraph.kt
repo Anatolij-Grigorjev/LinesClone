@@ -31,7 +31,7 @@ class IndexedGridGraph(val numRows: Int, val numCols: Int, val grid: Array<Array
         //connection left
         if (pos.first > 0) {
             val neighbour = grid[pos.first - 1][pos.second]
-            if (neighbour.ball == null || tileBallGroup.ball == null) {
+            if (neighbour.ball == null) {
                 connections.add(DescriptiveDefaultConnection(
                         tileBallGroup,
                         neighbour
@@ -41,7 +41,7 @@ class IndexedGridGraph(val numRows: Int, val numCols: Int, val grid: Array<Array
         //connection right
         if (pos.first < (numRows - 1)) {
             val neighbour = grid[pos.first + 1][pos.second]
-            if (neighbour.ball == null || tileBallGroup.ball == null) {
+            if (neighbour.ball == null) {
                 connections.add(DescriptiveDefaultConnection(
                         tileBallGroup,
                         neighbour
@@ -51,7 +51,7 @@ class IndexedGridGraph(val numRows: Int, val numCols: Int, val grid: Array<Array
         //connection below
         if(pos.second > 0) {
             val neighbour = grid[pos.first][pos.second - 1]
-            if (neighbour.ball == null || tileBallGroup.ball == null) {
+            if (neighbour.ball == null) {
                 connections.add(DescriptiveDefaultConnection(
                         tileBallGroup,
                         neighbour
@@ -61,7 +61,7 @@ class IndexedGridGraph(val numRows: Int, val numCols: Int, val grid: Array<Array
         //connection above
         if (pos.second < (numCols - 1)) {
             val neighbour = grid[pos.first][pos.second + 1]
-            if (neighbour.ball == null || tileBallGroup.ball == null) {
+            if (neighbour.ball == null) {
                 connections.add(DescriptiveDefaultConnection(
                         tileBallGroup,
                         neighbour
