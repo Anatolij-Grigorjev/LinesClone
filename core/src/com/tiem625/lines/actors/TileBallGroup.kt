@@ -60,7 +60,7 @@ class TileBallGroup(val grid: TilesGrid, val gridPos: Pair<Int, Int>, val tile: 
 
     private fun updateSelected(selected: Boolean) {
         if (this.isSelected != selected) {
-            var ballTransferred = false
+
             updateTileColor(selected)
             //started selection of this tile
             if (selected) {
@@ -109,6 +109,8 @@ class TileBallGroup(val grid: TilesGrid, val gridPos: Pair<Int, Int>, val tile: 
                                                 ball,
                                                 tileTo = this
                                         )
+                                        grid.checkGridUpdates(this)
+                                        it.updateSelected(false)
                                     }
                             ))
 
@@ -116,11 +118,7 @@ class TileBallGroup(val grid: TilesGrid, val gridPos: Pair<Int, Int>, val tile: 
 
                             println("Path from ${it.gridPos} to ${this.gridPos} not found... :(")
                         }
-
-                        ballTransferred = true
-                        grid.checkGridUpdates(if (this.ball != null) this else it)
                     }
-                    //change selection
                     it.updateSelected(false)
                 }
                 GridGlobals.selectedTileGroup = this
@@ -131,10 +129,6 @@ class TileBallGroup(val grid: TilesGrid, val gridPos: Pair<Int, Int>, val tile: 
             }
 
             this.isSelected = selected
-            //clear selection
-            if (ballTransferred) {
-                updateSelected(false)
-            }
         }
     }
 

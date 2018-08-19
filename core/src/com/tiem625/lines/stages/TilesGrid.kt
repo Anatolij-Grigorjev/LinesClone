@@ -86,6 +86,14 @@ class TilesGrid(val numRows: Int,
                 grid[point.first][point.second]
             else null
 
+    /**
+     * Try adding new balls at free shuffled positions on the board
+     *
+     * returns <code>true</code> if the amount of positions filled corresponds to the
+     * expected turn amount (i.e. its not game over yet)
+     *
+     * <code>false</code> means number of free positions was lower than balls willing to fill them
+     */
     fun addNewBalls(): Boolean {
 
         //take first N new ball positions
@@ -153,8 +161,12 @@ class TilesGrid(val numRows: Int,
 
     /**
      * Check if the grid has a pop-ready ball alignment in any direction by length
+     *
+     * if it does, pop it
+     *
+     * if it does not, generate new balls batch
      */
-    fun checkGridUpdates(vararg aroundBalls: TileBallGroup) {
+    fun checkGridUpdates(vararg aroundBalls: TileBallGroup ) {
 
         aroundBalls.forEach { balledGroup ->
             //only do things if group has ball
@@ -165,6 +177,11 @@ class TilesGrid(val numRows: Int,
 
                 if (markedSurroundGroups.size >= GridGlobals.POP_NUM_BALLS) {
                     removePoppedBalls(markedSurroundGroups)
+                } else {
+                    //if this was false, its game over man!
+                    if (!addNewBalls()) {
+                        LinesGame.currentGame.gameOver()
+                    }
                 }
             }
         }

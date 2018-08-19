@@ -14,16 +14,22 @@ class LinesGame : ApplicationAdapter() {
 
     lateinit var tilesGrid: TilesGrid
 
+    companion object {
+        lateinit var currentGame: LinesGame
+    }
+
     val INITIAL_WIDTH = 640
     val INITIAL_HEIGHT = 640
 
     override fun create() {
 
+        currentGame = this
+
         Assets.load()
         tilesGrid = TilesGrid(GridGlobals.GRID_ROWS, GridGlobals.GRID_COLS)
         resize(INITIAL_WIDTH, INITIAL_HEIGHT)
         //initialize grid with some stuff
-        (0 until 5).forEach { tilesGrid.addNewBalls() }
+        (0 until 1).forEach { tilesGrid.addNewBalls() }
         Gdx.input.inputProcessor = tilesGrid
         tilesGrid.addListener(object : InputListener() {
 
@@ -32,9 +38,7 @@ class LinesGame : ApplicationAdapter() {
                     Input.Keys.SPACE -> {
                         val haveBalls = tilesGrid.addNewBalls()
                         if (!haveBalls) {
-                            println("Balls done, game over...")
-                            Thread.sleep(1000)
-                            Gdx.app.exit()
+                            gameOver()
                         }
                     }
                     Input.Keys.H -> {
@@ -67,5 +71,11 @@ class LinesGame : ApplicationAdapter() {
     override fun dispose() {
         tilesGrid.dispose()
         Assets.manager.dispose()
+    }
+
+    fun gameOver() {
+        println("Balls done, game over...")
+        Thread.sleep(1000)
+        Gdx.app.exit()
     }
 }
