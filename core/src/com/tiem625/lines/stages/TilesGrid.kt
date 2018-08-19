@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.tiem625.lines.*
 import com.tiem625.lines.actors.Ball
+import com.tiem625.lines.actors.ReceivedPoints
 import com.tiem625.lines.actors.Tile
 import com.tiem625.lines.actors.TileBallGroup
 
@@ -166,7 +167,7 @@ class TilesGrid(val numRows: Int,
      *
      * if it does not, generate new balls batch
      */
-    fun checkGridUpdates(vararg aroundBalls: TileBallGroup ) {
+    fun checkGridUpdates(vararg aroundBalls: TileBallGroup) {
 
         aroundBalls.forEach { balledGroup ->
             //only do things if group has ball
@@ -176,6 +177,14 @@ class TilesGrid(val numRows: Int,
                 val markedSurroundGroups = (markAroundBall(ball) + balledGroup)
 
                 if (markedSurroundGroups.size >= GridGlobals.POP_NUM_BALLS) {
+                    //create points float above this moved ball
+                    addActor(ReceivedPoints(
+                            Pair(
+                                    tileHeight * ball.gridPos.first,
+                                    tileWidth * ball.gridPos.second
+                            ),
+                            150)
+                    )
                     removePoppedBalls(markedSurroundGroups)
                 } else {
                     //if this was false, its game over man!
