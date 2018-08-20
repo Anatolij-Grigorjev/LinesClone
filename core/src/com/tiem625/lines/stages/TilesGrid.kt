@@ -138,7 +138,6 @@ class TilesGrid(val numRows: Int,
                     this.addActor(ball)
                     positions.add(ball.gridPos)
                     Actions.run {
-                        println("Removing ball ${ball.gridPos}(${ball.color})...")
                         removeActor(ball)
                         group.ball = null
                     }
@@ -177,11 +176,12 @@ class TilesGrid(val numRows: Int,
                 val markedSurroundGroups = (markAroundBall(ball) + balledGroup)
 
                 if (markedSurroundGroups.size >= GridGlobals.POP_NUM_BALLS) {
+                    println("Creating recievd points at ${ball.gridPos}")
                     //create points float above this moved ball
-                    addActor(ReceivedPoints(
+                    balledGroup.addActor(ReceivedPoints(
                             Pair(
-                                    tileHeight * ball.gridPos.first,
-                                    tileWidth * ball.gridPos.second
+                                    tileWidth / 2,
+                                    tileHeight / 2
                             ),
                             150)
                     )
