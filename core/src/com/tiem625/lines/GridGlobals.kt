@@ -1,11 +1,17 @@
 package com.tiem625.lines
 
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.utils.Disposable
 import com.tiem625.lines.actors.Ball
 import com.tiem625.lines.actors.TileBallGroup
 import com.tiem625.lines.stages.TilesGrid
 
-object GridGlobals {
+object GridGlobals: Disposable {
+
+    override fun dispose() {
+        pointsLabelFont.dispose()
+    }
 
     const val WORLD_WIDTH = 640.0f
     const val WORLD_HEIGHT = 640.0f
@@ -21,6 +27,8 @@ object GridGlobals {
     const val TURN_NUM_BALLS = 5 //how many balls get added in a turn
     const val POP_NUM_BALLS = 4 // num balls to align in a single pattern
     const val TILE_BALL_GUTTER = 0.0f
+
+    val pointsLabelFont = BitmapFont()
 
     val BALL_COLORS = listOf<Color>(
             Color.RED,
@@ -73,7 +81,7 @@ object GridGlobals {
                 fromTile.gridPos.first * fromTile.tile.height
         )
         fromTile.ball = null
-        toStage.addActor(ball)
+        toStage.gridGroup.addActor(ball)
 
         ballPositions.add(fromTile.gridPos)
         ballPositions.shuffled()

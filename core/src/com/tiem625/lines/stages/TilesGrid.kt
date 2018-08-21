@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
-import com.badlogic.gdx.utils.viewport.ExtendViewport
+import com.badlogic.gdx.utils.viewport.FitViewport
 import com.tiem625.lines.*
 import com.tiem625.lines.actors.Ball
 import com.tiem625.lines.actors.ReceivedPoints
@@ -13,12 +13,16 @@ import com.tiem625.lines.actors.Tile
 import com.tiem625.lines.actors.TileBallGroup
 
 class TilesGrid(val numRows: Int,
-                val numCols: Int) : Stage(ExtendViewport(GridGlobals.WORLD_WIDTH, GridGlobals.WORLD_HEIGHT)) {
+                val numCols: Int,
+                val offset: Pair<Float, Float> = (0.0f to 0.0f)
+) : Stage(FitViewport(GridGlobals.WORLD_WIDTH, GridGlobals.WORLD_HEIGHT)) {
 
-    val tileWidth: Float = viewport.worldWidth / numRows
-    val tileHeight: Float = viewport.worldHeight / numCols
+    val tileWidth: Float = (viewport.worldWidth - offset.first) / numRows
+    val tileHeight: Float = (viewport.worldHeight - offset.second) / numCols
 
     var highlightOn = false
+
+    val gridGroup = Group()
 
     val grid: Array<Array<TileBallGroup>> = (tileWidth to tileHeight).let { (tileWidth, tileHeight) ->
 
@@ -27,12 +31,20 @@ class TilesGrid(val numRows: Int,
                 TileBallGroup(this, rowIdx to colIdx, Tile(tileWidth, tileHeight).apply {
                     zIndex = 0
                 }).apply {
+                    gridGroup.addActor(this)
                     x = tileWidth * colIdx
                     y = tileHeight * rowIdx
                     tile.group = this
-                    this@TilesGrid.addActor(this)
                 }
             }
+        }
+    }
+
+    init {
+        gridGroup.apply {
+            x += offset.first
+            y += offset.second
+            this@TilesGrid.addActor(this)
         }
     }
 
@@ -135,7 +147,7 @@ class TilesGrid(val numRows: Int,
             //record ball positions
             val removeBallActions = markedSurroundGroups.mapNotNull { group ->
                 group.ball?.let { ball ->
-                    this.addActor(ball)
+                    gridGroup.addActor(ball)
                     positions.add(ball.gridPos)
                     Actions.run {
                         removeActor(ball)
@@ -155,7 +167,7 @@ class TilesGrid(val numRows: Int,
                     },
                     Actions.removeActor(this)
             ))
-            this@TilesGrid.addActor(this)
+            gridGroup.addActor(this)
         }
     }
 
@@ -179,11 +191,10 @@ class TilesGrid(val numRows: Int,
                     println("Creating recievd points at ${ball.gridPos}")
                     //create points float above this moved ball
                     balledGroup.addActor(ReceivedPoints(
-                            Pair(
-                                    tileWidth / 2,
-                                    tileHeight / 2
-                            ),
-                            150)
+                            tileWidth / 2 to tileHeight / 2,
+                            tileWidth to tileHeight,
+                            150,
+                            ball.color)
                     )
                     removePoppedBalls(markedSurroundGroups)
                 } else {

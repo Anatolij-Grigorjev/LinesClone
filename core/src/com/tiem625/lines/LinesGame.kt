@@ -26,7 +26,11 @@ class LinesGame : ApplicationAdapter() {
         currentGame = this
 
         Assets.load()
-        tilesGrid = TilesGrid(GridGlobals.GRID_ROWS, GridGlobals.GRID_COLS)
+        tilesGrid = TilesGrid(
+                GridGlobals.GRID_ROWS,
+                GridGlobals.GRID_COLS,
+                (0.0f to 100.0f)
+        )
         resize(INITIAL_WIDTH, INITIAL_HEIGHT)
         //initialize grid with some stuff
         (0 until 1).forEach { tilesGrid.addNewBalls() }
@@ -71,6 +75,7 @@ class LinesGame : ApplicationAdapter() {
     override fun dispose() {
         tilesGrid.dispose()
         Assets.manager.dispose()
+        GridGlobals.dispose()
     }
 
     fun gameOver() {
