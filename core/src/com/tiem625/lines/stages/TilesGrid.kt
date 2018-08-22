@@ -15,10 +15,13 @@ import com.tiem625.lines.actors.TileBallGroup
 class TilesGrid(val numRows: Int,
                 val numCols: Int,
                 val offset: Pair<Float, Float> = (0.0f to 0.0f)
-) : Stage(FitViewport(GridGlobals.WORLD_WIDTH, GridGlobals.WORLD_HEIGHT)) {
+) : Stage(FitViewport(
+        GridGlobals.WORLD_WIDTH + Math.abs(offset.first),
+        GridGlobals.WORLD_HEIGHT + Math.abs(offset.second))
+) {
 
-    val tileWidth: Float = (viewport.worldWidth - offset.first) / numRows
-    val tileHeight: Float = (viewport.worldHeight - offset.second) / numCols
+    val tileWidth: Float = (GridGlobals.WORLD_WIDTH) / numRows
+    val tileHeight: Float = (GridGlobals.WORLD_HEIGHT) / numCols
 
     var highlightOn = false
 
@@ -43,7 +46,9 @@ class TilesGrid(val numRows: Int,
     init {
         gridGroup.apply {
             x += offset.first
-            y += offset.second
+            if (offset.second > 0) {
+                y += offset.second
+            }
             this@TilesGrid.addActor(this)
         }
     }

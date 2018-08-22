@@ -29,11 +29,13 @@ class LinesGame : ApplicationAdapter() {
         tilesGrid = TilesGrid(
                 GridGlobals.GRID_ROWS,
                 GridGlobals.GRID_COLS,
-                (0.0f to 100.0f)
+                (0.0f to -100.0f)
         )
-        resize(INITIAL_WIDTH, INITIAL_HEIGHT)
+//        resize(INITIAL_WIDTH, INITIAL_HEIGHT)
+
         //initialize grid with some stuff
         (0 until 1).forEach { tilesGrid.addNewBalls() }
+
         Gdx.input.inputProcessor = tilesGrid
         tilesGrid.addListener(object : InputListener() {
 
@@ -62,11 +64,11 @@ class LinesGame : ApplicationAdapter() {
     }
 
     override fun resize(width: Int, height: Int) {
-        tilesGrid.viewport.update(width, height, true)
+        tilesGrid.viewport.update(width, height, false)
     }
 
     override fun render() {
-        Gdx.gl.glClearColor(1f, 0f, 0f, 1f)
+        Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         tilesGrid.act(Gdx.graphics.deltaTime)
         tilesGrid.draw()

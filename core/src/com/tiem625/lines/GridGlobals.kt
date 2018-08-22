@@ -13,8 +13,8 @@ object GridGlobals: Disposable {
         pointsLabelFont.dispose()
     }
 
-    const val WORLD_WIDTH = 640.0f
-    const val WORLD_HEIGHT = 640.0f
+    const val WORLD_WIDTH = 800.0f
+    const val WORLD_HEIGHT = 800.0f
 
     const val GRID_ROWS = 8
     const val GRID_COLS = 8

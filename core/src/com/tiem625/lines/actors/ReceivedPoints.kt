@@ -33,7 +33,11 @@ class ReceivedPoints(val pos: Pair<Float, Float>,
                 Actions.removeActor()
         ))
 
-        label = Label(points.toString(), Label.LabelStyle(GridGlobals.pointsLabelFont, ballColor)).apply {
+        label = Label(points.toString(), Label.LabelStyle(
+                GridGlobals.pointsLabelFont,
+                //white for blue balls due to background
+                if (ballColor != Color.BLUE) ballColor else Color.WHITE
+        )).apply {
             setFontScale(1.5f)
             width = targetWidth
             height = targetHeight
