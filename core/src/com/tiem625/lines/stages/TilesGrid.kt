@@ -6,19 +6,19 @@ import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.viewport.FitViewport
+import com.badlogic.gdx.utils.viewport.Viewport
 import com.tiem625.lines.*
 import com.tiem625.lines.actors.Ball
 import com.tiem625.lines.actors.ReceivedPoints
 import com.tiem625.lines.actors.Tile
 import com.tiem625.lines.actors.TileBallGroup
 
-class TilesGrid(val numRows: Int,
-                val numCols: Int,
-                val offset: Pair<Float, Float> = (0.0f to 0.0f)
-) : Stage(FitViewport(
-        GridGlobals.WORLD_WIDTH + Math.abs(offset.first),
-        GridGlobals.WORLD_HEIGHT + Math.abs(offset.second))
-) {
+class TilesGrid(
+        viewport: Viewport,
+        val numRows: Int,
+        val numCols: Int,
+        val offset: Pair<Float, Float> = (0.0f to 0.0f)
+) : Stage(viewport) {
 
     val tileWidth: Float = (GridGlobals.WORLD_WIDTH) / numRows
     val tileHeight: Float = (GridGlobals.WORLD_HEIGHT) / numCols
@@ -134,9 +134,13 @@ class TilesGrid(val numRows: Int,
 
         println("Empty grid positions: ${GridGlobals.ballPositions.size}")
 
-        //change in topology, redoing paths
+        //change in topology, redoing paths and scanning for poppers penguins
         if (newPositions.isNotEmpty()) {
             gridGraph.invalidateConnections()
+            checkGridUpdates(
+                    *newPositions.map { grid[it.first][it.second] }.toTypedArray(),
+                    addNewBalls = false
+            )
         }
 
         //return if we had balls
@@ -183,7 +187,7 @@ class TilesGrid(val numRows: Int,
      *
      * if it does not, generate new balls batch
      */
-    fun checkGridUpdates(vararg aroundBalls: TileBallGroup) {
+    fun checkGridUpdates(vararg aroundBalls: TileBallGroup, addNewBalls: Boolean = true) {
 
         aroundBalls.forEach { balledGroup ->
             //only do things if group has ball
@@ -204,8 +208,10 @@ class TilesGrid(val numRows: Int,
                     removePoppedBalls(markedSurroundGroups)
                 } else {
                     //if this was false, its game over man!
-                    if (!addNewBalls()) {
-                        LinesGame.currentGame.gameOver()
+                    if (addNewBalls) {
+                        if (!addNewBalls()) {
+                            LinesGame.currentGame.gameOver()
+                        }
                     }
                 }
             }

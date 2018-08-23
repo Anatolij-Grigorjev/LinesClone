@@ -3,7 +3,6 @@ package com.tiem625.lines.actors
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Batch
-import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Label
@@ -13,7 +12,7 @@ import com.tiem625.lines.GridGlobals
 class ReceivedPoints(val pos: Pair<Float, Float>,
                      val area: Pair<Float, Float>,
                      val points: Int,
-                     ballColor: Color): Actor() {
+                     ballColor: Color) : Actor() {
 
     val label: Label
     val targetWidth = area.first
@@ -25,15 +24,15 @@ class ReceivedPoints(val pos: Pair<Float, Float>,
         println("Points at point ${pos}")
         //add half of target width to start at center,
         //add half of that to see half of label by center
-        x = pos.first  + targetWidth / 4
+        x = pos.first + targetWidth / 4
         //vertical is centered due to align, so just bump down enough to float
-        y = pos.second  - floatDistance / 2
+        y = pos.second - floatDistance / 2
         addAction(Actions.sequence(
                 Actions.moveBy(0.0f, floatDistance, Gdx.graphics.deltaTime * floatFrames),
                 Actions.removeActor()
         ))
 
-        label = Label(points.toString(), Label.LabelStyle(
+        label = Label("+$points", Label.LabelStyle(
                 GridGlobals.pointsLabelFont,
                 //white for blue balls due to background
                 if (ballColor != Color.BLUE) ballColor else Color.WHITE

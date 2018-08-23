@@ -6,32 +6,40 @@ import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
+import com.badlogic.gdx.utils.viewport.FitViewport
+import com.badlogic.gdx.utils.viewport.Viewport
 import com.tiem625.lines.assets.Assets
 import com.tiem625.lines.stages.TilesGrid
+import com.tiem625.lines.stages.ui.GridHUD
 
 
 class LinesGame : ApplicationAdapter() {
 
     lateinit var tilesGrid: TilesGrid
+    lateinit var gridHUD: GridHUD
+    lateinit var viewport: Viewport
 
     companion object {
         lateinit var currentGame: LinesGame
     }
 
-    val INITIAL_WIDTH = 640
-    val INITIAL_HEIGHT = 640
-
     override fun create() {
 
         currentGame = this
 
+        viewport = FitViewport(
+                GridGlobals.WORLD_WIDTH + Math.abs(GridGlobals.WORLD_OFFSET.first),
+                GridGlobals.WORLD_HEIGHT + Math.abs(GridGlobals.WORLD_OFFSET.second))
+
         Assets.load()
+
+        gridHUD = GridHUD(viewport)
         tilesGrid = TilesGrid(
+                viewport,
                 GridGlobals.GRID_ROWS,
                 GridGlobals.GRID_COLS,
-                (0.0f to -100.0f)
+                GridGlobals.WORLD_OFFSET
         )
-//        resize(INITIAL_WIDTH, INITIAL_HEIGHT)
 
         //initialize grid with some stuff
         (0 until 1).forEach { tilesGrid.addNewBalls() }
@@ -64,7 +72,7 @@ class LinesGame : ApplicationAdapter() {
     }
 
     override fun resize(width: Int, height: Int) {
-        tilesGrid.viewport.update(width, height, false)
+        viewport.update(width, height, false)
     }
 
     override fun render() {
@@ -72,10 +80,12 @@ class LinesGame : ApplicationAdapter() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         tilesGrid.act(Gdx.graphics.deltaTime)
         tilesGrid.draw()
+        gridHUD.draw()
     }
 
     override fun dispose() {
         tilesGrid.dispose()
+        gridHUD.dispose()
         Assets.manager.dispose()
         GridGlobals.dispose()
     }

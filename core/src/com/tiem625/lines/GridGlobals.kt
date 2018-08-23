@@ -12,9 +12,11 @@ object GridGlobals: Disposable {
     override fun dispose() {
         pointsLabelFont.dispose()
     }
+    const val HUD_HEIGHT = 100.0f
 
     const val WORLD_WIDTH = 800.0f
     const val WORLD_HEIGHT = 800.0f
+    val WORLD_OFFSET = (0.0f to -HUD_HEIGHT)
 
     const val GRID_ROWS = 8
     const val GRID_COLS = 8
