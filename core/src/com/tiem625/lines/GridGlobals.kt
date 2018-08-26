@@ -25,6 +25,7 @@ object GridGlobals: Disposable {
     val TILE_SELECTED_COLOR: Color = Color.BLUE
 
     var selectedTileGroup: TileBallGroup? = null
+    var currentPoints: Int = 0
 
     const val TURN_NUM_BALLS = 5 //how many balls get added in a turn
     const val POP_NUM_BALLS = 4 // num balls to align in a single pattern

@@ -8,6 +8,9 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.utils.Align
 import com.tiem625.lines.GridGlobals
+import com.tiem625.lines.event.EventSystem
+import com.tiem625.lines.event.GameEvent
+import com.tiem625.lines.event.GameEventTypes
 
 class ReceivedPoints(val pos: Pair<Float, Float>,
                      val area: Pair<Float, Float>,
@@ -22,6 +25,9 @@ class ReceivedPoints(val pos: Pair<Float, Float>,
 
     init {
         println("Points at point ${pos}")
+
+        EventSystem.submitEvent(GameEvent(GameEventTypes.RECEIVE_POINTS, points))
+
         //add half of target width to start at center,
         //add half of that to see half of label by center
         x = pos.first + targetWidth / 4

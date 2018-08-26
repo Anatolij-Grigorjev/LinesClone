@@ -8,8 +8,15 @@ import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.tiem625.lines.GridGlobals
 import com.tiem625.lines.actors.ui.GridHUDBackground
+import com.tiem625.lines.event.EventSystem
+import com.tiem625.lines.event.GameEvent
+import com.tiem625.lines.event.GameEventHandler
+import com.tiem625.lines.event.GameEventTypes
+import java.text.DecimalFormat
 
 class GridHUD(viewport: Viewport) : Stage(viewport) {
+
+    val pointsFormat = DecimalFormat("0000")
 
     val backgroundGroup = Group().apply {
         x = 0.0f
@@ -66,6 +73,28 @@ class GridHUD(viewport: Viewport) : Stage(viewport) {
         //center by Y with X in the right align
         x = parent.width - width - pointsPadding
         y = parent.height / 2 - height / 2
+    }
+
+    init {
+
+        updatePointsLabel()
+
+        EventSystem.addHandler(GameEventTypes.RECEIVE_POINTS, object : GameEventHandler() {
+
+            override fun handle(event: GameEvent) {
+
+                val addedPoints = event.data as Int
+                GridGlobals.currentPoints += addedPoints
+
+                updatePointsLabel()
+            }
+
+        })
+    }
+
+    private fun updatePointsLabel() {
+
+        pointsLabel.setText(pointsFormat.format(GridGlobals.currentPoints))
     }
 
 }
