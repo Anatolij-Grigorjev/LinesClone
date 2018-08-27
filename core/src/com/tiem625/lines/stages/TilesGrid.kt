@@ -197,18 +197,31 @@ class TilesGrid(
                 val markedSurroundGroups = (markAroundBall(ball) + balledGroup)
 
                 if (markedSurroundGroups.size >= GridGlobals.POP_NUM_BALLS) {
-                    println("Creating recievd points at ${ball.gridPos}")
+                    if (!GameRuntime.justPoppedBalls) {
+                        GameRuntime.justPoppedBalls = true
+                        GameRuntime.currentPointsMultiplier = 1.0f
+                    } else {
+                        GameRuntime.currentPointsMultiplier += GridGlobals.STREAK_MULTIPLIER_ADJUST
+                    }
+                    println("Creating received points at ${ball.gridPos}")
                     //create points float above this moved ball
-                    balledGroup.addActor(ReceivedPoints(
-                            tileWidth / 2 to tileHeight / 2,
+                    gridGroup.addActor(ReceivedPoints(
+                            tileWidth * balledGroup.gridPos.second to tileHeight * balledGroup.gridPos.first,
                             tileWidth to tileHeight,
-                            150,
+                            //score provided without multiplier,
+                            // that's applied globally later in object itself
+                            GridGlobals.POINTS_PER_CHAIN +
+                                    (markedSurroundGroups.size - GridGlobals.POP_NUM_BALLS) * GridGlobals.POINTS_PER_EXTRA_BALL,
                             ball.color)
                     )
                     removePoppedBalls(markedSurroundGroups)
                 } else {
-                    //if this was false, its game over man!
+                    //not enough balls, resetting streak
+                    GameRuntime.justPoppedBalls = false
+                    GameRuntime.currentPointsMultiplier = 1.0f
+
                     if (addNewBalls) {
+                        //if this was false, its game over man!
                         if (!addNewBalls()) {
                             LinesGame.currentGame.gameOver()
                         }

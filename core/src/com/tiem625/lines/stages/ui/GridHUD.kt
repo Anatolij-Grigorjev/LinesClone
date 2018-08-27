@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.Viewport
+import com.tiem625.lines.GameRuntime
 import com.tiem625.lines.GridGlobals
 import com.tiem625.lines.actors.ui.GridHUDBackground
 import com.tiem625.lines.event.EventSystem
@@ -84,7 +85,7 @@ class GridHUD(viewport: Viewport) : Stage(viewport) {
             override fun handle(event: GameEvent) {
 
                 val addedPoints = event.data as Int
-                GridGlobals.currentPoints += addedPoints
+                GameRuntime.currentPoints += addedPoints
 
                 updatePointsLabel()
             }
@@ -94,7 +95,7 @@ class GridHUD(viewport: Viewport) : Stage(viewport) {
 
     private fun updatePointsLabel() {
 
-        pointsLabel.setText(pointsFormat.format(GridGlobals.currentPoints))
+        pointsLabel.setText(pointsFormat.format(GameRuntime.currentPoints))
     }
 
 }

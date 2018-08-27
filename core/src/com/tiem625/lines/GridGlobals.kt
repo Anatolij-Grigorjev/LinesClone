@@ -24,12 +24,17 @@ object GridGlobals: Disposable {
     val TILE_NORMAL_COLOR: Color = Color.WHITE
     val TILE_SELECTED_COLOR: Color = Color.BLUE
 
-    var selectedTileGroup: TileBallGroup? = null
-    var currentPoints: Int = 0
-
-    const val TURN_NUM_BALLS = 5 //how many balls get added in a turn
-    const val POP_NUM_BALLS = 4 // num balls to align in a single pattern
+    //how many balls get added in a turn
+    const val TURN_NUM_BALLS = 5
+    // num balls to align in a single pattern
+    const val POP_NUM_BALLS = 4
     const val TILE_BALL_GUTTER = 0.0f
+    //how many points you get for popping POP_NUM_BALLS amount of balls
+    const val POINTS_PER_CHAIN = 150
+    //how many points you get for every extra ball in chain above POP_NUM_BALLS
+    const val POINTS_PER_EXTRA_BALL = 150
+    //multiplier addition when on popping streak
+    const val STREAK_MULTIPLIER_ADJUST = 0.5f
 
     val pointsLabelFont = BitmapFont()
 

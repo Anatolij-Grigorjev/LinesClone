@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
+import com.tiem625.lines.GameRuntime
 import com.tiem625.lines.GridGlobals
 import com.tiem625.lines.distanceTo
 import com.tiem625.lines.stages.TilesGrid
@@ -64,7 +65,7 @@ class TileBallGroup(val grid: TilesGrid, val gridPos: Pair<Int, Int>, val tile: 
             updateTileColor(selected)
             //started selection of this tile
             if (selected) {
-                GridGlobals.selectedTileGroup?.let {
+                GameRuntime.selectedTileGroup?.let {
                     //empty to balled - transfer ball
                     //empty to empty - change selection
                     //ball to ball - change selection
@@ -121,10 +122,10 @@ class TileBallGroup(val grid: TilesGrid, val gridPos: Pair<Int, Int>, val tile: 
                     }
                     it.updateSelected(false)
                 }
-                GridGlobals.selectedTileGroup = this
+                GameRuntime.selectedTileGroup = this
             } else {
-                if (this == GridGlobals.selectedTileGroup) {
-                    GridGlobals.selectedTileGroup = null
+                if (this == GameRuntime.selectedTileGroup) {
+                    GameRuntime.selectedTileGroup = null
                 }
             }
 

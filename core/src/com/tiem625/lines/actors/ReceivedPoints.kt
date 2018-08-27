@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.utils.Align
+import com.tiem625.lines.GameRuntime
 import com.tiem625.lines.GridGlobals
 import com.tiem625.lines.event.EventSystem
 import com.tiem625.lines.event.GameEvent
@@ -23,10 +24,17 @@ class ReceivedPoints(val pos: Pair<Float, Float>,
     val floatDistance = 5.0f
     val floatFrames = 55
 
+    private val BASE_FONT_SCALE = 1.5f
+
     init {
         println("Points at point ${pos}")
 
-        EventSystem.submitEvent(GameEvent(GameEventTypes.RECEIVE_POINTS, points))
+        EventSystem.submitEvent(
+                GameEvent(
+                        GameEventTypes.RECEIVE_POINTS,
+                        (points * GameRuntime.currentPointsMultiplier).toInt()
+                )
+        )
 
         //add half of target width to start at center,
         //add half of that to see half of label by center
@@ -38,12 +46,19 @@ class ReceivedPoints(val pos: Pair<Float, Float>,
                 Actions.removeActor()
         ))
 
-        label = Label("+$points", Label.LabelStyle(
+        val text = "+$points${if (GameRuntime.currentPointsMultiplier > 1.0f) " X ${GameRuntime.currentPointsMultiplier}" else ""}"
+        println("doing points text: $text")
+        //label text hides multiplier if its not higher than normal
+        label = Label(text, Label.LabelStyle(
                 GridGlobals.pointsLabelFont,
                 //white for blue balls due to background
                 if (ballColor != Color.BLUE) ballColor else Color.WHITE
         )).apply {
-            setFontScale(1.5f)
+            //every ADJUST increase
+            //should increase font scale by 0.2 from base
+            setFontScale(BASE_FONT_SCALE + (
+                    ((GameRuntime.currentPointsMultiplier - 1.0f) / GridGlobals.STREAK_MULTIPLIER_ADJUST) * 0.2f)
+            )
             width = targetWidth
             height = targetHeight
         }
