@@ -28,13 +28,8 @@ class ReceivedPoints(val pos: Pair<Float, Float>,
 
     init {
         println("Points at point ${pos}")
-
-        EventSystem.submitEvent(
-                GameEvent(
-                        GameEventTypes.RECEIVE_POINTS,
-                        (points * GameRuntime.currentPointsMultiplier).toInt()
-                )
-        )
+        //fires event internally
+        GameRuntime.currentPoints += (points * GameRuntime.currentPointsMultiplier).toInt()
 
         //add half of target width to start at center,
         //add half of that to see half of label by center
@@ -56,9 +51,7 @@ class ReceivedPoints(val pos: Pair<Float, Float>,
         )).apply {
             //every ADJUST increase
             //should increase font scale by 0.2 from base
-            setFontScale(BASE_FONT_SCALE + (
-                    ((GameRuntime.currentPointsMultiplier - 1.0f) / GridGlobals.STREAK_MULTIPLIER_ADJUST) * 0.2f)
-            )
+            setFontScale(GameRuntime.multiplierScale(BASE_FONT_SCALE))
             width = targetWidth
             height = targetHeight
         }
