@@ -2,21 +2,17 @@ package com.tiem625.lines.actors
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.g2d.Batch
-import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.utils.Align
 import com.tiem625.lines.GameRuntime
 import com.tiem625.lines.GridGlobals
-import com.tiem625.lines.event.EventSystem
-import com.tiem625.lines.event.GameEvent
-import com.tiem625.lines.event.GameEventTypes
+import com.tiem625.lines.actors.ui.GridHUDBackground
 
 class ReceivedPoints(val pos: Pair<Float, Float>,
                      val area: Pair<Float, Float>,
                      val points: Int,
-                     ballColor: Color) : Actor() {
+                     ballColor: Color) : Group() {
 
     val label: Label
     val targetWidth = area.first
@@ -27,15 +23,15 @@ class ReceivedPoints(val pos: Pair<Float, Float>,
     private val BASE_FONT_SCALE = 1.5f
 
     init {
+        x = pos.first
+        y = pos.second
+        width = targetWidth
+        height = targetHeight
+
         println("Points at point ${pos}")
         //fires event internally
         GameRuntime.currentPoints += (points * GameRuntime.currentPointsMultiplier).toInt()
 
-        //add half of target width to start at center,
-        //add half of that to see half of label by center
-        x = pos.first + targetWidth / 4
-        //vertical is centered due to align, so just bump down enough to float
-        y = pos.second - floatDistance / 2
         addAction(Actions.sequence(
                 Actions.moveBy(0.0f, floatDistance, Gdx.graphics.deltaTime * floatFrames),
                 Actions.removeActor()
@@ -49,18 +45,26 @@ class ReceivedPoints(val pos: Pair<Float, Float>,
                 //white for blue balls due to background
                 if (ballColor != Color.BLUE) ballColor else Color.WHITE
         )).apply {
-            //every ADJUST increase
-            //should increase font scale by 0.2 from base
             setFontScale(GameRuntime.multiplierScale(BASE_FONT_SCALE))
-            width = targetWidth
-            height = targetHeight
+            //add half of target width to start at center,
+            //add half of that to see half of label by center
+            x = targetWidth / 4
+            //vertical is centered due to align, so just bump down enough to float
+            y = - floatDistance / 2
         }
+        val actual = pointsDimensions()
+        addActor(GridHUDBackground(0.0f, 0.0f, actual.first, actual.second,
+                Color.DARK_GRAY.apply {
+                    this.a = 0.5f
+                }))
+        addActor(label)
     }
 
-    override fun draw(batch: Batch?, parentAlpha: Float) {
-        batch?.let {
-            label.setPosition(x, y, Align.center)
-            label.draw(it, parentAlpha)
-        }
-    }
+
+    private fun pointsDimensions(): Pair<Float, Float> =
+            GridGlobals.glyphLayout.let {
+                it.setText(GridGlobals.pointsLabelFont, label.text)
+                (it.width to it.height)
+            }
+
 }

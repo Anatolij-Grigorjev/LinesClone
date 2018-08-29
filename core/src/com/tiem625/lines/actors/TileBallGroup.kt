@@ -3,7 +3,6 @@ package com.tiem625.lines.actors
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.ai.pfa.DefaultGraphPath
 import com.badlogic.gdx.math.Interpolation
-import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
@@ -22,6 +21,10 @@ class TileBallGroup(val grid: TilesGrid, val gridPos: Pair<Int, Int>, val tile: 
         } else {
             tile.color = GridGlobals.TILE_NORMAL_COLOR
         }
+    }
+
+    override fun toString(): String {
+        return "[Pos: ${gridPos} | select: ${isSelected} | ball: ${ball?.color ?: "N\\A"}]"
     }
 
     var isSelected = false
@@ -60,7 +63,10 @@ class TileBallGroup(val grid: TilesGrid, val gridPos: Pair<Int, Int>, val tile: 
 
 
     private fun updateSelected(selected: Boolean) {
+        //this is movement
         if (this.isSelected != selected) {
+
+            println("AT GROUND ZERO: ${grid.grid[0][0]}")
 
             updateTileColor(selected)
             //started selection of this tile

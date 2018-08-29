@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
-import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.tiem625.lines.*
 import com.tiem625.lines.actors.Ball
@@ -156,11 +155,11 @@ class TilesGrid(
             //record ball positions
             val removeBallActions = markedSurroundGroups.mapNotNull { group ->
                 group.ball?.let { ball ->
-                    gridGroup.addActor(ball)
                     positions.add(ball.gridPos)
                     Actions.run {
                         removeActor(ball)
                         group.ball = null
+                        ball.addAction(Actions.removeActor())
                     }
                 }
             }
@@ -206,7 +205,10 @@ class TilesGrid(
                     println("Creating received points at ${ball.gridPos}")
                     //create points float above this moved ball
                     gridGroup.addActor(ReceivedPoints(
-                            tileWidth * balledGroup.gridPos.second to tileHeight * balledGroup.gridPos.first,
+                            tileWidth * balledGroup.gridPos.second
+                                    to
+                                    tileHeight * balledGroup.gridPos.first
+                            ,
                             tileWidth to tileHeight,
                             //score provided without multiplier,
                             // that's applied globally later in object itself

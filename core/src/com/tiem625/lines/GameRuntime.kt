@@ -19,6 +19,10 @@ object GameRuntime {
         field = value
         EventSystem.submitEvent(GameEvent(GameEventTypes.CHANGE_MULTIPLIER, value))
     }
+
+    /**
+     * Every adjustment of multiplier by ADJUST means additional 0.2 points to font scale
+     */
     fun multiplierScale(baseScale: Float): Float =
             baseScale + ((GameRuntime.currentPointsMultiplier - 1.0f) / GridGlobals.STREAK_MULTIPLIER_ADJUST) * 0.2f
 

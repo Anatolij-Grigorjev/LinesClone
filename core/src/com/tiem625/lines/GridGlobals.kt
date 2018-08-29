@@ -2,6 +2,7 @@ package com.tiem625.lines
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.utils.Disposable
 import com.tiem625.lines.actors.Ball
 import com.tiem625.lines.actors.TileBallGroup
@@ -37,6 +38,8 @@ object GridGlobals: Disposable {
     const val STREAK_MULTIPLIER_ADJUST = 0.5f
 
     val pointsLabelFont = BitmapFont()
+
+    val glyphLayout: GlyphLayout = GlyphLayout()
 
     val BALL_COLORS = listOf<Color>(
             Color.RED,

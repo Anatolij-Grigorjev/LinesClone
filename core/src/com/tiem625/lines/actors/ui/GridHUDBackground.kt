@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Actor
-import com.tiem625.lines.assets.Assets
 
 class GridHUDBackground(x: Float, y: Float, width: Float, height: Float, color: Color) : Actor() {
 

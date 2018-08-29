@@ -10,8 +10,6 @@ import com.tiem625.lines.GameRuntime
 import com.tiem625.lines.GridGlobals
 import com.tiem625.lines.actors.ui.GridHUDBackground
 import com.tiem625.lines.event.EventSystem
-import com.tiem625.lines.event.GameEvent
-import com.tiem625.lines.event.GameEventHandler
 import com.tiem625.lines.event.GameEventTypes
 import java.text.DecimalFormat
 

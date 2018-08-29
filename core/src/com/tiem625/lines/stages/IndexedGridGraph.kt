@@ -3,7 +3,6 @@ package com.tiem625.lines.stages
 import com.badlogic.gdx.ai.pfa.Connection
 import com.badlogic.gdx.ai.pfa.DefaultConnection
 import com.badlogic.gdx.ai.pfa.indexed.IndexedGraph
-import com.tiem625.lines.GridGlobals
 import com.tiem625.lines.actors.TileBallGroup
 import com.tiem625.lines.toIndex
 
