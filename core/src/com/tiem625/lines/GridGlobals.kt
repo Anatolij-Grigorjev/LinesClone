@@ -3,6 +3,7 @@ package com.tiem625.lines
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
+import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.utils.Disposable
 import com.tiem625.lines.actors.Ball
 import com.tiem625.lines.actors.TileBallGroup
@@ -40,6 +41,12 @@ object GridGlobals: Disposable {
     val pointsLabelFont = BitmapFont()
 
     val glyphLayout: GlyphLayout = GlyphLayout()
+
+    fun pointsDimensions(label: Label): Pair<Float, Float> =
+            glyphLayout.let {
+                it.setText(GridGlobals.pointsLabelFont, label.text)
+                (it.width to it.height)
+            }
 
     val BALL_COLORS = listOf<Color>(
             Color.RED,

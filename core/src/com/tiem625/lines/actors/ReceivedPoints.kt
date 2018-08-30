@@ -21,6 +21,7 @@ class ReceivedPoints(val pos: Pair<Float, Float>,
     val floatFrames = 55
 
     private val BASE_FONT_SCALE = 1.5f
+    private val LABEL_PADDING = 15.0f
 
     init {
         x = pos.first
@@ -40,31 +41,32 @@ class ReceivedPoints(val pos: Pair<Float, Float>,
         val text = "+$points${if (GameRuntime.currentPointsMultiplier > 1.0f) " X ${GameRuntime.currentPointsMultiplier}" else ""}"
         println("doing points text: $text")
         //label text hides multiplier if its not higher than normal
+        val labelScale = GameRuntime.multiplierScale(BASE_FONT_SCALE)
         label = Label(text, Label.LabelStyle(
                 GridGlobals.pointsLabelFont,
                 //white for blue balls due to background
                 if (ballColor != Color.BLUE) ballColor else Color.WHITE
         )).apply {
-            setFontScale(GameRuntime.multiplierScale(BASE_FONT_SCALE))
+            setFontScale(labelScale)
             //add half of target width to start at center,
             //add half of that to see half of label by center
             x = targetWidth / 4
             //vertical is centered due to align, so just bump down enough to float
-            y = - floatDistance / 2
+            y = targetHeight / 2 - floatDistance / 2
         }
-        val actual = pointsDimensions()
-        addActor(GridHUDBackground(0.0f, 0.0f, actual.first, actual.second,
+        val labelSize = GridGlobals.pointsDimensions(label)
+
+        addActor(GridHUDBackground(
+                label.x - LABEL_PADDING,
+                label.y - LABEL_PADDING,
+                labelSize.first * labelScale + (LABEL_PADDING * 2),
+                labelSize.second * labelScale + (LABEL_PADDING * 2),
                 Color.DARK_GRAY.apply {
                     this.a = 0.5f
-                }))
+                }).apply {
+
+        })
         addActor(label)
     }
-
-
-    private fun pointsDimensions(): Pair<Float, Float> =
-            GridGlobals.glyphLayout.let {
-                it.setText(GridGlobals.pointsLabelFont, label.text)
-                (it.width to it.height)
-            }
 
 }
