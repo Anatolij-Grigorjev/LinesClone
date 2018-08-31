@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.tiem625.lines.GameRuntime
 import com.tiem625.lines.GridGlobals
 import com.tiem625.lines.actors.ui.GridHUDBackground
+import com.tiem625.lines.clamp
 
 class ReceivedPoints(val pos: Pair<Float, Float>,
                      val area: Pair<Float, Float>,
@@ -56,11 +57,17 @@ class ReceivedPoints(val pos: Pair<Float, Float>,
         }
         val labelSize = GridGlobals.pointsDimensions(label)
 
+        val labelBLockWidth = labelSize.first * labelScale + (LABEL_PADDING * 2)
+        val labelBlockHeight = labelSize.second * labelScale + (LABEL_PADDING * 2)
+        //clamp this actor position to allow label display
+        x = clamp(x, 0.0f, GridGlobals.WORLD_WIDTH - labelBLockWidth)
+        y = clamp(y, 0.0f, GridGlobals.WORLD_HEIGHT - labelBlockHeight)
+
         addActor(GridHUDBackground(
                 label.x - LABEL_PADDING,
                 label.y - LABEL_PADDING,
-                labelSize.first * labelScale + (LABEL_PADDING * 2),
-                labelSize.second * labelScale + (LABEL_PADDING * 2),
+                labelBLockWidth,
+                labelBlockHeight,
                 Color.DARK_GRAY.apply {
                     this.a = 0.5f
                 }).apply {

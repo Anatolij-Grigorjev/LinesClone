@@ -55,3 +55,6 @@ fun Pair<Int, Int>.toIndex(base: Int = 10): Int =
 
 fun Pair<Int, Int>.distanceTo(other: Pair<Int, Int>): Pair<Int, Int> =
         Pair(Math.abs(first - other.first), Math.abs(second - other.second))
+
+fun clamp(value: Float, min: Float, max: Float): Float =
+        Math.min(Math.max(value, min), max)
