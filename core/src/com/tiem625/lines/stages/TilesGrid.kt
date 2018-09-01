@@ -12,7 +12,7 @@ import com.tiem625.lines.actors.ReceivedPoints
 import com.tiem625.lines.actors.Tile
 import com.tiem625.lines.actors.TileBallGroup
 
-class TilesGrid(
+open class TilesGrid(
         viewport: Viewport,
         val numRows: Int,
         val numCols: Int,
@@ -21,8 +21,6 @@ class TilesGrid(
 
     val tileWidth: Float = (GridGlobals.WORLD_WIDTH) / numRows
     val tileHeight: Float = (GridGlobals.WORLD_HEIGHT) / numCols
-
-    var highlightOn = false
 
     val gridGroup = Group()
 
@@ -54,48 +52,6 @@ class TilesGrid(
 
     val gridGraph = IndexedGridGraph(numRows, numCols, grid)
     val pathFinder = IndexedAStarPathFinder(gridGraph)
-
-
-    fun toggleConnectionsHighlight() {
-        val groups = gridGraph
-                .connectionsMap
-                .values
-                .flatten()
-                .map { con ->
-                    listOf<TileBallGroup>(con.fromNode, con.toNode)
-                }.flatten()
-                .toSet()
-
-        highlightOn = !highlightOn
-        if (highlightOn) {
-            highlightTileGroups(groups)
-        } else {
-            clearHighlight()
-        }
-    }
-
-    fun toggleBallsHighlight() {
-        val groups = grid.flatten().filter { it.ball != null }
-
-        highlightOn = !highlightOn
-        if (highlightOn) {
-            highlightTileGroups(groups)
-        } else {
-            clearHighlight()
-        }
-    }
-
-    private fun highlightTileGroups(tileGroups: Iterable<TileBallGroup>) {
-        tileGroups.forEach {
-            it.tile.color = GridGlobals.BALL_COLORS[2]
-        }
-    }
-
-    private fun clearHighlight() {
-        grid.flatten().forEach {
-            it.tile.color = GridGlobals.TILE_NORMAL_COLOR
-        }
-    }
 
     private fun tileGroupAt(point: Pair<Int, Int>): TileBallGroup? =
             if (point.first in (0 until numRows)

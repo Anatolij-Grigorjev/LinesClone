@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.tiem625.lines.assets.Assets
+import com.tiem625.lines.stages.SplashGridStage
 import com.tiem625.lines.stages.TilesGrid
 import com.tiem625.lines.stages.ui.GridHUD
 
@@ -16,6 +17,7 @@ import com.tiem625.lines.stages.ui.GridHUD
 class LinesGame : ApplicationAdapter() {
 
     lateinit var tilesGrid: TilesGrid
+    lateinit var splashGridStage: SplashGridStage
     lateinit var gridHUD: GridHUD
     lateinit var viewport: Viewport
 
@@ -55,12 +57,6 @@ class LinesGame : ApplicationAdapter() {
                             gameOver()
                         }
                     }
-                    Input.Keys.H -> {
-                        tilesGrid.toggleBallsHighlight()
-                    }
-                    Input.Keys.C -> {
-                        tilesGrid.toggleConnectionsHighlight()
-                    }
                     else -> {
                         println("No handler for key $keycode")
                     }
@@ -69,6 +65,11 @@ class LinesGame : ApplicationAdapter() {
                 return true
             }
         })
+
+        splashGridStage = SplashGridStage(
+                viewport,
+                -350.0f
+        )
     }
 
     override fun resize(width: Int, height: Int) {
@@ -78,15 +79,17 @@ class LinesGame : ApplicationAdapter() {
     override fun render() {
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-        tilesGrid.act(Gdx.graphics.deltaTime)
-        gridHUD.act(Gdx.graphics.deltaTime)
-        tilesGrid.draw()
-        gridHUD.draw()
+//        tilesGrid.act(Gdx.graphics.deltaTime)
+//        gridHUD.act(Gdx.graphics.deltaTime)
+//        tilesGrid.draw()
+//        gridHUD.draw()
+        splashGridStage.draw()
     }
 
     override fun dispose() {
         tilesGrid.dispose()
         gridHUD.dispose()
+        splashGridStage.dispose()
         Assets.manager.dispose()
         GridGlobals.dispose()
     }
