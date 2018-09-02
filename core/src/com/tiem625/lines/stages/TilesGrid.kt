@@ -14,13 +14,15 @@ import com.tiem625.lines.actors.TileBallGroup
 
 open class TilesGrid(
         viewport: Viewport,
+        gridWidth: Float,
+        gridHeight: Float,
         val numRows: Int,
         val numCols: Int,
         val offset: Pair<Float, Float> = (0.0f to 0.0f)
 ) : Stage(viewport) {
 
-    val tileWidth: Float = (GridGlobals.WORLD_WIDTH) / numRows
-    val tileHeight: Float = (GridGlobals.WORLD_HEIGHT) / numCols
+    val tileWidth: Float = gridWidth / numCols
+    val tileHeight: Float = gridHeight / numRows
 
     val gridGroup = Group()
 

@@ -38,6 +38,8 @@ class LinesGame : ApplicationAdapter() {
         gridHUD = GridHUD(viewport)
         tilesGrid = TilesGrid(
                 viewport,
+                GridGlobals.WORLD_WIDTH,
+                GridGlobals.WORLD_HEIGHT,
                 GridGlobals.GRID_ROWS,
                 GridGlobals.GRID_COLS,
                 GridGlobals.WORLD_OFFSET
@@ -66,10 +68,7 @@ class LinesGame : ApplicationAdapter() {
             }
         })
 
-        splashGridStage = SplashGridStage(
-                viewport,
-                -350.0f
-        )
+        splashGridStage = SplashGridStage(viewport)
     }
 
     override fun resize(width: Int, height: Int) {
@@ -81,6 +80,7 @@ class LinesGame : ApplicationAdapter() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 //        tilesGrid.act(Gdx.graphics.deltaTime)
 //        gridHUD.act(Gdx.graphics.deltaTime)
+        splashGridStage.act(Gdx.graphics.deltaTime)
 //        tilesGrid.draw()
 //        gridHUD.draw()
         splashGridStage.draw()
