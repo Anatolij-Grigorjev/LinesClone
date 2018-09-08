@@ -36,68 +36,72 @@ class SplashGridStage(
         //remaining 0.4f of viewport height divided by 2, to center vertically
         (0.0f to viewport.worldHeight * 0.2f)) {
 
+    val midBallDelay = Gdx.graphics.deltaTime * 60.0f
+    val splashMoveTime = Gdx.graphics.deltaTime * 60
+    val splashBalls = listOf(
+            //L
+            (1 to 1),
+            (2 to 1),
+            (3 to 1),
+            (4 to 1),
+            (5 to 1),
+            (5 to 2),
+            (5 to 3),
+            //I
+            (1 to 6),
+            (2 to 6),
+            (3 to 6),
+            (4 to 6),
+            (5 to 6),
+            //N
+            (1 to 9),
+            (2 to 9),
+            (3 to 9),
+            (4 to 9),
+            (5 to 9),
+
+            (3 to 10),
+            (4 to 11),
+
+            (1 to 12),
+            (2 to 12),
+            (3 to 12),
+            (4 to 12),
+            (5 to 12),
+            //E
+            (1 to 15),
+            (2 to 15),
+            (3 to 15),
+            (4 to 15),
+            (5 to 15),
+
+            (1 to 16),
+            (1 to 17),
+
+            (3 to 16),
+            (3 to 17),
+
+            (5 to 16),
+            (5 to 17),
+            //S
+            (1 to 20),
+            (2 to 20),
+            (5 to 20),
+            (1 to 21),
+            (3 to 21),
+            (5 to 21),
+            (1 to 22),
+            (4 to 22),
+            (5 to 22)
+
+    )
+
     init {
         //create drawing with positions list
-        gridGroup.addAction(Actions.sequence(*listOf(
-                //L
-                (1 to 1),
-                (2 to 1),
-                (3 to 1),
-                (4 to 1),
-                (5 to 1),
-                (5 to 2),
-                (5 to 3),
-                //I
-                (1 to 6),
-                (2 to 6),
-                (3 to 6),
-                (4 to 6),
-                (5 to 6),
-                //N
-                (1 to 9),
-                (2 to 9),
-                (3 to 9),
-                (4 to 9),
-                (5 to 9),
-
-                (3 to 10),
-                (4 to 11),
-
-                (1 to 12),
-                (2 to 12),
-                (3 to 12),
-                (4 to 12),
-                (5 to 12),
-                //E
-                (1 to 15),
-                (2 to 15),
-                (3 to 15),
-                (4 to 15),
-                (5 to 15),
-
-                (1 to 16),
-                (1 to 17),
-
-                (3 to 16),
-                (3 to 17),
-
-                (5 to 16),
-                (5 to 17),
-                //S
-                (1 to 20),
-                (2 to 20),
-                (5 to 20),
-                (1 to 21),
-                (3 to 21),
-                (5 to 21),
-                (1 to 22),
-                (4 to 22),
-                (5 to 22)
-
-        ).map { point ->
+        gridGroup.addAction(Actions.sequence(*splashBalls.map { point ->
 
             Actions.delay(
-                    Gdx.graphics.deltaTime * 60.0f,
+                    midBallDelay,
                     Actions.run {
 
                         //Y coordinate is inverted between array and screen
@@ -116,7 +120,7 @@ class SplashGridStage(
                     this@SplashGridStage.addAction(Actions.moveBy(
                             0.0f,
                             offset.second / 2,
-                            Gdx.graphics.deltaTime * 60,
+                            splashMoveTime,
                             Interpolation.bounceOut
                     ))
                 }

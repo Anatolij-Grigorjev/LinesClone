@@ -6,9 +6,11 @@ import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
+import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.tiem625.lines.assets.Assets
+import com.tiem625.lines.stages.MainMenu
 import com.tiem625.lines.stages.SplashGridStage
 import com.tiem625.lines.stages.TilesGrid
 import com.tiem625.lines.stages.ui.GridHUD
@@ -18,6 +20,7 @@ class LinesGame : ApplicationAdapter() {
 
     lateinit var tilesGrid: TilesGrid
     lateinit var splashGridStage: SplashGridStage
+    lateinit var mainMenuStage: MainMenu
     lateinit var gridHUD: GridHUD
     lateinit var viewport: Viewport
 
@@ -34,6 +37,33 @@ class LinesGame : ApplicationAdapter() {
                 GridGlobals.WORLD_HEIGHT + Math.abs(GridGlobals.WORLD_OFFSET.second))
 
         Assets.load()
+
+        splashGridStage = SplashGridStage(viewport)
+        mainMenuStage = MainMenu(viewport,
+                splashGridStage.splashMoveTime
+                        + splashGridStage.midBallDelay * splashGridStage.splashBalls.size
+        )
+        Gdx.input.inputProcessor = mainMenuStage
+        mainMenuStage.addListener(object : InputListener() {
+
+            override fun keyUp(event: InputEvent?, keycode: Int): Boolean {
+
+                //add leaving actions
+                mainMenuStage.addAction(Actions.moveBy(0.0f, -1000f, Gdx.graphics.deltaTime * 70))
+                splashGridStage.addAction(Actions.moveBy(0.0f, -1000f, Gdx.graphics.deltaTime * 70))
+
+                createGameGrid()
+
+
+
+                return true
+            }
+        })
+    }
+
+
+
+    fun createGameGrid() {
 
         gridHUD = GridHUD(viewport)
         tilesGrid = TilesGrid(
@@ -67,8 +97,6 @@ class LinesGame : ApplicationAdapter() {
                 return true
             }
         })
-
-        splashGridStage = SplashGridStage(viewport)
     }
 
     override fun resize(width: Int, height: Int) {
@@ -81,15 +109,18 @@ class LinesGame : ApplicationAdapter() {
 //        tilesGrid.act(Gdx.graphics.deltaTime)
 //        gridHUD.act(Gdx.graphics.deltaTime)
         splashGridStage.act(Gdx.graphics.deltaTime)
+        mainMenuStage.act(Gdx.graphics.deltaTime)
 //        tilesGrid.draw()
 //        gridHUD.draw()
         splashGridStage.draw()
+        mainMenuStage.draw()
     }
 
     override fun dispose() {
         tilesGrid.dispose()
         gridHUD.dispose()
         splashGridStage.dispose()
+        mainMenuStage.dispose()
         Assets.manager.dispose()
         GridGlobals.dispose()
     }
