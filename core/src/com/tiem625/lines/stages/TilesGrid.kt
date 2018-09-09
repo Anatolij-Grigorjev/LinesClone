@@ -26,6 +26,8 @@ open class TilesGrid(
 
     val gridGroup = Group()
 
+    var ballMoving = false
+
     val grid: Array<Array<TileBallGroup>> = (tileWidth to tileHeight).let { (tileWidth, tileHeight) ->
 
         Array(numRows) { rowIdx ->

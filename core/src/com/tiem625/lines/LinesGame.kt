@@ -28,6 +28,8 @@ class LinesGame : ApplicationAdapter() {
         lateinit var currentGame: LinesGame
     }
 
+    var currentScreen = GameScreens.MAIN_MENU
+
     override fun create() {
 
         currentGame = this
@@ -38,6 +40,10 @@ class LinesGame : ApplicationAdapter() {
 
         Assets.load()
 
+       createMenuScreen()
+    }
+
+    fun createMenuScreen() {
         splashGridStage = SplashGridStage(viewport)
         mainMenuStage = MainMenu(viewport,
                 splashGridStage.splashMoveTime
@@ -48,19 +54,20 @@ class LinesGame : ApplicationAdapter() {
 
             override fun keyUp(event: InputEvent?, keycode: Int): Boolean {
 
+                currentScreen = GameScreens.GAME_GRID
+
                 //add leaving actions
                 mainMenuStage.addAction(Actions.moveBy(0.0f, -1000f, Gdx.graphics.deltaTime * 70))
                 splashGridStage.addAction(Actions.moveBy(0.0f, -1000f, Gdx.graphics.deltaTime * 70))
 
                 createGameGrid()
 
-
-
+                mainMenuStage.dispose()
+                splashGridStage.dispose()
                 return true
             }
         })
     }
-
 
 
     fun createGameGrid() {
@@ -89,6 +96,11 @@ class LinesGame : ApplicationAdapter() {
                             gameOver()
                         }
                     }
+                    Input.Keys.ESCAPE -> {
+                        currentScreen = GameScreens.MAIN_MENU
+
+                        createMenuScreen()
+                    }
                     else -> {
                         println("No handler for key $keycode")
                     }
@@ -106,21 +118,43 @@ class LinesGame : ApplicationAdapter() {
     override fun render() {
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-//        tilesGrid.act(Gdx.graphics.deltaTime)
-//        gridHUD.act(Gdx.graphics.deltaTime)
-        splashGridStage.act(Gdx.graphics.deltaTime)
-        mainMenuStage.act(Gdx.graphics.deltaTime)
-//        tilesGrid.draw()
-//        gridHUD.draw()
-        splashGridStage.draw()
-        mainMenuStage.draw()
+        when (currentScreen) {
+
+            GameScreens.MAIN_MENU -> {
+
+                splashGridStage.act(Gdx.graphics.deltaTime)
+                mainMenuStage.act(Gdx.graphics.deltaTime)
+
+                splashGridStage.draw()
+                mainMenuStage.draw()
+            }
+            GameScreens.GAME_GRID -> {
+
+                tilesGrid.act(Gdx.graphics.deltaTime)
+                gridHUD.act(Gdx.graphics.deltaTime)
+
+                tilesGrid.draw()
+                gridHUD.draw()
+            }
+        }
     }
 
     override fun dispose() {
-        tilesGrid.dispose()
-        gridHUD.dispose()
-        splashGridStage.dispose()
-        mainMenuStage.dispose()
+
+        when (currentScreen) {
+
+            GameScreens.MAIN_MENU -> {
+
+                splashGridStage.dispose()
+                mainMenuStage.dispose()
+            }
+            GameScreens.GAME_GRID -> {
+
+                gridHUD.dispose()
+                tilesGrid.dispose()
+            }
+        }
+
         Assets.manager.dispose()
         GridGlobals.dispose()
     }

@@ -29,6 +29,7 @@ class TileBallGroup(val grid: TilesGrid, val gridPos: Pair<Int, Int>, val tile: 
 
     var isSelected = false
 
+
     var ball: Ball? = null
     // perform actor manipulations when ball changes
         set(value) {
@@ -54,7 +55,8 @@ class TileBallGroup(val grid: TilesGrid, val gridPos: Pair<Int, Int>, val tile: 
         addListener(object : InputListener() {
 
             override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
-                updateSelected(!isSelected)
+                if (!grid.ballMoving)
+                    updateSelected(!isSelected)
 
                 return true
             }
@@ -97,6 +99,7 @@ class TileBallGroup(val grid: TilesGrid, val gridPos: Pair<Int, Int>, val tile: 
 
                             ball.addAction(Actions.sequence(
                                     Actions.run {
+                                        grid.ballMoving = true
                                         GridGlobals.removeBall(
                                                 it,
                                                 grid
@@ -118,6 +121,7 @@ class TileBallGroup(val grid: TilesGrid, val gridPos: Pair<Int, Int>, val tile: 
                                         )
                                         grid.checkGridUpdates(this)
                                         it.updateSelected(false)
+                                        grid.ballMoving = false
                                     }
                             ))
 
