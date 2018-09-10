@@ -54,19 +54,30 @@ class LinesGame : ApplicationAdapter() {
 
             override fun keyUp(event: InputEvent?, keycode: Int): Boolean {
 
-                currentScreen = GameScreens.GAME_GRID
+                if (!mainMenuStage.menuReady) return true
 
                 //add leaving actions
-                mainMenuStage.addAction(Actions.moveBy(0.0f, -1000f, Gdx.graphics.deltaTime * 70))
-                splashGridStage.addAction(Actions.moveBy(0.0f, -1000f, Gdx.graphics.deltaTime * 70))
+                mainMenuStage.addAction(Actions.sequence(
+                        Actions.moveBy(0.0f, -500f, 1f),
+                        Actions.run {
+                            createGameGrid()
+                            Actions.removeActor()
+                            mainMenuStage.dispose()
+                        }
+                ))
+                splashGridStage.addAction(Actions.sequence(
+                        Actions.moveBy(0.0f, 1500f, 1f),
+                        Actions.run {
+                            Actions.removeActor()
+                            splashGridStage.dispose()
+                        }
+                ))
 
-                createGameGrid()
-
-                mainMenuStage.dispose()
-                splashGridStage.dispose()
                 return true
             }
         })
+
+        currentScreen = GameScreens.MAIN_MENU
     }
 
 
@@ -97,8 +108,7 @@ class LinesGame : ApplicationAdapter() {
                         }
                     }
                     Input.Keys.ESCAPE -> {
-                        currentScreen = GameScreens.MAIN_MENU
-
+                        mainMenuStage.menuReady = false
                         createMenuScreen()
                     }
                     else -> {
@@ -109,6 +119,8 @@ class LinesGame : ApplicationAdapter() {
                 return true
             }
         })
+
+        currentScreen = GameScreens.GAME_GRID
     }
 
     override fun resize(width: Int, height: Int) {

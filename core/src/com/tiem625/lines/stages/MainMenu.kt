@@ -29,6 +29,7 @@ class MainMenu(viewport: Viewport, appearDelay: Float) : Stage(viewport) {
         )))
         setFontScale(3f)
     }
+    var menuReady: Boolean = false
 
     init {
 
@@ -36,6 +37,7 @@ class MainMenu(viewport: Viewport, appearDelay: Float) : Stage(viewport) {
                 Actions.run {
                     this.addActor(startGameText)
                     startGameText.addAction(Actions.moveBy(0.0f, MENU_HEIGHT))
+                    menuReady = true
                 }
         ))
         this.addActor(textsGroup)

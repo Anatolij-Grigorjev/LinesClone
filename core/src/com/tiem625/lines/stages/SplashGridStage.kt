@@ -36,8 +36,7 @@ class SplashGridStage(
         //remaining 0.4f of viewport height divided by 2, to center vertically
         (0.0f to viewport.worldHeight * 0.2f)) {
 
-    val midBallDelay = Gdx.graphics.deltaTime * 60.0f
-    val splashMoveTime = Gdx.graphics.deltaTime * 60
+    val splashMoveTime = 1.5f
     val splashBalls = listOf(
             //L
             (1 to 1),
@@ -95,6 +94,8 @@ class SplashGridStage(
             (5 to 22)
 
     )
+
+    val midBallDelay = 1f / splashBalls.size
 
     init {
         //create drawing with positions list
