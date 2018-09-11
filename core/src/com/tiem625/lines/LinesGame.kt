@@ -10,6 +10,10 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.tiem625.lines.assets.Assets
+import com.tiem625.lines.constants.GameScreens
+import com.tiem625.lines.constants.MenuItems
+import com.tiem625.lines.event.EventSystem
+import com.tiem625.lines.event.GameEventTypes
 import com.tiem625.lines.stages.MainMenu
 import com.tiem625.lines.stages.SplashGridStage
 import com.tiem625.lines.stages.TilesGrid
@@ -40,7 +44,27 @@ class LinesGame : ApplicationAdapter() {
 
         Assets.load()
 
-       createMenuScreen()
+        createMenuScreen()
+
+        //setup menu listener
+        EventSystem.addHandler(GameEventTypes.MENU_OPTION_SELECTED) { gameEvent ->
+
+            val option = gameEvent.data as MenuItems
+
+            when(option) {
+
+                MenuItems.START_GAME -> {
+
+                    createGameGrid()
+                }
+                MenuItems.VIEW_LEADERBOARDS -> {
+                    TODO("No leaderboards... yet!")
+                }
+                MenuItems.EXIT_GAME -> {
+                    gameOver()
+                }
+            }
+        }
     }
 
     fun createMenuScreen() {
@@ -50,32 +74,6 @@ class LinesGame : ApplicationAdapter() {
                         + splashGridStage.midBallDelay * splashGridStage.splashBalls.size
         )
         Gdx.input.inputProcessor = mainMenuStage
-        mainMenuStage.addListener(object : InputListener() {
-
-            override fun keyUp(event: InputEvent?, keycode: Int): Boolean {
-
-                if (!mainMenuStage.menuReady) return true
-
-                //add leaving actions
-                mainMenuStage.addAction(Actions.sequence(
-                        Actions.moveBy(0.0f, -500f, 1f),
-                        Actions.run {
-                            createGameGrid()
-                            Actions.removeActor()
-                            mainMenuStage.dispose()
-                        }
-                ))
-                splashGridStage.addAction(Actions.sequence(
-                        Actions.moveBy(0.0f, 1500f, 1f),
-                        Actions.run {
-                            Actions.removeActor()
-                            splashGridStage.dispose()
-                        }
-                ))
-
-                return true
-            }
-        })
 
         currentScreen = GameScreens.MAIN_MENU
     }

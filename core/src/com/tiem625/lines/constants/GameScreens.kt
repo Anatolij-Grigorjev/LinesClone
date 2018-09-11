@@ -1,4 +1,4 @@
-package com.tiem625.lines
+package com.tiem625.lines.constants
 
 enum class GameScreens {
 

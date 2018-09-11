@@ -10,7 +10,7 @@ object EventSystem {
 
         eventHandlers[eventTypes]?.add(handler)
     }
-    fun addHandler(eventTypes: GameEventTypes, handler: (GameEvent) -> Any) {
+    fun addHandler(eventTypes: GameEventTypes, handler: (GameEvent) -> Unit) {
 
         eventHandlers[eventTypes]?.add(object : GameEventHandler() {
             override fun handle(event: GameEvent) {
