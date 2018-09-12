@@ -2,6 +2,7 @@ package com.tiem625.lines.stages
 
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.Stage
@@ -19,7 +20,7 @@ import com.tiem625.lines.event.GameEventTypes
 class MainMenu(viewport: Viewport, appearDelay: Float) : Stage(viewport) {
 
     val textsGroup = VerticalGroup()
-
+    val LABEL_HEIGHT = 30.0f
     val SPACING = 20.0f
 
     val menuOptions = MenuItems.values().map { option ->
@@ -28,6 +29,7 @@ class MainMenu(viewport: Viewport, appearDelay: Float) : Stage(viewport) {
         )).apply {
             setFontScale(2f)
             setAlignment(Align.center)
+            height = LABEL_HEIGHT
         }
     }.toMap()
 
@@ -37,7 +39,7 @@ class MainMenu(viewport: Viewport, appearDelay: Float) : Stage(viewport) {
     set(value) {
 
         menuOptions[field]?.color = Color.YELLOW
-        menuOptions[value]?.color = Color.BLUE
+        menuOptions[value]?.color = Color.RED
         field = value
     }
 
@@ -53,6 +55,13 @@ class MainMenu(viewport: Viewport, appearDelay: Float) : Stage(viewport) {
                             }
 
                     textsGroup.space(SPACING)
+                    textsGroup.align(Align.center)
+                    textsGroup.width = viewport.worldWidth
+                    //move up by half height and pad by option height
+                    textsGroup.moveBy(0.0f,
+                            ((SPACING + LABEL_HEIGHT) * textsGroup.children.size) / 2 + LABEL_HEIGHT + SPACING
+                    )
+                    selectedOption = MenuItems.first
                     menuReady = true
                 }
         ))
@@ -69,11 +78,15 @@ class MainMenu(viewport: Viewport, appearDelay: Float) : Stage(viewport) {
                         EventSystem.submitEvent(GameEvent(GameEventTypes.MENU_OPTION_SELECTED, selectedOption))
                         return true
                     }
-                    Input.Keys.UP -> {
-                        selectedOption = selectedOption++
-                    }
                     Input.Keys.DOWN -> {
-                        selectedOption = selectedOption--
+                        selectedOption = ++selectedOption
+                    }
+                    Input.Keys.UP -> {
+                        selectedOption = --selectedOption
+                    }
+                    Input.Keys.ESCAPE -> {
+                        //simulate exit selected on escape
+                        EventSystem.submitEvent(GameEvent(GameEventTypes.MENU_OPTION_SELECTED, MenuItems.EXIT_GAME))
                     }
 
                     else -> {

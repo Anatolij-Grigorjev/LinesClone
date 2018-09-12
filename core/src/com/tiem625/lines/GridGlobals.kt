@@ -3,7 +3,9 @@ package com.tiem625.lines
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog
 import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.badlogic.gdx.scenes.scene2d.ui.Window
 import com.badlogic.gdx.utils.Disposable
 import com.tiem625.lines.actors.Ball
 import com.tiem625.lines.actors.TileBallGroup
@@ -50,6 +52,7 @@ object GridGlobals: Disposable {
 
     val BALL_COLORS = listOf<Color>(
             Color.RED,
+            Color.PURPLE,
             Color.BLUE,
             Color.YELLOW
     )
