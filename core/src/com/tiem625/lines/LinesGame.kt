@@ -22,10 +22,12 @@ import com.tiem625.lines.constants.GameScreens
 import com.tiem625.lines.constants.MenuItems
 import com.tiem625.lines.event.EventSystem
 import com.tiem625.lines.event.GameEventTypes
+import com.tiem625.lines.leaderboards.InputNameDialog
 import com.tiem625.lines.stages.MainMenu
 import com.tiem625.lines.stages.SplashGridStage
 import com.tiem625.lines.stages.TilesGrid
 import com.tiem625.lines.stages.ui.GridHUD
+import jdk.nashorn.internal.objects.Global
 
 
 class LinesGame : ApplicationAdapter() {
@@ -66,22 +68,7 @@ class LinesGame : ApplicationAdapter() {
                     createGameGrid()
                 }
                 MenuItems.VIEW_LEADERBOARDS -> {
-                    Dialog("Input your name", Window.WindowStyle(
-                            GridGlobals.pointsLabelFont,
-                            Color.BLACK,
-                            TextureRegionDrawable(TextureRegion(Assets.manager.get<Texture>(Assets.ball)))
-                    )).apply {
-                        contentTable.add(TextField(
-                                "Your name here...",
-                                TextField.TextFieldStyle(
-                                        GridGlobals.pointsLabelFont,
-                                        Color.BLACK,
-                                        TextureRegionDrawable(TextureRegion(Assets.manager.get<Texture>(Assets.ball))),
-                                        TextureRegionDrawable(TextureRegion(Assets.manager.get<Texture>(Assets.ball))),
-                                        TextureRegionDrawable(TextureRegion(Assets.manager.get<Texture>(Assets.ball)))
-                                )
-                        ))
-                    }.show(mainMenuStage)
+                    InputNameDialog(mainMenuStage).show()
                 }
                 MenuItems.EXIT_GAME -> {
                     gameOver()

@@ -21,8 +21,7 @@ class Ball(width: Float,
         this.width = width
         this.height = height
 
-        Assets.manager.finishLoadingAsset(Assets.ball)
-        texture = Assets.manager.get(Assets.ball)
+        texture = Assets.ballTexture
 
         setBounds(x, y, width, height)
     }

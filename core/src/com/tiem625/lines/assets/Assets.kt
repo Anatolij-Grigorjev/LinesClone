@@ -11,6 +11,9 @@ class Assets {
         val tile = "img/tile.png"
         val ball = "img/ball.png"
 
+        lateinit var tileTexture: Texture
+        lateinit var ballTexture: Texture
+
         val assetTypeMappings = mapOf(
                 tile to Texture::class.java,
                 ball to Texture::class.java
@@ -20,6 +23,10 @@ class Assets {
             assetTypeMappings.forEach { assetPath, klass ->
                 manager.load(assetPath, klass)
             }
+            manager.finishLoading()
+
+            tileTexture = manager.get(tile)
+            ballTexture = manager.get(ball)
         }
     }
 }

@@ -14,8 +14,8 @@ class Tile(width: Float, height: Float): Actor() {
     init {
         setWidth(width)
         setHeight(height)
-        Assets.manager.finishLoadingAsset(Assets.tile)
-        texture = Assets.manager.get(Assets.tile)
+
+        texture = Assets.tileTexture
         setBounds(x, y, width, height)
     }
 

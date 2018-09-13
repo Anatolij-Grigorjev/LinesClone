@@ -1,6 +1,11 @@
 package com.tiem625.lines
 
+import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.math.Rectangle
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import java.util.*
+import javax.xml.soap.Text
 
 
 val rnd = Random()
@@ -58,3 +63,11 @@ fun Pair<Int, Int>.distanceTo(other: Pair<Int, Int>): Pair<Int, Int> =
 
 fun clamp(value: Float, min: Float, max: Float): Float =
         Math.min(Math.max(value, min), max)
+
+fun Texture.asDrawable(region: Rectangle = Rectangle(0f, 0f, this.width.toFloat(), this.height.toFloat())) =
+        TextureRegionDrawable(TextureRegion(this,
+                region.x.toInt(),
+                region.y.toInt(),
+                region.width.toInt(),
+                region.height.toInt())
+        )
