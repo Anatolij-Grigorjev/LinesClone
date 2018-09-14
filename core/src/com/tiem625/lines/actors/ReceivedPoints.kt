@@ -44,7 +44,7 @@ class ReceivedPoints(val pos: Pair<Float, Float>,
         //label text hides multiplier if its not higher than normal
         val labelScale = GameRuntime.multiplierScale(BASE_FONT_SCALE)
         label = Label(text, Label.LabelStyle(
-                GridGlobals.pointsLabelFont,
+                GridGlobals.skinRegularFont,
                 //white for blue balls due to background
                 if (ballColor != Color.BLUE) ballColor else Color.WHITE
         )).apply {

@@ -3,59 +3,35 @@ package com.tiem625.lines
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
-import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
-import com.badlogic.gdx.scenes.scene2d.actions.Actions
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog
-import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.ui.TextField
-import com.badlogic.gdx.scenes.scene2d.ui.Window
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.tiem625.lines.assets.Assets
 import com.tiem625.lines.constants.GameScreens
 import com.tiem625.lines.constants.MenuItems
 import com.tiem625.lines.event.EventSystem
+import com.tiem625.lines.event.GameEvent
 import com.tiem625.lines.event.GameEventTypes
 import com.tiem625.lines.leaderboards.InputNameDialog
 import com.tiem625.lines.stages.MainMenu
 import com.tiem625.lines.stages.SplashGridStage
-import com.tiem625.lines.stages.TilesGrid
+import com.tiem625.lines.stages.TilesGridStage
 import com.tiem625.lines.stages.ui.GridHUD
-import jdk.nashorn.internal.objects.Global
 
 
 class LinesGame : ApplicationAdapter() {
 
-    lateinit var tilesGrid: TilesGrid
+    lateinit var tilesGridStage: TilesGridStage
     lateinit var splashGridStage: SplashGridStage
     lateinit var mainMenuStage: MainMenu
     lateinit var gridHUD: GridHUD
     lateinit var viewport: Viewport
 
-    companion object {
-        lateinit var currentGame: LinesGame
-    }
-
     var currentScreen = GameScreens.MAIN_MENU
 
-    override fun create() {
-
-        currentGame = this
-
-        viewport = FitViewport(
-                GridGlobals.WORLD_WIDTH + Math.abs(GridGlobals.WORLD_OFFSET.first),
-                GridGlobals.WORLD_HEIGHT + Math.abs(GridGlobals.WORLD_OFFSET.second))
-
-        Assets.load()
-
-        createMenuScreen()
-
+    fun setupEventHandlers() {
         //setup menu listener
         EventSystem.addHandler(GameEventTypes.MENU_OPTION_SELECTED) { gameEvent ->
 
@@ -75,6 +51,24 @@ class LinesGame : ApplicationAdapter() {
                 }
             }
         }
+        //game over listener (called from filled grid), show menu
+        EventSystem.addHandler(GameEventTypes.GAME_OVER) { event ->
+            InputNameDialog(tilesGridStage).show()
+            createMenuScreen()
+        }
+    }
+
+    override fun create() {
+
+        setupEventHandlers()
+
+        viewport = FitViewport(
+                GridGlobals.WORLD_WIDTH + Math.abs(GridGlobals.WORLD_OFFSET.first),
+                GridGlobals.WORLD_HEIGHT + Math.abs(GridGlobals.WORLD_OFFSET.second))
+
+        Assets.load()
+
+        createMenuScreen()
     }
 
     fun createMenuScreen() {
@@ -92,7 +86,7 @@ class LinesGame : ApplicationAdapter() {
     fun createGameGrid() {
 
         gridHUD = GridHUD(viewport)
-        tilesGrid = TilesGrid(
+        tilesGridStage = TilesGridStage(
                 viewport,
                 GridGlobals.WORLD_WIDTH,
                 GridGlobals.WORLD_HEIGHT,
@@ -102,21 +96,20 @@ class LinesGame : ApplicationAdapter() {
         )
 
         //initialize grid with some stuff
-        (0 until 1).forEach { tilesGrid.addNewBalls() }
+        (0 until 1).forEach { tilesGridStage.addNewBalls() }
 
-        Gdx.input.inputProcessor = tilesGrid
-        tilesGrid.addListener(object : InputListener() {
+        Gdx.input.inputProcessor = tilesGridStage
+        tilesGridStage.addListener(object : InputListener() {
 
             override fun keyUp(event: InputEvent?, keycode: Int): Boolean {
                 when (keycode) {
                     Input.Keys.SPACE -> {
-                        val haveBalls = tilesGrid.addNewBalls()
+                        val haveBalls = tilesGridStage.addNewBalls()
                         if (!haveBalls) {
-                            gameOver()
+                            EventSystem.submitEvent(GameEvent(GameEventTypes.GAME_OVER, GameRuntime.currentPoints))
                         }
                     }
                     Input.Keys.ESCAPE -> {
-                        mainMenuStage.menuReady = false
                         createMenuScreen()
                     }
                     else -> {
@@ -150,10 +143,10 @@ class LinesGame : ApplicationAdapter() {
             }
             GameScreens.GAME_GRID -> {
 
-                tilesGrid.act(Gdx.graphics.deltaTime)
+                tilesGridStage.act(Gdx.graphics.deltaTime)
                 gridHUD.act(Gdx.graphics.deltaTime)
 
-                tilesGrid.draw()
+                tilesGridStage.draw()
                 gridHUD.draw()
             }
         }
@@ -171,7 +164,7 @@ class LinesGame : ApplicationAdapter() {
             GameScreens.GAME_GRID -> {
 
                 gridHUD.dispose()
-                tilesGrid.dispose()
+                tilesGridStage.dispose()
             }
         }
 

@@ -1,6 +1,5 @@
 package com.tiem625.lines.stages
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
@@ -27,7 +26,7 @@ import com.tiem625.lines.actors.Ball
  */
 class SplashGridStage(
         viewport: Viewport
-) : TilesGrid(
+) : TilesGridStage(
         viewport,
         viewport.worldWidth,
         viewport.worldHeight * 0.6f,

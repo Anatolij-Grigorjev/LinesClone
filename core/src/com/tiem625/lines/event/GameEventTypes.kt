@@ -4,5 +4,6 @@ enum class GameEventTypes {
 
     RECEIVE_POINTS,
     CHANGE_MULTIPLIER,
-    MENU_OPTION_SELECTED
+    MENU_OPTION_SELECTED,
+    GAME_OVER
 }

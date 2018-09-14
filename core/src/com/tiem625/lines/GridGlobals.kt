@@ -1,20 +1,19 @@
 package com.tiem625.lines
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog
 import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.ui.Window
+import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.utils.Disposable
 import com.tiem625.lines.actors.Ball
 import com.tiem625.lines.actors.TileBallGroup
-import com.tiem625.lines.stages.TilesGrid
+import com.tiem625.lines.stages.TilesGridStage
 
 object GridGlobals: Disposable {
 
     override fun dispose() {
-        pointsLabelFont.dispose()
+        skinRegularFont.dispose()
     }
     const val HUD_HEIGHT = 100.0f
 
@@ -40,13 +39,16 @@ object GridGlobals: Disposable {
     //multiplier addition when on popping streak
     const val STREAK_MULTIPLIER_ADJUST = 0.5f
 
-    val pointsLabelFont = BitmapFont()
+    val gameSkin = Skin(Gdx.files.internal("skins/plain-james/plain-james-ui.json"))
 
     val glyphLayout: GlyphLayout = GlyphLayout()
 
+    val skinRegularFont = gameSkin.getFont("font")
+    val skinTitleFont = gameSkin.getFont("title")
+
     fun pointsDimensions(label: Label): Pair<Float, Float> =
             glyphLayout.let {
-                it.setText(GridGlobals.pointsLabelFont, label.text)
+                it.setText(GridGlobals.skinRegularFont, label.text)
                 (it.width to it.height)
             }
 
@@ -88,7 +90,7 @@ object GridGlobals: Disposable {
         ballPositions.shuffled()
     }
 
-    fun removeBall(fromTile: TileBallGroup, toStage: TilesGrid) {
+    fun removeBall(fromTile: TileBallGroup, toStage: TilesGridStage) {
         //if the tile doesn't have a ball, we log and return
         if (fromTile.ball == null) {
             println("TILE ${fromTile.gridPos} HAS NO BALL")

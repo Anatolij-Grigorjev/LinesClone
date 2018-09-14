@@ -1,35 +1,41 @@
 package com.tiem625.lines.leaderboards
 
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog
+import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.TextField
+import com.tiem625.lines.GameRuntime
 import com.tiem625.lines.GridGlobals
-import com.tiem625.lines.asDrawable
-import com.tiem625.lines.assets.Assets
 
-class InputNameDialog(stage: Stage): Dialog("Input your name", WindowStyle().apply {
-    titleFont = GridGlobals.pointsLabelFont
-    titleFontColor = Color.BLACK
-    background = Assets.tileTexture.asDrawable()
-}) {
+class InputNameDialog(stage: Stage) : Dialog("High Score!!!", GridGlobals.gameSkin) {
+
+    val field = TextField(
+            "Enter your name...", GridGlobals.gameSkin)
 
     init {
+
         this.stage = stage
 
+        contentTable.add(Label("Enter your name for the leaderboards:", GridGlobals.gameSkin))
+        contentTable.row()
+        contentTable.add(field)
 
-
-        contentTable.add(TextField(
-                "Your name here...",
-                TextField.TextFieldStyle().apply {
-                    font = GridGlobals.pointsLabelFont
-                    fontColor = Color.BLACK
-
-                }
-        ))
-
-
+        button("Cancel", null)
+        button("OK", field.text)
     }
 
-    fun show(): Dialog = this.show(stage)
+    override fun result(`object`: Any?) {
+        if (`object` == null) {
+            println("Player decided not to do leaderboard... :(")
+        } else {
+            //returned objet is name from input
+            val newName = `object` as String
+            println("Adding leaderboard record for $newName and ${GameRuntime.currentPoints} points...")
+        }
+    }
+
+    fun show(): Dialog {
+        field.selectAll()
+        return this.show(stage)
+    }
 }

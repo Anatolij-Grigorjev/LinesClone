@@ -11,8 +11,11 @@ import com.tiem625.lines.actors.Ball
 import com.tiem625.lines.actors.ReceivedPoints
 import com.tiem625.lines.actors.Tile
 import com.tiem625.lines.actors.TileBallGroup
+import com.tiem625.lines.event.EventSystem
+import com.tiem625.lines.event.GameEvent
+import com.tiem625.lines.event.GameEventTypes
 
-open class TilesGrid(
+open class TilesGridStage(
         viewport: Viewport,
         gridWidth: Float,
         gridHeight: Float,
@@ -50,7 +53,7 @@ open class TilesGrid(
             if (offset.second > 0) {
                 y += offset.second
             }
-            this@TilesGrid.addActor(this)
+            this@TilesGridStage.addActor(this)
         }
     }
 
@@ -185,7 +188,10 @@ open class TilesGrid(
                     if (addNewBalls) {
                         //if this was false, its game over man!
                         if (!addNewBalls()) {
-                            LinesGame.currentGame.gameOver()
+                            EventSystem.submitEvent(GameEvent(
+                                    GameEventTypes.GAME_OVER,
+                                    GameRuntime.currentPoints)
+                            )
                         }
                     }
                 }

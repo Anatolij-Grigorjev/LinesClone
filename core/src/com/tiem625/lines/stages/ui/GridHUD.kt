@@ -63,7 +63,7 @@ class GridHUD(viewport: Viewport) : Stage(viewport) {
         pointsGroup.addActor(this)
     }
     val pointsLabel = Label("0000", Label.LabelStyle(
-            GridGlobals.pointsLabelFont,
+            GridGlobals.skinRegularFont,
             Color.WHITE)).apply {
         setAlignment(Align.right)
         pointsGroup.addActor(this)
@@ -97,7 +97,7 @@ class GridHUD(viewport: Viewport) : Stage(viewport) {
         multiplierGroup.addActor(this)
     }
     val multiplierLabel = Label("x0.0", Label.LabelStyle(
-            GridGlobals.pointsLabelFont,
+            GridGlobals.skinRegularFont,
             Color.WHITE)).apply {
         setAlignment(Align.center)
         multiplierGroup.addActor(this)

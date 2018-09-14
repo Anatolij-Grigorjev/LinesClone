@@ -10,10 +10,10 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.tiem625.lines.GameRuntime
 import com.tiem625.lines.GridGlobals
 import com.tiem625.lines.distanceTo
-import com.tiem625.lines.stages.TilesGrid
+import com.tiem625.lines.stages.TilesGridStage
 import com.tiem625.lines.toIndex
 
-class TileBallGroup(val grid: TilesGrid, val gridPos: Pair<Int, Int>, val tile: Tile) : Group() {
+class TileBallGroup(val grid: TilesGridStage, val gridPos: Pair<Int, Int>, val tile: Tile) : Group() {
 
     private fun updateTileColor(selected: Boolean) {
         if (selected) {

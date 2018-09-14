@@ -2,7 +2,6 @@ package com.tiem625.lines.stages
 
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.Stage
@@ -25,7 +24,7 @@ class MainMenu(viewport: Viewport, appearDelay: Float) : Stage(viewport) {
 
     val menuOptions = MenuItems.values().map { option ->
         option to Label(option.menuLine.toUpperCase(), Label.LabelStyle(
-                GridGlobals.pointsLabelFont, Color.YELLOW
+                GridGlobals.skinRegularFont, Color.YELLOW
         )).apply {
             setFontScale(2f)
             setAlignment(Align.center)
