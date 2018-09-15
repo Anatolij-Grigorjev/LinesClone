@@ -3,27 +3,25 @@ package com.tiem625.lines.event
 object EventSystem {
 
     val eventHandlers = mapOf(
-            *GameEventTypes.values().map { it to mutableListOf<GameEventHandler>() }.toTypedArray()
+            *GameEventTypes.values().map {
+                it to mutableListOf<(GameEvent) -> Unit>()
+            }.toTypedArray()
     )
 
-    fun addHandler(eventTypes: GameEventTypes, handler: GameEventHandler) {
+    fun addHandler(eventTypes: GameEventTypes, handler: (GameEvent) -> Unit) {
 
         eventHandlers[eventTypes]?.add(handler)
     }
-    fun addHandler(eventTypes: GameEventTypes, handler: (GameEvent) -> Unit) {
 
-        eventHandlers[eventTypes]?.add(object : GameEventHandler() {
-            override fun handle(event: GameEvent) {
-                handler(event)
-            }
-        })
+
+    fun submitEvent(eventType: GameEventTypes, data: Any? = null) {
+        submitEvent(GameEvent(eventType, data))
     }
 
-
-    fun submitEvent(event: GameEvent) {
+    private fun submitEvent(event: GameEvent) {
 
         eventHandlers[event.type]?.let { handlers ->
-            handlers.forEach { it.handle(event) }
+            handlers.forEach { it(event) }
         }
     }
 

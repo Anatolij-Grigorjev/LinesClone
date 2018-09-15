@@ -106,7 +106,7 @@ class LinesGame : ApplicationAdapter() {
                     Input.Keys.SPACE -> {
                         val haveBalls = tilesGridStage.addNewBalls()
                         if (!haveBalls) {
-                            EventSystem.submitEvent(GameEvent(GameEventTypes.GAME_OVER, GameRuntime.currentPoints))
+                            EventSystem.submitEvent(GameEventTypes.GAME_OVER, GameRuntime.currentPoints)
                         }
                     }
                     Input.Keys.ESCAPE -> {

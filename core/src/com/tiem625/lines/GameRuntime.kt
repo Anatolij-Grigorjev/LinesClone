@@ -11,13 +11,13 @@ object GameRuntime {
     var currentPoints: Int = 0
     set(value) {
         field = value
-        EventSystem.submitEvent(GameEvent(GameEventTypes.RECEIVE_POINTS, value))
+        EventSystem.submitEvent(GameEventTypes.RECEIVE_POINTS, value)
     }
     var currentPointsMultiplier: Float = 1.0f
     set(value) {
 
         field = value
-        EventSystem.submitEvent(GameEvent(GameEventTypes.CHANGE_MULTIPLIER, value))
+        EventSystem.submitEvent(GameEventTypes.CHANGE_MULTIPLIER, value)
     }
 
     /**

@@ -188,9 +188,9 @@ open class TilesGridStage(
                     if (addNewBalls) {
                         //if this was false, its game over man!
                         if (!addNewBalls()) {
-                            EventSystem.submitEvent(GameEvent(
+                            EventSystem.submitEvent(
                                     GameEventTypes.GAME_OVER,
-                                    GameRuntime.currentPoints)
+                                    GameRuntime.currentPoints
                             )
                         }
                     }

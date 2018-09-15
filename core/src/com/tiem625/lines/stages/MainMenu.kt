@@ -33,14 +33,15 @@ class MainMenu(viewport: Viewport, appearDelay: Float) : Stage(viewport) {
     }.toMap()
 
     var menuReady: Boolean = false
+    var dialogVisible = false
 
     var selectedOption: MenuItems = MenuItems.first
-    set(value) {
+        set(value) {
 
-        menuOptions[field]?.color = Color.YELLOW
-        menuOptions[value]?.color = Color.RED
-        field = value
-    }
+            menuOptions[field]?.color = Color.YELLOW
+            menuOptions[value]?.color = Color.RED
+            field = value
+        }
 
     init {
 
@@ -65,16 +66,19 @@ class MainMenu(viewport: Viewport, appearDelay: Float) : Stage(viewport) {
                 }
         ))
         this.addActor(textsGroup)
+        EventSystem.addHandler(GameEventTypes.DIALOG_APPEAR) { dialogVisible = true }
+        EventSystem.addHandler(GameEventTypes.DIALOG_DISMISS) { dialogVisible = false }
         addListener(object : InputListener() {
 
             override fun keyUp(event: InputEvent?, keycode: Int): Boolean {
 
-                if (!menuReady) return true
+                //if there is dialog on stage we ignore input until it goes away
+                if (!menuReady || dialogVisible) return true
 
                 when (keycode) {
 
                     Input.Keys.ENTER -> {
-                        EventSystem.submitEvent(GameEvent(GameEventTypes.MENU_OPTION_SELECTED, selectedOption))
+                        EventSystem.submitEvent(GameEventTypes.MENU_OPTION_SELECTED, selectedOption)
                         return true
                     }
                     Input.Keys.DOWN -> {
@@ -85,7 +89,7 @@ class MainMenu(viewport: Viewport, appearDelay: Float) : Stage(viewport) {
                     }
                     Input.Keys.ESCAPE -> {
                         //simulate exit selected on escape
-                        EventSystem.submitEvent(GameEvent(GameEventTypes.MENU_OPTION_SELECTED, MenuItems.EXIT_GAME))
+                        EventSystem.submitEvent(GameEventTypes.MENU_OPTION_SELECTED, MenuItems.EXIT_GAME)
                     }
 
                     else -> {
