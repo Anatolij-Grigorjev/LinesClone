@@ -44,7 +44,7 @@ class LinesGame : ApplicationAdapter() {
                     createGameGrid()
                 }
                 MenuItems.VIEW_LEADERBOARDS -> {
-                    InputNameDialog(mainMenuStage).show()
+                    println("No leaderboards yet :(")
                 }
                 MenuItems.EXIT_GAME -> {
                     gameOver()
@@ -54,7 +54,12 @@ class LinesGame : ApplicationAdapter() {
         //game over listener (called from filled grid), show menu
         EventSystem.addHandler(GameEventTypes.GAME_OVER) { event ->
             InputNameDialog(tilesGridStage).show()
-            createMenuScreen()
+        }
+
+        EventSystem.addHandler(GameEventTypes.DIALOG_DISMISS) { event ->
+            if (currentScreen == GameScreens.GAME_GRID) {
+                createMenuScreen()
+            }
         }
     }
 
@@ -67,11 +72,12 @@ class LinesGame : ApplicationAdapter() {
                 GridGlobals.WORLD_HEIGHT + Math.abs(GridGlobals.WORLD_OFFSET.second))
 
         Assets.load()
-
-        createMenuScreen()
+        //create menu for first time
+        createMenuScreen(fresh = true)
     }
 
-    fun createMenuScreen() {
+    fun createMenuScreen(fresh: Boolean = false) {
+
         splashGridStage = SplashGridStage(viewport)
         mainMenuStage = MainMenu(viewport,
                 splashGridStage.splashMoveTime
@@ -80,6 +86,13 @@ class LinesGame : ApplicationAdapter() {
         Gdx.input.inputProcessor = mainMenuStage
 
         currentScreen = GameScreens.MAIN_MENU
+
+        //fresh means menu created first time not to get exception
+        //for checking a lateinit
+        if (!fresh) {
+            gridHUD.dispose()
+            tilesGridStage.dispose()
+        }
     }
 
 
@@ -109,6 +122,9 @@ class LinesGame : ApplicationAdapter() {
                             EventSystem.submitEvent(GameEventTypes.GAME_OVER, GameRuntime.currentPoints)
                         }
                     }
+                    Input.Keys.D -> {
+                        EventSystem.submitEvent(GameEventTypes.GAME_OVER)
+                    }
                     Input.Keys.ESCAPE -> {
                         createMenuScreen()
                     }
@@ -122,6 +138,9 @@ class LinesGame : ApplicationAdapter() {
         })
 
         currentScreen = GameScreens.GAME_GRID
+
+        mainMenuStage.dispose()
+        splashGridStage.dispose()
     }
 
     override fun resize(width: Int, height: Int) {

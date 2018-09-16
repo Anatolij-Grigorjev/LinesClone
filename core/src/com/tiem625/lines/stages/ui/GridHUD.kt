@@ -109,13 +109,15 @@ class GridHUD(viewport: Viewport) : Stage(viewport) {
         y = parent.height / 2 - height / 2
     }
 
+    val eventHandlerKeys = mutableListOf<String>()
+
     init {
 
         updatePointsLabel()
         updateMultiplierLabel()
 
-        EventSystem.addHandler(GameEventTypes.RECEIVE_POINTS) { event -> updatePointsLabel() }
-        EventSystem.addHandler(GameEventTypes.CHANGE_MULTIPLIER) { event -> updateMultiplierLabel() }
+        eventHandlerKeys.add(EventSystem.addHandler(GameEventTypes.RECEIVE_POINTS) { event -> updatePointsLabel() })
+        eventHandlerKeys.add(EventSystem.addHandler(GameEventTypes.CHANGE_MULTIPLIER) { event -> updateMultiplierLabel() })
     }
 
     private fun updatePointsLabel() {
@@ -127,4 +129,8 @@ class GridHUD(viewport: Viewport) : Stage(viewport) {
         multiplierLabel.setText(multiplierFormat.format(GameRuntime.currentPointsMultiplier))
     }
 
+    override fun dispose() {
+        eventHandlerKeys.forEach { EventSystem.removeHandler(it) }
+        super.dispose()
+    }
 }

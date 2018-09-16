@@ -1,16 +1,41 @@
 package com.tiem625.lines.event
 
+import java.util.*
+
 object EventSystem {
 
-    val eventHandlers = mapOf(
+    data class GameEventTypeHandler(
+            val type: GameEventTypes,
+            val handler: (GameEvent) -> Unit
+    )
+
+    val eventHandlers = mutableMapOf(
             *GameEventTypes.values().map {
-                it to mutableListOf<(GameEvent) -> Unit>()
+                it to mutableListOf<GameEventTypeHandler>()
             }.toTypedArray()
     )
 
-    fun addHandler(eventTypes: GameEventTypes, handler: (GameEvent) -> Unit) {
+    val handlersByKey = mutableMapOf<String, GameEventTypeHandler>()
 
-        eventHandlers[eventTypes]?.add(handler)
+    /**
+     * Add handler for specified event type,
+     * return unique handler UUID key by which its possible to remove it later
+     */
+    fun addHandler(eventType: GameEventTypes, handlerMethod: (GameEvent) -> Unit): String {
+        return UUID.randomUUID().toString().apply {
+            val typeHandler = GameEventTypeHandler(type = eventType, handler = handlerMethod)
+            (eventHandlers[eventType] ?: mutableListOf<GameEventTypeHandler>().apply {
+                eventHandlers[eventType] = this
+            }).add(typeHandler)
+            handlersByKey[this] = typeHandler
+        }
+    }
+
+    fun removeHandler(handlerKey: String) {
+
+        handlersByKey[handlerKey]?.let { typeHandler ->
+            eventHandlers[typeHandler.type]?.remove(typeHandler)
+        }
     }
 
 
@@ -21,7 +46,7 @@ object EventSystem {
     private fun submitEvent(event: GameEvent) {
 
         eventHandlers[event.type]?.let { handlers ->
-            handlers.forEach { it(event) }
+            handlers.forEach { it.handler(event) }
         }
     }
 

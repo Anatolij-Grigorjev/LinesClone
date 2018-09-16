@@ -33,7 +33,6 @@ class MainMenu(viewport: Viewport, appearDelay: Float) : Stage(viewport) {
     }.toMap()
 
     var menuReady: Boolean = false
-    var dialogVisible = false
 
     var selectedOption: MenuItems = MenuItems.first
         set(value) {
@@ -66,14 +65,13 @@ class MainMenu(viewport: Viewport, appearDelay: Float) : Stage(viewport) {
                 }
         ))
         this.addActor(textsGroup)
-        EventSystem.addHandler(GameEventTypes.DIALOG_APPEAR) { dialogVisible = true }
-        EventSystem.addHandler(GameEventTypes.DIALOG_DISMISS) { dialogVisible = false }
+
         addListener(object : InputListener() {
 
             override fun keyUp(event: InputEvent?, keycode: Int): Boolean {
 
                 //if there is dialog on stage we ignore input until it goes away
-                if (!menuReady || dialogVisible) return true
+                if (!menuReady) return true
 
                 when (keycode) {
 
