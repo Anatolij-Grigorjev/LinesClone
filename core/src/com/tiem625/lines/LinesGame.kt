@@ -15,6 +15,7 @@ import com.tiem625.lines.event.EventSystem
 import com.tiem625.lines.event.GameEvent
 import com.tiem625.lines.event.GameEventTypes
 import com.tiem625.lines.leaderboards.InputNameDialog
+import com.tiem625.lines.leaderboards.LeaderboardStage
 import com.tiem625.lines.stages.MainMenu
 import com.tiem625.lines.stages.SplashGridStage
 import com.tiem625.lines.stages.TilesGridStage
@@ -26,6 +27,7 @@ class LinesGame : ApplicationAdapter() {
     lateinit var tilesGridStage: TilesGridStage
     lateinit var splashGridStage: SplashGridStage
     lateinit var mainMenuStage: MainMenu
+    lateinit var leaderboardStage: LeaderboardStage
     lateinit var gridHUD: GridHUD
     lateinit var viewport: Viewport
 
@@ -44,7 +46,8 @@ class LinesGame : ApplicationAdapter() {
                     createGameGrid()
                 }
                 MenuItems.VIEW_LEADERBOARDS -> {
-                    println("No leaderboards yet :(")
+
+                    createLeaderboards()
                 }
                 MenuItems.EXIT_GAME -> {
                     gameOver()
@@ -85,14 +88,23 @@ class LinesGame : ApplicationAdapter() {
         )
         Gdx.input.inputProcessor = mainMenuStage
 
-        currentScreen = GameScreens.MAIN_MENU
-
         //fresh means menu created first time not to get exception
         //for checking a lateinit
         if (!fresh) {
-            gridHUD.dispose()
-            tilesGridStage.dispose()
+            disposeCurrentScreen()
         }
+
+        currentScreen = GameScreens.MAIN_MENU
+    }
+
+    fun createLeaderboards() {
+
+        leaderboardStage = LeaderboardStage(viewport)
+        Gdx.input.inputProcessor = leaderboardStage
+
+        disposeCurrentScreen()
+
+        currentScreen = GameScreens.LEADERBOARDS
     }
 
 
@@ -137,10 +149,9 @@ class LinesGame : ApplicationAdapter() {
             }
         })
 
-        currentScreen = GameScreens.GAME_GRID
+        disposeCurrentScreen()
 
-        mainMenuStage.dispose()
-        splashGridStage.dispose()
+        currentScreen = GameScreens.GAME_GRID
     }
 
     override fun resize(width: Int, height: Int) {
@@ -168,11 +179,23 @@ class LinesGame : ApplicationAdapter() {
                 tilesGridStage.draw()
                 gridHUD.draw()
             }
+            GameScreens.LEADERBOARDS -> {
+
+                leaderboardStage.act(Gdx.graphics.deltaTime)
+                leaderboardStage.draw()
+            }
         }
     }
 
     override fun dispose() {
 
+        disposeCurrentScreen()
+
+        Assets.manager.dispose()
+        GridGlobals.dispose()
+    }
+
+    fun disposeCurrentScreen() {
         when (currentScreen) {
 
             GameScreens.MAIN_MENU -> {
@@ -185,10 +208,11 @@ class LinesGame : ApplicationAdapter() {
                 gridHUD.dispose()
                 tilesGridStage.dispose()
             }
-        }
+            GameScreens.LEADERBOARDS -> {
 
-        Assets.manager.dispose()
-        GridGlobals.dispose()
+                leaderboardStage.dispose()
+            }
+        }
     }
 
     fun gameOver() {
