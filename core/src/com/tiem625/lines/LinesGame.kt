@@ -61,7 +61,7 @@ class LinesGame : ApplicationAdapter() {
 
         EventSystem.addHandler(GameEventTypes.DIALOG_DISMISS) { event ->
             if (currentScreen == GameScreens.GAME_GRID) {
-                createMenuScreen()
+                createLeaderboards()
             }
         }
     }

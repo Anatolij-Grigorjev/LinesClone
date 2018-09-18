@@ -7,5 +7,6 @@ enum class GameEventTypes {
     MENU_OPTION_SELECTED,
     GAME_OVER,
     DIALOG_APPEAR,
-    DIALOG_DISMISS
+    DIALOG_DISMISS,
+    LEADERBOARD_ENTRY
 }

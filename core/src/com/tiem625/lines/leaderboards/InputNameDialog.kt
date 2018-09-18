@@ -43,6 +43,8 @@ class InputNameDialog(stage: Stage) : Dialog("High Score!!!", GridGlobals.gameSk
             //returned object is name from input
             val nameField = `object` as TextField
             println("Adding leaderboard record for ${nameField.text} and ${GameRuntime.currentPoints} points...")
+
+            EventSystem.submitEvent(GameEventTypes.LEADERBOARD_ENTRY, (nameField.text to GameRuntime.currentPoints))
         }
     }
 
