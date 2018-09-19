@@ -13,6 +13,9 @@ object GameRuntime {
         field = value
         EventSystem.submitEvent(GameEventTypes.RECEIVE_POINTS, value)
     }
+
+    //lowest current highscore, barrier for name entry
+    var currentLowestHigh: Int = 0
     var currentPointsMultiplier: Float = 1.0f
     set(value) {
 

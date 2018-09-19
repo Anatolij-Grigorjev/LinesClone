@@ -1,8 +1,11 @@
 package com.tiem625.lines.stages
 
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.ai.pfa.indexed.IndexedAStarPathFinder
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.Group
+import com.badlogic.gdx.scenes.scene2d.InputEvent
+import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.viewport.Viewport
@@ -55,6 +58,28 @@ open class TilesGridStage(
             }
             this@TilesGridStage.addActor(this)
         }
+
+        addListener(object : InputListener() {
+
+            override fun keyUp(event: InputEvent?, keycode: Int): Boolean {
+                when (keycode) {
+                    Input.Keys.SPACE -> {
+                        val haveBalls = addNewBalls()
+                        if (!haveBalls) {
+                            EventSystem.submitEvent(GameEventTypes.GAME_OVER, GameRuntime.currentPoints)
+                        }
+                    }
+                    Input.Keys.ESCAPE -> {
+                        EventSystem.submitEvent(GameEventTypes.GRID_ESCAPE)
+                    }
+                    else -> {
+                        println("No handler for key $keycode")
+                    }
+                }
+
+                return true
+            }
+        })
     }
 
     val gridGraph = IndexedGridGraph(numRows, numCols, grid)

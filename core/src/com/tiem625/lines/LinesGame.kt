@@ -56,7 +56,14 @@ class LinesGame : ApplicationAdapter() {
         }
         //game over listener (called from filled grid), show menu
         EventSystem.addHandler(GameEventTypes.GAME_OVER) { event ->
-            InputNameDialog(tilesGridStage).show()
+
+            val earnedPoints = event.data as Int
+
+            if (earnedPoints >= GameRuntime.currentLowestHigh) {
+                InputNameDialog(tilesGridStage).show()
+            } else {
+                createLeaderboards()
+            }
         }
 
         EventSystem.addHandler(GameEventTypes.DIALOG_DISMISS) { event ->
@@ -64,6 +71,8 @@ class LinesGame : ApplicationAdapter() {
                 createLeaderboards()
             }
         }
+
+        EventSystem.addHandler(GameEventTypes.GRID_ESCAPE) { event -> createMenuScreen() }
     }
 
     override fun create() {
@@ -124,30 +133,6 @@ class LinesGame : ApplicationAdapter() {
         (0 until 1).forEach { tilesGridStage.addNewBalls() }
 
         Gdx.input.inputProcessor = tilesGridStage
-        tilesGridStage.addListener(object : InputListener() {
-
-            override fun keyUp(event: InputEvent?, keycode: Int): Boolean {
-                when (keycode) {
-                    Input.Keys.SPACE -> {
-                        val haveBalls = tilesGridStage.addNewBalls()
-                        if (!haveBalls) {
-                            EventSystem.submitEvent(GameEventTypes.GAME_OVER, GameRuntime.currentPoints)
-                        }
-                    }
-                    Input.Keys.D -> {
-                        EventSystem.submitEvent(GameEventTypes.GAME_OVER)
-                    }
-                    Input.Keys.ESCAPE -> {
-                        createMenuScreen()
-                    }
-                    else -> {
-                        println("No handler for key $keycode")
-                    }
-                }
-
-                return true
-            }
-        })
 
         disposeCurrentScreen()
 
