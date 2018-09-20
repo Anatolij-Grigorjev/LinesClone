@@ -20,21 +20,24 @@ import java.text.DecimalFormat
 
 class LeaderboardStage(viewport: Viewport) : Stage(viewport) {
 
-    val initialBoardOffset = -GridGlobals.WORLD_HEIGHT
+    companion object {
 
-    val appearDuration = 1f
+        const val INITIAL_BOARD_OFFSET = -GridGlobals.WORLD_HEIGHT
+        const val APPEAR_ANIMATION_SEC = 0.8f
+        const val ROW_SPACING = 15f
+        val POINTS_FORMATTER: DecimalFormat = DecimalFormat("00000000")
+        val PLACE_FORMATTER: DecimalFormat = DecimalFormat("'#'00'. '")
+
+        var loadedFile = false
+    }
+
 
     val root = Window("Leaderboard: ".toUpperCase(), GridGlobals.gameSkin).apply {
-        y = initialBoardOffset
         width = viewport.worldWidth
-        height = viewport.worldHeight
-        titleTable.debug().cells[0].expand().fill()
+        titleTable.cells[0].expand().fill()
         titleLabel.setAlignment(Align.left)
     }
 
-    val rowSpacing = 15f
-    val pointsFormatter: DecimalFormat = DecimalFormat("00000000")
-    val placeFormatter: DecimalFormat = DecimalFormat("'#'00'. '")
 
     val records = loadStoredRecords() ?: arrayOf(*(0 until GridGlobals.LEADERBOARD_POSITIONS).map {
         LeaderboardRecord.empty()
@@ -50,9 +53,9 @@ class LeaderboardStage(viewport: Viewport) : Stage(viewport) {
 //                .debug()
 
         records.forEachIndexed { idx, record ->
-            mainTable.row().fillX().padTop(rowSpacing)
+            mainTable.row().fillX().padTop(ROW_SPACING)
 
-            mainTable.add(placeFormatter.format(idx + 1))
+            mainTable.add(PLACE_FORMATTER.format(idx + 1))
                     .left()
                     .width(Value.percentWidth(0.1f, mainTable))
                     .fill()
@@ -61,13 +64,19 @@ class LeaderboardStage(viewport: Viewport) : Stage(viewport) {
                 setAlignment(Align.left)
             }).left().expandX().expand()
 
-            mainTable.add(Label(pointsFormatter.format(record.score), GridGlobals.gameSkin).apply {
+            mainTable.add(Label(POINTS_FORMATTER.format(record.score), GridGlobals.gameSkin).apply {
                 setAlignment(Align.right)
             }).right().expand().fill()
         }
 
         addActor(root.apply {
-            addAction(Actions.moveBy(0f, -initialBoardOffset, appearDuration))
+            y = INITIAL_BOARD_OFFSET
+            addAction(Actions.sequence(
+                    Actions.moveBy(0f, -INITIAL_BOARD_OFFSET, APPEAR_ANIMATION_SEC),
+                    Actions.run {
+                        root.height = viewport.worldHeight
+                    }
+            ))
         })
 
         //add event handler

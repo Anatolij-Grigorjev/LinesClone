@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
+import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.tiem625.lines.assets.Assets
@@ -24,14 +25,33 @@ import com.tiem625.lines.stages.ui.GridHUD
 
 class LinesGame : ApplicationAdapter() {
 
-    lateinit var tilesGridStage: TilesGridStage
     lateinit var splashGridStage: SplashGridStage
     lateinit var mainMenuStage: MainMenu
-    lateinit var leaderboardStage: LeaderboardStage
+    lateinit var tilesGridStage: TilesGridStage
     lateinit var gridHUD: GridHUD
+    lateinit var leaderboardStage: LeaderboardStage
     lateinit var viewport: Viewport
 
+    val currentScreenStages = mutableListOf<Stage>()
     var currentScreen = GameScreens.MAIN_MENU
+        set(value) {
+            currentScreenStages.clear()
+            when (value) {
+                GameScreens.MAIN_MENU -> {
+                    currentScreenStages.add(splashGridStage)
+                    currentScreenStages.add(mainMenuStage)
+                }
+                GameScreens.GAME_GRID -> {
+                    currentScreenStages.add(tilesGridStage)
+                    currentScreenStages.add(gridHUD)
+                }
+                GameScreens.LEADERBOARDS -> {
+                    currentScreenStages.add(leaderboardStage)
+                }
+            }
+
+            field = value
+        }
 
     fun setupEventHandlers() {
         //setup menu listener
@@ -39,7 +59,7 @@ class LinesGame : ApplicationAdapter() {
 
             val option = gameEvent.data as MenuItems
 
-            when(option) {
+            when (option) {
 
                 MenuItems.START_GAME -> {
 
@@ -72,7 +92,15 @@ class LinesGame : ApplicationAdapter() {
             }
         }
 
-        EventSystem.addHandler(GameEventTypes.GRID_ESCAPE) { event -> createMenuScreen() }
+        EventSystem.addHandler(GameEventTypes.GRID_ESCAPE) { event ->
+            resetGamePoints()
+            createMenuScreen()
+        }
+    }
+
+    private fun resetGamePoints() {
+        GameRuntime.currentPoints = 0
+        GameRuntime.currentPointsMultiplier = 1f
     }
 
     override fun create() {
@@ -101,8 +129,10 @@ class LinesGame : ApplicationAdapter() {
         //for checking a lateinit
         if (!fresh) {
             disposeCurrentScreen()
+        } else {
+            //prepare list for initial menu stages
+            currentScreenStages.clear()
         }
-
         currentScreen = GameScreens.MAIN_MENU
     }
 
@@ -146,29 +176,9 @@ class LinesGame : ApplicationAdapter() {
     override fun render() {
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-        when (currentScreen) {
-
-            GameScreens.MAIN_MENU -> {
-
-                splashGridStage.act(Gdx.graphics.deltaTime)
-                mainMenuStage.act(Gdx.graphics.deltaTime)
-
-                splashGridStage.draw()
-                mainMenuStage.draw()
-            }
-            GameScreens.GAME_GRID -> {
-
-                tilesGridStage.act(Gdx.graphics.deltaTime)
-                gridHUD.act(Gdx.graphics.deltaTime)
-
-                tilesGridStage.draw()
-                gridHUD.draw()
-            }
-            GameScreens.LEADERBOARDS -> {
-
-                leaderboardStage.act(Gdx.graphics.deltaTime)
-                leaderboardStage.draw()
-            }
+        currentScreenStages.forEach { stage ->
+            stage.act(Gdx.graphics.deltaTime)
+            stage.draw()
         }
     }
 
@@ -181,23 +191,7 @@ class LinesGame : ApplicationAdapter() {
     }
 
     fun disposeCurrentScreen() {
-        when (currentScreen) {
-
-            GameScreens.MAIN_MENU -> {
-
-                splashGridStage.dispose()
-                mainMenuStage.dispose()
-            }
-            GameScreens.GAME_GRID -> {
-
-                gridHUD.dispose()
-                tilesGridStage.dispose()
-            }
-            GameScreens.LEADERBOARDS -> {
-
-                leaderboardStage.dispose()
-            }
-        }
+        currentScreenStages.forEach { stage -> stage.dispose() }
     }
 
     fun gameOver() {
