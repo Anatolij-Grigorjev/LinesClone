@@ -1,7 +1,6 @@
-package com.tiem625.lines.leaderboards
+package com.tiem625.lines.dialog
 
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.ui.TextField
@@ -10,22 +9,24 @@ import com.tiem625.lines.GridGlobals
 import com.tiem625.lines.event.EventSystem
 import com.tiem625.lines.event.GameEventTypes
 
-class InputNameDialog(stage: Stage) : Dialog("High Score!!!", GridGlobals.gameSkin) {
+class InputNameDialog(stage: Stage) : LinesGameDialog(stage, "High Score!!!".toUpperCase()) {
 
     val fieldPadding = 10f
     val buttonWidth = 150f
+    val textFieldHeight = 50f
 
     val textField = TextField("", GridGlobals.gameSkin)
 
-    init {
-
-        this.stage = stage
-        isModal = true
+    override fun constructDialog() {
         contentTable.add(
                 Label("Enter your name for the leaderboards:", GridGlobals.gameSkin)
         ).padTop(fieldPadding)
         contentTable.row()
-        contentTable.add(textField).left().padBottom(fieldPadding * 2).padTop(fieldPadding / 2)
+        contentTable.add(textField)
+                .left()
+                .padBottom(fieldPadding * 2)
+                .padTop(fieldPadding / 2)
+                .height(textFieldHeight)
 
         setObject(TextButton("Cancel", GridGlobals.gameSkin).apply {
             buttonTable.add(this).width(buttonWidth).padBottom(fieldPadding).padRight(fieldPadding)
@@ -35,24 +36,20 @@ class InputNameDialog(stage: Stage) : Dialog("High Score!!!", GridGlobals.gameSk
         }, textField)
     }
 
-    override fun result(`object`: Any?) {
-        EventSystem.submitEvent(GameEventTypes.DIALOG_DISMISS)
-        if (`object` == null) {
+    override fun resolveResultObject(result: Any?) {
+        if (result == null) {
             println("Player decided not to do leaderboard... :(")
         } else {
             //returned object is name from input
-            val nameField = `object` as TextField
+            val nameField = result as TextField
             println("Adding leaderboard record for ${nameField.text} and ${GameRuntime.currentPoints} points...")
 
             EventSystem.submitEvent(GameEventTypes.LEADERBOARD_ENTRY, (nameField.text to GameRuntime.currentPoints))
         }
     }
 
-    fun show(): Dialog {
-        return this.show(stage).apply {
-            stage.keyboardFocus = textField
-            textField.width = contentTable.width
-            EventSystem.submitEvent(GameEventTypes.DIALOG_APPEAR)
-        }
+    override fun onShow() {
+        textField.width = contentTable.width
+        stage.keyboardFocus = textField
     }
 }

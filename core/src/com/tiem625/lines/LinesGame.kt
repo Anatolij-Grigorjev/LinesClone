@@ -2,10 +2,7 @@ package com.tiem625.lines
 
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.GL20
-import com.badlogic.gdx.scenes.scene2d.InputEvent
-import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
@@ -13,9 +10,8 @@ import com.tiem625.lines.assets.Assets
 import com.tiem625.lines.constants.GameScreens
 import com.tiem625.lines.constants.MenuItems
 import com.tiem625.lines.event.EventSystem
-import com.tiem625.lines.event.GameEvent
 import com.tiem625.lines.event.GameEventTypes
-import com.tiem625.lines.leaderboards.InputNameDialog
+import com.tiem625.lines.dialog.InputNameDialog
 import com.tiem625.lines.leaderboards.LeaderboardStage
 import com.tiem625.lines.stages.MainMenu
 import com.tiem625.lines.stages.SplashGridStage
