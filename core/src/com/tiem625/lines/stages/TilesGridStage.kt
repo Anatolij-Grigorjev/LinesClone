@@ -14,6 +14,7 @@ import com.tiem625.lines.actors.Ball
 import com.tiem625.lines.actors.ReceivedPoints
 import com.tiem625.lines.actors.Tile
 import com.tiem625.lines.actors.TileBallGroup
+import com.tiem625.lines.dialog.LinesGameDialog
 import com.tiem625.lines.event.EventSystem
 import com.tiem625.lines.event.GameEvent
 import com.tiem625.lines.event.GameEventTypes
@@ -62,10 +63,16 @@ open class TilesGridStage(
         addListener(object : InputListener() {
 
             override fun keyUp(event: InputEvent?, keycode: Int): Boolean {
+                //ignore input while any dialogs are showing
+                if (LinesGameDialog.dialogIsShowing) {
+                    return true
+                }
+
                 when (keycode) {
                     Input.Keys.SPACE -> {
                         val haveBalls = addNewBalls()
                         if (!haveBalls) {
+                            GridGlobals.refreshGridPositions()
                             EventSystem.submitEvent(GameEventTypes.GAME_OVER, GameRuntime.currentPoints)
                         }
                     }
@@ -213,6 +220,8 @@ open class TilesGridStage(
                     if (addNewBalls) {
                         //if this was false, its game over man!
                         if (!addNewBalls()) {
+                            //reset ball positions
+                            GridGlobals.refreshGridPositions()
                             EventSystem.submitEvent(
                                     GameEventTypes.GAME_OVER,
                                     GameRuntime.currentPoints

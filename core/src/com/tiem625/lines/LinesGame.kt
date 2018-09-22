@@ -1,6 +1,7 @@
 package com.tiem625.lines
 
 import com.badlogic.gdx.ApplicationAdapter
+import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.scenes.scene2d.Stage
@@ -12,6 +13,7 @@ import com.tiem625.lines.constants.MenuItems
 import com.tiem625.lines.event.EventSystem
 import com.tiem625.lines.event.GameEventTypes
 import com.tiem625.lines.dialog.InputNameDialog
+import com.tiem625.lines.leaderboards.LeaderboardRecord
 import com.tiem625.lines.leaderboards.LeaderboardStage
 import com.tiem625.lines.stages.MainMenu
 import com.tiem625.lines.stages.SplashGridStage
@@ -48,6 +50,7 @@ class LinesGame : ApplicationAdapter() {
 
             field = value
         }
+
 
     fun setupEventHandlers() {
         //setup menu listener
@@ -92,6 +95,29 @@ class LinesGame : ApplicationAdapter() {
             resetGamePoints()
             createMenuScreen()
         }
+
+        //add event handler
+        EventSystem.addHandler(GameEventTypes.LEADERBOARD_ENTRY) { event ->
+
+            val entry = event.data as Pair<String, Int>
+
+            val firstSmallerIdx = GameRuntime.records.indexOfFirst { it.score <= entry.second }
+
+            //if some values actually are smaller than this
+            if (firstSmallerIdx >= 0) {
+
+                //shit elements lower by one position down
+                (firstSmallerIdx until GameRuntime.records.size - 1).forEach { idx ->
+                    GameRuntime.records[idx + 1] = GameRuntime.records[idx]
+                }
+                GameRuntime.records[firstSmallerIdx] = LeaderboardRecord(
+                        name = entry.first,
+                        score = entry.second
+                )
+            }
+
+            GameRuntime.updateLowestHigh()
+        }
     }
 
     private fun resetGamePoints() {
@@ -100,7 +126,7 @@ class LinesGame : ApplicationAdapter() {
     }
 
     override fun create() {
-
+        GridGlobals.refreshGridPositions()
         setupEventHandlers()
 
         viewport = FitViewport(

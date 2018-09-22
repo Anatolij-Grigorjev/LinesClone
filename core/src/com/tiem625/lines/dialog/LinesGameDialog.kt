@@ -7,7 +7,12 @@ import com.tiem625.lines.event.EventSystem
 import com.tiem625.lines.event.GameEventTypes
 
 abstract class LinesGameDialog(stage: Stage,
-                               val title: String) : Dialog(title, GridGlobals.gameSkin) {
+                               title: String) : Dialog(title, GridGlobals.gameSkin) {
+
+    companion object {
+
+        var dialogIsShowing = false
+    }
 
 
     abstract fun constructDialog()
@@ -26,11 +31,14 @@ abstract class LinesGameDialog(stage: Stage,
     override fun result(`object`: Any?) {
 
         resolveResultObject(`object`)
+        dialogIsShowing = false
         EventSystem.submitEvent(GameEventTypes.DIALOG_DISMISS)
     }
 
     fun show(): Dialog {
         return this.show(stage).apply {
+            dialogIsShowing = true
+            //perform custom initialization
             onShow()
             EventSystem.submitEvent(GameEventTypes.DIALOG_APPEAR)
         }

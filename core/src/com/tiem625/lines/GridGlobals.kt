@@ -10,11 +10,12 @@ import com.tiem625.lines.actors.Ball
 import com.tiem625.lines.actors.TileBallGroup
 import com.tiem625.lines.stages.TilesGridStage
 
-object GridGlobals: Disposable {
+object GridGlobals : Disposable {
 
     override fun dispose() {
         skinRegularFont.dispose()
     }
+
     const val HUD_HEIGHT = 100.0f
 
     const val WORLD_WIDTH = 800.0f
@@ -64,11 +65,15 @@ object GridGlobals: Disposable {
 
     //all ball positions used during the game. when this list runs out, its over
     //disappearing groups add their positions back into this
-    val ballPositions = (0 until GRID_ROWS).map { rIdx ->
-        (0 until GRID_COLS).map { cIdx ->
-            rIdx to cIdx
-        }
-    }.flatten().toMutableList().shuffled()
+    lateinit var ballPositions: MutableList<Pair<Int, Int>>
+
+    fun refreshGridPositions() {
+        ballPositions = (0 until GRID_ROWS).map { rIdx ->
+            (0 until GRID_COLS).map { cIdx ->
+                rIdx to cIdx
+            }
+        }.flatten().toMutableList().shuffled()
+    }
 
     /**
      * Test if two tileballgroups both either have or dont have a ball

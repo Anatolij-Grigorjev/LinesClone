@@ -28,7 +28,35 @@ class LeaderboardStage(viewport: Viewport) : Stage(viewport) {
         val POINTS_FORMATTER: DecimalFormat = DecimalFormat("00000000")
         val PLACE_FORMATTER: DecimalFormat = DecimalFormat("'#'00'. '")
 
-        var loadedFile = false
+        fun loadStoredRecords(): Array<LeaderboardRecord>? {
+
+            val leaderBoardsFile = Gdx.files.local(GridGlobals.LEADERBOARD_FILENAME)
+
+            if (!leaderBoardsFile.exists()) return null
+
+            val data = leaderBoardsFile.readString(Charsets.UTF_8.displayName())
+            return try {
+                JsonReader().parse(data).let {
+                    if (!it.isArray) return null
+
+                    it.map { jsonValue ->
+                        LeaderboardRecord(
+                                name = jsonValue["name"]?.asString() ?: return null,
+                                score = jsonValue["score"]?.asInt() ?: return null
+                        )
+                    }
+                }.toTypedArray().apply {
+                    //calculate records current hash
+                    GameRuntime.recordsHash = calcRecordsHash(this)
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                return null
+            }
+        }
+
+        private fun calcRecordsHash(records: Array<LeaderboardRecord>): String =
+                records.joinToString(separator = "|") { it.hashCode().toString() }
     }
 
 
@@ -38,21 +66,12 @@ class LeaderboardStage(viewport: Viewport) : Stage(viewport) {
         titleLabel.setAlignment(Align.left)
     }
 
-
-    val records = loadStoredRecords() ?: arrayOf(*(0 until GridGlobals.LEADERBOARD_POSITIONS).map {
-        LeaderboardRecord.empty()
-    }.toTypedArray())
-
-    var recordsHash = ""
-
     init {
-
-        updateLowestHigh()
 
         val mainTable = root.align(Align.top)
 //                .debug()
 
-        records.forEachIndexed { idx, record ->
+        GameRuntime.records.forEachIndexed { idx, record ->
             mainTable.row().fillX().padTop(ROW_SPACING)
 
             mainTable.add(PLACE_FORMATTER.format(idx + 1))
@@ -79,29 +98,6 @@ class LeaderboardStage(viewport: Viewport) : Stage(viewport) {
             ))
         })
 
-        //add event handler
-        EventSystem.addHandler(GameEventTypes.LEADERBOARD_ENTRY) { event ->
-
-            val entry = event.data as Pair<String, Int>
-
-            val firstSmallerIdx = records.indexOfFirst { it.score <= entry.second }
-
-            //if some values actually are smaller than this
-            if (firstSmallerIdx >= 0) {
-
-                //shit elements lower by one position down
-                (firstSmallerIdx until records.size - 1).forEach { idx ->
-                    records[idx + 1] = records[idx]
-                }
-                records[firstSmallerIdx] = LeaderboardRecord(
-                        name = entry.first,
-                        score = entry.second
-                )
-            }
-
-            updateLowestHigh()
-        }
-
         addListener(object : InputListener() {
 
             override fun keyUp(event: InputEvent?, keycode: Int): Boolean {
@@ -125,13 +121,13 @@ class LeaderboardStage(viewport: Viewport) : Stage(viewport) {
 
     fun storeRecords() {
 
-        val hash = calcRecordsHash(records)
+        val hash = calcRecordsHash(GameRuntime.records)
 
-        if (recordsHash == hash) {
+        if (GameRuntime.recordsHash == hash) {
             println("Records didn't change, no saving!")
             return
         } else {
-            recordsHash = hash
+            GameRuntime.recordsHash = hash
         }
 
         val leaderBoardsFile = Gdx.files.local(GridGlobals.LEADERBOARD_FILENAME)
@@ -139,7 +135,7 @@ class LeaderboardStage(viewport: Viewport) : Stage(viewport) {
         leaderBoardsFile.writeString(
                 JsonWriter(StringWriter()).let { writer ->
                     writer.array()
-                    records.forEach { record ->
+                    GameRuntime.records.forEach { record ->
                         writer.`object`()
                         writer.set("name", record.name)
                         writer.set("score", record.score)
@@ -153,40 +149,6 @@ class LeaderboardStage(viewport: Viewport) : Stage(viewport) {
                 Charsets.UTF_8.displayName()
         )
     }
-
-    private fun loadStoredRecords(): Array<LeaderboardRecord>? {
-
-        val leaderBoardsFile = Gdx.files.local(GridGlobals.LEADERBOARD_FILENAME)
-
-        if (!leaderBoardsFile.exists()) return null
-
-        val data = leaderBoardsFile.readString(Charsets.UTF_8.displayName())
-        return try {
-            JsonReader().parse(data).let {
-                if (!it.isArray) return null
-
-                it.map { jsonValue ->
-                    LeaderboardRecord(
-                            name = jsonValue["name"]?.asString() ?: return null,
-                            score = jsonValue["score"]?.asInt() ?: return null
-                    )
-                }
-            }.toTypedArray().apply {
-                //calculate records current hash
-                recordsHash = calcRecordsHash(this)
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            return null
-        }
-    }
-
-    private fun updateLowestHigh() {
-        GameRuntime.currentLowestHigh = records.lastOrNull()?.score ?: 0
-    }
-
-    private fun calcRecordsHash(records: Array<LeaderboardRecord>): String =
-            records.joinToString(separator = "|") { it.hashCode().toString() }
 
     override fun dispose() {
         storeRecords()
