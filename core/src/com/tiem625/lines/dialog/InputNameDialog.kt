@@ -1,11 +1,16 @@
 package com.tiem625.lines.dialog
 
+import com.badlogic.gdx.Input
+import com.badlogic.gdx.scenes.scene2d.InputEvent
+import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.tiem625.lines.GameRuntime
 import com.tiem625.lines.GridGlobals
+import com.tiem625.lines.click
 import com.tiem625.lines.event.EventSystem
 import com.tiem625.lines.event.GameEventTypes
 
@@ -17,7 +22,11 @@ class InputNameDialog(stage: Stage) : LinesGameDialog(stage, "High Score!!!".toU
         const val TEXT_FIELD_HEIGHT = 50f
     }
 
-    lateinit var textField: TextField
+    private lateinit var textField: TextField
+
+    lateinit var cancelButton: Button
+    lateinit var okButton: Button
+    private lateinit var buttonsKeyboardClicker: InputListener
 
     override fun constructDialog() {
         textField = TextField("", GridGlobals.gameSkin)
@@ -31,12 +40,38 @@ class InputNameDialog(stage: Stage) : LinesGameDialog(stage, "High Score!!!".toU
                 .padTop(FIELD_PADDING / 2)
                 .height(TEXT_FIELD_HEIGHT)
 
-        setObject(TextButton("Cancel", GridGlobals.gameSkin).apply {
+        cancelButton = TextButton("Cancel", GridGlobals.gameSkin).apply {
             buttonTable.add(this).width(BUTTON_WIDTH).padBottom(FIELD_PADDING).padRight(FIELD_PADDING)
-        }, null)
-        setObject(TextButton("OK", GridGlobals.gameSkin).apply {
+            setProgrammaticChangeEvents(true)
+        }
+        okButton = TextButton("OK", GridGlobals.gameSkin).apply {
             buttonTable.add(this).width(BUTTON_WIDTH).padBottom(FIELD_PADDING)
-        }, textField)
+            setProgrammaticChangeEvents(true)
+        }
+        buttonsKeyboardClicker = object: InputListener() {
+            override fun keyUp(event: InputEvent?, keycode: Int): Boolean {
+                when(keycode) {
+
+                    Input.Keys.ENTER -> {
+
+                        okButton.click()
+                        return true
+                    }
+                    Input.Keys.ESCAPE -> {
+                        cancelButton.click()
+                        return true
+                    }
+
+                }
+
+                return true
+            }
+        }
+
+        setObject(cancelButton, null)
+        setObject(okButton, textField)
+
+        stage.addListener(buttonsKeyboardClicker)
     }
 
     override fun resolveResultObject(result: Any?) {
@@ -54,4 +89,6 @@ class InputNameDialog(stage: Stage) : LinesGameDialog(stage, "High Score!!!".toU
         textField.width = contentTable.width
         stage.keyboardFocus = textField
     }
+
+
 }

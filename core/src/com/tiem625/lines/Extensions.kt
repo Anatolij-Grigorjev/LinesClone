@@ -3,6 +3,8 @@ package com.tiem625.lines
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Rectangle
+import com.badlogic.gdx.scenes.scene2d.InputEvent
+import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import java.util.*
 import javax.xml.soap.Text
@@ -71,3 +73,14 @@ fun Texture.asDrawable(region: Rectangle = Rectangle(0f, 0f, this.width.toFloat(
                 region.width.toInt(),
                 region.height.toInt())
         )
+
+fun Button.click() {
+    this.fire(InputEvent().apply {
+        relatedActor = this@click
+        type = InputEvent.Type.touchDown
+    })
+    this.fire(InputEvent().apply {
+        relatedActor = this@click
+        type = InputEvent.Type.touchUp
+    })
+}

@@ -26,10 +26,13 @@ object GameRuntime {
     var recordsHash = ""
     val records = LeaderboardStage.loadStoredRecords() ?: arrayOf(*(0 until GridGlobals.LEADERBOARD_POSITIONS).map {
         LeaderboardRecord.empty()
-    }.toTypedArray()).apply { updateLowestHigh() }
+    }.toTypedArray()).apply {
+        updateLowestHigh()
+    }
 
     fun updateLowestHigh() {
-        currentLowestHigh = records.lastOrNull()?.score ?: 0
+        //leave "redundant" null check since the variable might not have been initialized yet
+        currentLowestHigh = records?.lastOrNull()?.score ?: 0
     }
 
     /**

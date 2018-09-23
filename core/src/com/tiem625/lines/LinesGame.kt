@@ -107,8 +107,9 @@ class LinesGame : ApplicationAdapter() {
             if (firstSmallerIdx >= 0) {
 
                 //shit elements lower by one position down
-                (firstSmallerIdx until GameRuntime.records.size - 1).forEach { idx ->
-                    GameRuntime.records[idx + 1] = GameRuntime.records[idx]
+                // (going other direction just copies value across array)
+                (GameRuntime.records.size - 1 downTo firstSmallerIdx + 1).forEach { idx ->
+                    GameRuntime.records[idx] = GameRuntime.records[idx - 1]
                 }
                 GameRuntime.records[firstSmallerIdx] = LeaderboardRecord(
                         name = entry.first,
