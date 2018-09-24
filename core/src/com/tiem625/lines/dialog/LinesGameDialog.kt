@@ -7,7 +7,8 @@ import com.tiem625.lines.event.EventSystem
 import com.tiem625.lines.event.GameEventTypes
 
 abstract class LinesGameDialog(stage: Stage,
-                               title: String) : Dialog(title, GridGlobals.gameSkin) {
+                               title: String,
+                               val dialogType: GameDialogTypes) : Dialog(title, GridGlobals.gameSkin) {
 
     companion object {
 
@@ -32,7 +33,7 @@ abstract class LinesGameDialog(stage: Stage,
 
         resolveResultObject(`object`)
         dialogIsShowing = false
-        EventSystem.submitEvent(GameEventTypes.DIALOG_DISMISS)
+        EventSystem.submitEvent(GameEventTypes.DIALOG_DISMISS, dialogType)
     }
 
     fun show(): Dialog {
@@ -40,7 +41,7 @@ abstract class LinesGameDialog(stage: Stage,
             dialogIsShowing = true
             //perform custom initialization
             onShow()
-            EventSystem.submitEvent(GameEventTypes.DIALOG_APPEAR)
+            EventSystem.submitEvent(GameEventTypes.DIALOG_APPEAR, dialogType)
         }
     }
 

@@ -14,7 +14,11 @@ import com.tiem625.lines.click
 import com.tiem625.lines.event.EventSystem
 import com.tiem625.lines.event.GameEventTypes
 
-class InputNameDialog(stage: Stage) : LinesGameDialog(stage, "High Score!!!".toUpperCase()) {
+class InputNameDialog(stage: Stage) : LinesGameDialog(
+        stage,
+        "High Score!!!".toUpperCase(),
+        GameDialogTypes.HIGHSCORE_NAME_DIALOG
+) {
 
     companion object {
         const val FIELD_PADDING = 10f
