@@ -14,7 +14,7 @@ class LeaveScoreDialog(stage: Stage) : LinesGameDialog(
         GameDialogTypes.HIGHSCORE_LEAVE_DIALOG
 ) {
 
-    val buttonWidth = 50f
+    var buttonWidth: Float = 0f
 
     private enum class DialogChoices {
         QUIT, CANCEL, RECORD_SCORE
@@ -22,14 +22,24 @@ class LeaveScoreDialog(stage: Stage) : LinesGameDialog(
 
     override fun constructDialog() {
 
-        contentTable.row()
-        contentTable.add(Label("Quit now? Your score (${GameRuntime.currentPoints}) qualifies for the leaderboards! " +
-                "Maybe record it at least?", GridGlobals.gameSkin))
+        contentTable.add(Label("Quit now?\n" +
+                "Your score (${GameRuntime.currentPoints}) qualifies for the leaderboards!\n" +
+                "Maybe record it first?", GridGlobals.gameSkin))
         contentTable.row()
 
-        setObject(TextButton("QUIT", GridGlobals.gameSkin), DialogChoices.QUIT)
-        setObject(TextButton("CANCEL", GridGlobals.gameSkin), DialogChoices.CANCEL)
-        setObject(TextButton("RECORD SCORE", GridGlobals.gameSkin), DialogChoices.RECORD_SCORE)
+        buttonWidth = 150.0f
+        setObject(TextButton("QUIT", GridGlobals.gameSkin).apply {
+            buttonTable.add(this).width(buttonWidth).padBottom(buttonWidth / 5)
+                    .padRight(buttonWidth / 2)
+        }, DialogChoices.QUIT)
+        setObject(TextButton("CANCEL", GridGlobals.gameSkin).apply {
+            buttonTable.add(this).width(buttonWidth).padBottom(buttonWidth / 5)
+                    .padRight(buttonWidth / 2)
+        }, DialogChoices.CANCEL)
+        setObject(TextButton("RECORD SCORE", GridGlobals.gameSkin).apply {
+            buttonTable.add(this).width(buttonWidth * 1.5f).padBottom(buttonWidth / 5)
+        }, DialogChoices.RECORD_SCORE)
+
     }
 
     override fun resolveResultObject(result: Any?) {
@@ -46,13 +56,14 @@ class LeaveScoreDialog(stage: Stage) : LinesGameDialog(
                 println("all good")
             }
             LeaveScoreDialog.DialogChoices.RECORD_SCORE -> {
-                TODO("generate some event to call highscore name input dialog?")
+                EventSystem.submitEvent(GameEventTypes.GAME_OVER, GameRuntime.currentPoints)
             }
         }
     }
 
     override fun onShow() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        this.width = stage.viewport.worldWidth
+        buttonTable.width = contentTable.width
     }
 
 }

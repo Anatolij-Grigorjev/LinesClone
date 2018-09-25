@@ -16,7 +16,6 @@ object GameRuntime {
         }
 
     //lowest current highscore, barrier for name entry
-    var currentLowestHigh: Int = 0
     var currentPointsMultiplier: Float = 1.0f
         set(value) {
 
@@ -26,14 +25,10 @@ object GameRuntime {
     var recordsHash = ""
     val records = LeaderboardStage.loadStoredRecords() ?: arrayOf(*(0 until GridGlobals.LEADERBOARD_POSITIONS).map {
         LeaderboardRecord.empty()
-    }.toTypedArray()).apply {
-        updateLowestHigh()
-    }
+    }.toTypedArray())
 
-    fun updateLowestHigh() {
-        //leave "redundant" null check since the variable might not have been initialized yet
-        currentLowestHigh = records?.lastOrNull()?.score ?: 0
-    }
+    val currentLowestHigh: Int
+        get() = records?.get(GridGlobals.LEADERBOARD_POSITIONS - 1)?.score ?: 0
 
     /**
      * Every adjustment of multiplier by ADJUST means additional 0.2 points to font scale

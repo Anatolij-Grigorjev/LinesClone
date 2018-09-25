@@ -10,9 +10,10 @@ import com.tiem625.lines.assets.Assets
 import com.tiem625.lines.constants.GameScreens
 import com.tiem625.lines.constants.MenuItems
 import com.tiem625.lines.dialog.GameDialogTypes
+import com.tiem625.lines.dialog.InputNameDialog
+import com.tiem625.lines.dialog.LeaveScoreDialog
 import com.tiem625.lines.event.EventSystem
 import com.tiem625.lines.event.GameEventTypes
-import com.tiem625.lines.dialog.InputNameDialog
 import com.tiem625.lines.leaderboards.LeaderboardRecord
 import com.tiem625.lines.leaderboards.LeaderboardStage
 import com.tiem625.lines.stages.MainMenu
@@ -65,7 +66,6 @@ class LinesGame : ApplicationAdapter() {
                     createGameGrid()
                 }
                 MenuItems.VIEW_LEADERBOARDS -> {
-
                     createLeaderboards()
                 }
                 MenuItems.EXIT_GAME -> {
@@ -88,7 +88,7 @@ class LinesGame : ApplicationAdapter() {
         EventSystem.addHandler(GameEventTypes.DIALOG_DISMISS) { event ->
             val dialogType = event.data as GameDialogTypes
 
-            when(dialogType) {
+            when (dialogType) {
                 GameDialogTypes.HIGHSCORE_NAME_DIALOG -> {
                     if (currentScreen == GameScreens.GAME_GRID) {
                         createLeaderboards()
@@ -99,8 +99,13 @@ class LinesGame : ApplicationAdapter() {
         }
 
         EventSystem.addHandler(GameEventTypes.GRID_ESCAPE) { event ->
-            resetGamePoints()
-            createMenuScreen()
+
+            if (GameRuntime.currentPoints >= GameRuntime.currentLowestHigh) {
+                LeaveScoreDialog(tilesGridStage).show()
+            } else {
+                resetGamePoints()
+                createMenuScreen()
+            }
         }
 
         //add event handler
@@ -123,8 +128,6 @@ class LinesGame : ApplicationAdapter() {
                         score = entry.second
                 )
             }
-
-            GameRuntime.updateLowestHigh()
         }
     }
 
