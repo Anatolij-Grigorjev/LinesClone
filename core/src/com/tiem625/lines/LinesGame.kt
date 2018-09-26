@@ -98,13 +98,27 @@ class LinesGame : ApplicationAdapter() {
             }
         }
 
-        EventSystem.addHandler(GameEventTypes.GRID_ESCAPE) { event ->
+        EventSystem.addHandler(GameEventTypes.STAGE_ESCAPE) { event ->
 
-            if (GameRuntime.currentPoints >= GameRuntime.currentLowestHigh) {
-                LeaveScoreDialog(tilesGridStage).show()
-            } else {
-                resetGamePoints()
-                createMenuScreen()
+            val stage = event.data as GameScreens
+
+            when(stage) {
+
+                GameScreens.MAIN_MENU -> {
+                    gameOver()
+                }
+                GameScreens.GAME_GRID -> {
+                    if (GameRuntime.currentPoints >= GameRuntime.currentLowestHigh) {
+                        LeaveScoreDialog(tilesGridStage).show()
+                    } else {
+                        resetGamePoints()
+                        createMenuScreen()
+                    }
+                }
+                GameScreens.LEADERBOARDS -> {
+                    resetGamePoints()
+                    createMenuScreen()
+                }
             }
         }
 

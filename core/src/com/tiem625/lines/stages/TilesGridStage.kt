@@ -14,9 +14,9 @@ import com.tiem625.lines.actors.Ball
 import com.tiem625.lines.actors.ReceivedPoints
 import com.tiem625.lines.actors.Tile
 import com.tiem625.lines.actors.TileBallGroup
+import com.tiem625.lines.constants.GameScreens
 import com.tiem625.lines.dialog.LinesGameDialog
 import com.tiem625.lines.event.EventSystem
-import com.tiem625.lines.event.GameEvent
 import com.tiem625.lines.event.GameEventTypes
 
 open class TilesGridStage(
@@ -77,7 +77,7 @@ open class TilesGridStage(
                         }
                     }
                     Input.Keys.ESCAPE -> {
-                        EventSystem.submitEvent(GameEventTypes.GRID_ESCAPE)
+                        EventSystem.submitEvent(GameEventTypes.STAGE_ESCAPE, GameScreens.GAME_GRID)
                     }
                     else -> {
                         println("No handler for key $keycode")

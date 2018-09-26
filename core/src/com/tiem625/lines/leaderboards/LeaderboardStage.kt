@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.*
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.tiem625.lines.GameRuntime
 import com.tiem625.lines.GridGlobals
+import com.tiem625.lines.constants.GameScreens
 import com.tiem625.lines.event.EventSystem
 import com.tiem625.lines.event.GameEventTypes
 import java.io.StringWriter
@@ -106,7 +107,7 @@ class LeaderboardStage(viewport: Viewport) : Stage(viewport) {
 
                     Input.Keys.ESCAPE -> {
                         storeRecords()
-                        EventSystem.submitEvent(GameEventTypes.GRID_ESCAPE)
+                        EventSystem.submitEvent(GameEventTypes.STAGE_ESCAPE, GameScreens.LEADERBOARDS)
                     }
                     else -> {
                         println("No Leaderboards actions for key $keycode :(")
