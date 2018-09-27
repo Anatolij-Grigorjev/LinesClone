@@ -124,5 +124,12 @@ Thumbs.db
 !/ios-moe/xcode/*.xcodeproj/project.pbxproj
 /ios-moe/xcode/native/
 
+###
 ## Game Specific
+###
+
+## generated leaderboards files
 leaderboards.json
+
+## raw assets
+assets-workspace/*
