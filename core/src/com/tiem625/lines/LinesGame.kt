@@ -233,7 +233,7 @@ class LinesGame : ApplicationAdapter() {
 
         disposeCurrentScreen()
 
-        Assets.manager.dispose()
+        Assets.dispose()
         GridGlobals.dispose()
     }
 

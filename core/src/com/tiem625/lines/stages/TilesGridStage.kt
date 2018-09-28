@@ -14,7 +14,9 @@ import com.tiem625.lines.actors.Ball
 import com.tiem625.lines.actors.ReceivedPoints
 import com.tiem625.lines.actors.Tile
 import com.tiem625.lines.actors.TileBallGroup
+import com.tiem625.lines.assets.AudioPlayer
 import com.tiem625.lines.constants.GameScreens
+import com.tiem625.lines.constants.SoundFx
 import com.tiem625.lines.dialog.LinesGameDialog
 import com.tiem625.lines.event.EventSystem
 import com.tiem625.lines.event.GameEventTypes
@@ -144,6 +146,7 @@ open class TilesGridStage(
     private fun removePoppedBalls(markedSurroundGroups: List<TileBallGroup>) {
         println("Found remove sequence: ${markedSurroundGroups.joinToString { it.gridPos.toString() }}")
         val positions: MutableList<Pair<Int, Int>> = mutableListOf()
+        AudioPlayer.playSfx(SoundFx.BALLS_POP)
         //create removable group
         Group().apply {
             //remove ball references and create actor remove actions
