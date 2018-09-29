@@ -108,7 +108,8 @@ class LinesGame : ApplicationAdapter() {
                     gameOver()
                 }
                 GameScreens.GAME_GRID -> {
-                    if (GameRuntime.currentPoints >= GameRuntime.currentLowestHigh) {
+                    if (GameRuntime.currentPoints >= GameRuntime.currentLowestHigh &&
+                            GameRuntime.currentPoints > 0) {
                         LeaveScoreDialog(tilesGridStage).show()
                     } else {
                         resetGamePoints()

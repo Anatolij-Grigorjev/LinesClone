@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.tiem625.lines.actors.Ball
+import com.tiem625.lines.assets.AudioPlayer
 
 
 /**
@@ -97,6 +98,7 @@ class SplashGridStage(
     val midBallDelay = 1f / splashBalls.size
 
     init {
+        AudioPlayer.stopMusic()
         //create drawing with positions list
         gridGroup.addAction(Actions.sequence(*splashBalls.map { point ->
 

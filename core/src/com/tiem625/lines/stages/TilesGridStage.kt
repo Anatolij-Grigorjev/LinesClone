@@ -62,6 +62,8 @@ open class TilesGridStage(
             this@TilesGridStage.addActor(this)
         }
 
+        AudioPlayer.playMusic()
+
         addListener(object : InputListener() {
 
             override fun keyUp(event: InputEvent?, keycode: Int): Boolean {
@@ -80,6 +82,24 @@ open class TilesGridStage(
                     }
                     Input.Keys.ESCAPE -> {
                         EventSystem.submitEvent(GameEventTypes.STAGE_ESCAPE, GameScreens.GAME_GRID)
+                    }
+                    Input.Keys.P -> {
+                        if (AudioPlayer.isMusicPlaying())
+                            AudioPlayer.pauseMusic()
+                        else
+                            AudioPlayer.playMusic()
+                    }
+                    Input.Keys.S -> {
+                        if (AudioPlayer.isMusicPlaying())
+                            AudioPlayer.stopMusic()
+                        else
+                            AudioPlayer.playMusic()
+                    }
+                    Input.Keys.PERIOD -> {
+                        AudioPlayer.playNextMusic()
+                    }
+                    Input.Keys.COMMA -> {
+                        AudioPlayer.playPrevMusic()
                     }
                     else -> {
                         println("No handler for key $keycode")
@@ -294,5 +314,8 @@ open class TilesGridStage(
         return foundBalls
     }
 
-
+    override fun dispose() {
+        AudioPlayer.stopMusic()
+        super.dispose()
+    }
 }

@@ -9,7 +9,7 @@ import com.tiem625.lines.leaderboards.LeaderboardStage
 object GameRuntime {
 
     var selectedTileGroup: TileBallGroup? = null
-    var currentPoints: Int = 500
+    var currentPoints: Int = 0
         set(value) {
             field = value
             EventSystem.submitEvent(GameEventTypes.RECEIVE_POINTS, value)

@@ -1,5 +1,6 @@
 package com.tiem625.lines
 
+import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Rectangle
@@ -84,3 +85,5 @@ fun Button.click() {
         type = InputEvent.Type.touchUp
     })
 }
+
+fun Music.isNotPlaying() = !isPlaying
