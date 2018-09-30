@@ -18,9 +18,13 @@ object GridGlobals : Disposable {
 
     const val HUD_HEIGHT = 100.0f
 
-    const val WORLD_WIDTH = 800.0f
+    const val WORLD_WIDTH = 900.0f
     const val WORLD_HEIGHT = 800.0f
-    val WORLD_OFFSET = (0.0f to -HUD_HEIGHT)
+
+    const val GRID_WIDTH = 800f
+    const val GRID_HEIGHT = 800f
+
+    val GRID_OFFSET = (WORLD_WIDTH - GRID_WIDTH to -HUD_HEIGHT)
 
     const val GRID_ROWS = 8
     const val GRID_COLS = 8

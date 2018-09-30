@@ -156,8 +156,9 @@ class LinesGame : ApplicationAdapter() {
         setupEventHandlers()
 
         viewport = FitViewport(
-                GridGlobals.WORLD_WIDTH + Math.abs(GridGlobals.WORLD_OFFSET.first),
-                GridGlobals.WORLD_HEIGHT + Math.abs(GridGlobals.WORLD_OFFSET.second))
+                GridGlobals.WORLD_WIDTH,
+                GridGlobals.WORLD_HEIGHT + GridGlobals.HUD_HEIGHT
+        )
 
         Assets.load()
         //create menu for first time
@@ -202,11 +203,11 @@ class LinesGame : ApplicationAdapter() {
         gridHUD = GridHUD(viewport)
         tilesGridStage = TilesGridStage(
                 viewport,
-                GridGlobals.WORLD_WIDTH,
-                GridGlobals.WORLD_HEIGHT,
+                GridGlobals.GRID_WIDTH,
+                GridGlobals.GRID_HEIGHT,
                 GridGlobals.GRID_ROWS,
                 GridGlobals.GRID_COLS,
-                GridGlobals.WORLD_OFFSET
+                GridGlobals.GRID_OFFSET
         )
 
         //initialize grid with some stuff

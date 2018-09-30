@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.viewport.Viewport
+import com.tiem625.lines.GridGlobals
 import com.tiem625.lines.actors.Ball
 import com.tiem625.lines.assets.AudioPlayer
 
@@ -29,12 +30,12 @@ class SplashGridStage(
         viewport: Viewport
 ) : TilesGridStage(
         viewport,
-        viewport.worldWidth,
+        GridGlobals.GRID_WIDTH,
         viewport.worldHeight * 0.6f,
         7,
         25,
         //remaining 0.4f of viewport height divided by 2, to center vertically
-        (0.0f to viewport.worldHeight * 0.2f)) {
+        ((viewport.worldWidth - GridGlobals.GRID_WIDTH) / 2 to viewport.worldHeight * 0.2f)) {
 
     val splashMoveTime = 1.5f
     val splashBalls = listOf(
