@@ -197,6 +197,8 @@ class LinesGame : ApplicationAdapter() {
 
     fun createGameGrid() {
 
+        disposeCurrentScreen()
+
         gridHUD = GridHUD(viewport)
         tilesGridStage = TilesGridStage(
                 viewport,
@@ -211,8 +213,6 @@ class LinesGame : ApplicationAdapter() {
         (0 until 1).forEach { tilesGridStage.addNewBalls() }
 
         Gdx.input.inputProcessor = tilesGridStage
-
-        disposeCurrentScreen()
 
         currentScreen = GameScreens.GAME_GRID
     }
