@@ -66,4 +66,7 @@ object AudioPlayer {
 
     private fun <T> withCurrentMusic(action: (Music) -> T): T =
             Assets.orderedMusics[currentPlayingMusic].let(action)
+
+    //lets say music is paused if its started but not playing
+    fun isMusicPaused() = withCurrentMusic { it.isNotPlaying() && it.position > 0.0f }
 }

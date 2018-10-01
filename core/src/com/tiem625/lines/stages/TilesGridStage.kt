@@ -63,6 +63,7 @@ open class TilesGridStage(
         }
 
         AudioPlayer.playMusic()
+        EventSystem.submitEvent(GameEventTypes.USED_MUSIC_CONTROLS)
 
         addListener(object : InputListener() {
 
@@ -105,7 +106,8 @@ open class TilesGridStage(
                         println("No handler for key $keycode")
                     }
                 }
-
+                //launch event about music controls just in case
+                EventSystem.submitEvent(GameEventTypes.USED_MUSIC_CONTROLS)
                 return true
             }
         })

@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.viewport.Viewport
 import com.tiem625.lines.GameRuntime
 import com.tiem625.lines.GridGlobals
 import com.tiem625.lines.actors.ui.GridHUDBackground
+import com.tiem625.lines.assets.AudioPlayer
 import com.tiem625.lines.event.EventSystem
 import com.tiem625.lines.event.GameEventTypes
 import java.text.DecimalFormat
@@ -19,6 +20,7 @@ class GridHUD(viewport: Viewport) : Stage(viewport) {
     val multiplierFormat = DecimalFormat("x0.0")
 
     val multiplierFieldWidth = 100.0f
+    val musicStateFieldWith = 100.0f
 
     val backgroundGroup = Group().apply {
         x = 0.0f
@@ -75,8 +77,19 @@ class GridHUD(viewport: Viewport) : Stage(viewport) {
         y = parent.height / 2 - height / 2
     }
 
-    val multiplierGroup = Group().apply {
+    val musicStateGroup = Group().apply {
         x = pointsPadding
+        y = pointsPadding
+        //specific width
+        width = musicStateFieldWith
+        //padded up and down
+        height = GridGlobals.HUD_HEIGHT - 2 * pointsPadding
+
+        backgroundGroup.addActor(this)
+    }
+
+    val multiplierGroup = Group().apply {
+        x = 2 * pointsPadding + musicStateFieldWith
         y = pointsPadding
         //specific width
         width = multiplierFieldWidth
@@ -84,6 +97,17 @@ class GridHUD(viewport: Viewport) : Stage(viewport) {
         height = GridGlobals.HUD_HEIGHT - 2 * pointsPadding
 
         backgroundGroup.addActor(this)
+    }
+    val musicStateBg = GridHUDBackground(
+            x = 0.0f,
+            y = 0.0f,
+            //specific width
+            width = musicStateFieldWith,
+            //padded up and down
+            height = GridGlobals.HUD_HEIGHT - 2 * pointsPadding,
+            color = Color.BLACK
+    ).apply {
+        musicStateGroup.addActor(this)
     }
     val multiplierBg = GridHUDBackground(
             x = 0.0f,
@@ -95,6 +119,18 @@ class GridHUD(viewport: Viewport) : Stage(viewport) {
             color = Color.BLACK
     ).apply {
         multiplierGroup.addActor(this)
+    }
+    val musicStateLabel = Label("M", Label.LabelStyle(
+            GridGlobals.skinRegularFont,
+            Color.WHITE)).apply {
+        setAlignment(Align.center)
+        musicStateGroup.addActor(this)
+        setFontScale(
+                GameRuntime.multiplierScale(parent.height / height / 2)
+        )
+        //center by Y and X
+        x = parent.width / 2 - width / 2
+        y = parent.height / 2 - height / 2
     }
     val multiplierLabel = Label("x0.0", Label.LabelStyle(
             GridGlobals.skinRegularFont,
@@ -115,9 +151,11 @@ class GridHUD(viewport: Viewport) : Stage(viewport) {
 
         updatePointsLabel()
         updateMultiplierLabel()
+        updateMusicLabel()
 
         eventHandlerKeys.add(EventSystem.addHandler(GameEventTypes.RECEIVE_POINTS) { event -> updatePointsLabel() })
         eventHandlerKeys.add(EventSystem.addHandler(GameEventTypes.CHANGE_MULTIPLIER) { event -> updateMultiplierLabel() })
+        eventHandlerKeys.add(EventSystem.addHandler(GameEventTypes.USED_MUSIC_CONTROLS) { event -> updateMusicLabel() })
     }
 
     private fun updatePointsLabel() {
@@ -127,6 +165,21 @@ class GridHUD(viewport: Viewport) : Stage(viewport) {
 
     private fun updateMultiplierLabel() {
         multiplierLabel.setText(multiplierFormat.format(GameRuntime.currentPointsMultiplier))
+    }
+
+    private fun updateMusicLabel() {
+
+        musicStateLabel.setText(
+                //if music is stopped show nothing,
+                //if its playing show M
+                //if its paused show P
+                when {
+                    AudioPlayer.isMusicPlaying() -> "M"
+                    AudioPlayer.isMusicPaused() -> "P"
+                    else -> ""
+                }
+        )
+
     }
 
     override fun dispose() {
