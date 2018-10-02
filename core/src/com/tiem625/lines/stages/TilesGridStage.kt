@@ -53,6 +53,16 @@ open class TilesGridStage(
         }
     }
 
+    private val MUSIC_CONTROL_KEYS = setOf(
+            Input.Keys.P,
+            Input.Keys.S,
+            Input.Keys.PERIOD,
+            Input.Keys.COMMA
+    )
+
+    private fun keyIsMusicControl(keycode: Int) =
+            keycode in MUSIC_CONTROL_KEYS
+
     init {
         gridGroup.apply {
             x += offset.first
@@ -69,7 +79,8 @@ open class TilesGridStage(
 
             override fun keyUp(event: InputEvent?, keycode: Int): Boolean {
                 //ignore input while any dialogs are showing
-                if (LinesGameDialog.dialogIsShowing) {
+                val keyMusicControl = keyIsMusicControl(keycode)
+                if (LinesGameDialog.dialogIsShowing && !keyMusicControl) {
                     return true
                 }
 
@@ -106,8 +117,10 @@ open class TilesGridStage(
                         println("No handler for key $keycode")
                     }
                 }
-                //launch event about music controls just in case
-                EventSystem.submitEvent(GameEventTypes.USED_MUSIC_CONTROLS)
+                if (keyMusicControl) {
+                    //launch event about music controls
+                    EventSystem.submitEvent(GameEventTypes.USED_MUSIC_CONTROLS)
+                }
                 return true
             }
         })
