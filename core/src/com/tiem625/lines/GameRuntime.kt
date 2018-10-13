@@ -8,6 +8,10 @@ import com.tiem625.lines.leaderboards.LeaderboardStage
 
 object GameRuntime {
 
+    var musicOn = true
+    var sfxOn = true
+    val usedBallColors = mutableListOf(*GridGlobals.BALL_COLORS.toTypedArray())
+
     var selectedTileGroup: TileBallGroup? = null
     var currentPoints: Int = 0
         set(value) {

@@ -87,3 +87,5 @@ fun Button.click() {
 }
 
 fun Music.isNotPlaying() = !isPlaying
+
+fun Boolean.toOptionsWord() = if (this) "YES" else "NO"

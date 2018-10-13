@@ -17,6 +17,7 @@ import com.tiem625.lines.event.GameEventTypes
 import com.tiem625.lines.leaderboards.LeaderboardRecord
 import com.tiem625.lines.leaderboards.LeaderboardStage
 import com.tiem625.lines.stages.MainMenu
+import com.tiem625.lines.stages.OptionsMenu
 import com.tiem625.lines.stages.SplashGridStage
 import com.tiem625.lines.stages.TilesGridStage
 import com.tiem625.lines.stages.ui.GridHUD
@@ -26,6 +27,7 @@ class LinesGame : ApplicationAdapter() {
 
     lateinit var splashGridStage: SplashGridStage
     lateinit var mainMenuStage: MainMenu
+    lateinit var optionsStage: OptionsMenu
     lateinit var tilesGridStage: TilesGridStage
     lateinit var gridHUD: GridHUD
     lateinit var leaderboardStage: LeaderboardStage
@@ -39,6 +41,9 @@ class LinesGame : ApplicationAdapter() {
                 GameScreens.MAIN_MENU -> {
                     currentScreenStages.add(splashGridStage)
                     currentScreenStages.add(mainMenuStage)
+                }
+                GameScreens.OPTIONS -> {
+                    currentScreenStages.add(optionsStage)
                 }
                 GameScreens.GAME_GRID -> {
                     currentScreenStages.add(tilesGridStage)
@@ -64,6 +69,9 @@ class LinesGame : ApplicationAdapter() {
                 MenuItems.START_GAME -> {
 
                     createGameGrid()
+                }
+                MenuItems.OPTIONS -> {
+                    createOptions()
                 }
                 MenuItems.VIEW_LEADERBOARDS -> {
                     createLeaderboards()
@@ -116,7 +124,7 @@ class LinesGame : ApplicationAdapter() {
                         createMenuScreen()
                     }
                 }
-                GameScreens.LEADERBOARDS -> {
+                GameScreens.OPTIONS, GameScreens.LEADERBOARDS -> {
                     resetGamePoints()
                     createMenuScreen()
                 }
@@ -193,6 +201,16 @@ class LinesGame : ApplicationAdapter() {
         disposeCurrentScreen()
 
         currentScreen = GameScreens.LEADERBOARDS
+    }
+
+    fun createOptions() {
+
+        optionsStage = OptionsMenu(viewport)
+        Gdx.input.inputProcessor = optionsStage
+
+        disposeCurrentScreen()
+
+        currentScreen = GameScreens.OPTIONS
     }
 
 

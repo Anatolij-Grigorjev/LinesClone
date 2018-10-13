@@ -5,7 +5,8 @@ enum class MenuItems(val order: Int, val menuLine: String) {
 
     START_GAME(1,"Start Game"),
     VIEW_LEADERBOARDS(START_GAME.order + 1,"Leaderboards"),
-    EXIT_GAME(VIEW_LEADERBOARDS.order + 1,"Exit");
+    OPTIONS(VIEW_LEADERBOARDS.order + 1, "Options"),
+    EXIT_GAME(OPTIONS.order + 1,"Exit");
 
     companion object {
         private val orderMap = values().map { (it.order to it) }.toMap()
