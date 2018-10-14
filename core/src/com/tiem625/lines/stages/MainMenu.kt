@@ -21,12 +21,13 @@ class MainMenu(viewport: Viewport, appearDelay: Float) : Stage(viewport) {
     val textsGroup = VerticalGroup()
     val LABEL_HEIGHT = 30.0f
     val SPACING = 20.0f
+    val FONT_SCALE = 1.5f
 
     val menuOptions = MenuItems.values().map { option ->
         option to Label(option.menuLine.toUpperCase(), Label.LabelStyle(
                 GridGlobals.skinRegularFont, Color.YELLOW
         )).apply {
-            setFontScale(2f)
+            setFontScale(FONT_SCALE)
             setAlignment(Align.center)
             height = LABEL_HEIGHT
         }
@@ -53,13 +54,16 @@ class MainMenu(viewport: Viewport, appearDelay: Float) : Stage(viewport) {
                                 textsGroup.addActor(it)
                             }
 
-                    textsGroup.space(SPACING)
-                    textsGroup.align(Align.center)
-                    textsGroup.width = viewport.worldWidth
-                    //move up by half height and pad by option height
-                    textsGroup.moveBy(0.0f,
-                            ((SPACING + LABEL_HEIGHT) * textsGroup.children.size) / 2 + LABEL_HEIGHT + SPACING
-                    )
+                    textsGroup.apply {
+                        space(SPACING)
+                        align(Align.center)
+                        width = viewport.worldWidth
+                        //move up by half height and pad by option height
+                        moveBy(0.0f,
+                                ((SPACING + LABEL_HEIGHT) * textsGroup.children.size) / 2
+                                        + LABEL_HEIGHT
+                        )
+                    }
                     selectedOption = MenuItems.first
                     menuReady = true
                 }
