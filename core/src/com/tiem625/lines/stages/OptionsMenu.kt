@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.tiem625.lines.GameRuntime
 import com.tiem625.lines.GridGlobals
+import com.tiem625.lines.actors.TileBallGroup
 import com.tiem625.lines.constants.GameScreens
 import com.tiem625.lines.constants.OptionsItems
 import com.tiem625.lines.event.EventSystem
@@ -27,8 +28,29 @@ class OptionsMenu(viewport: Viewport) : Stage(viewport) {
 
     val menuOptions = mapOf<OptionsItems, Actor>(
             OptionsItems.TOGGLE_MUSIC to toggleOptionGroup(OptionsItems.TOGGLE_MUSIC, GameRuntime::musicOn),
-            OptionsItems.TOGGLE_SFX to toggleOptionGroup(OptionsItems.TOGGLE_SFX, GameRuntime::sfxOn)
+            OptionsItems.TOGGLE_SFX to toggleOptionGroup(OptionsItems.TOGGLE_SFX, GameRuntime::sfxOn),
+            OptionsItems.NUM_BALLS to ballColorsChoiceGroup()
     )
+
+    private fun ballColorsChoiceGroup(): HorizontalGroup {
+
+        return HorizontalGroup().apply {
+            userObject = GameRuntime.usedBallColors
+            //label
+            addActor(Label(OptionsItems.NUM_BALLS.menuLine, Label.LabelStyle(
+                    GridGlobals.skinRegularFont, Color.YELLOW
+            )).apply {
+                setFontScale(FONT_SCALE)
+                height = LABEL_HEIGHT
+                setAlignment(Align.left)
+            })
+            //balls group
+            //TODO: add decoupled tileballgroups
+
+
+            commonOptionsItemProps()
+        }
+    }
 
     private fun toggleOptionGroup(option: OptionsItems, toggleValueProp: KMutableProperty0<Boolean>): HorizontalGroup {
         return HorizontalGroup().apply {
@@ -47,14 +69,18 @@ class OptionsMenu(viewport: Viewport) : Stage(viewport) {
                 height = LABEL_HEIGHT
                 setAlignment(Align.right)
             })
-            align(Align.center)
-            height = LABEL_HEIGHT
-            width = viewport.worldWidth
-            space(viewport.worldWidth - children.fold(1f) {
-                acc, it -> acc + it.width * FONT_SCALE
-            })
-            debugAll()
+            commonOptionsItemProps()
         }
+    }
+
+    private fun HorizontalGroup.commonOptionsItemProps() {
+        align(Align.center)
+        height = LABEL_HEIGHT
+        width = viewport.worldWidth
+        space(viewport.worldWidth - children.fold(1f) { acc, it ->
+            acc + it.width * FONT_SCALE
+        })
+        debugAll()
     }
 
     private fun changeChildColors(option: OptionsItems, newColor: Color) {

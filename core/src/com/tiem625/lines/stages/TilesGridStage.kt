@@ -155,7 +155,7 @@ open class TilesGridStage(
             grid[pos.first][pos.second].ball = Ball(
                     width = tileWidth - GridGlobals.TILE_BALL_GUTTER,
                     height = tileHeight - GridGlobals.TILE_BALL_GUTTER,
-                    color = GridGlobals.BALL_COLORS.random(),
+                    color = GameRuntime.usedBallColors.random(),
                     gridPoxX = pos.first,
                     gridPosY = pos.second
             ).apply {

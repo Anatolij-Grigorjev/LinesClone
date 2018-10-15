@@ -70,8 +70,6 @@ class TileBallGroup(val grid: TilesGridStage, val gridPos: Pair<Int, Int>, val t
         //this is movement
         if (this.isSelected != selected) {
 
-            println("AT GROUND ZERO: ${grid.grid[0][0]}")
-
             updateTileColor(selected)
             //started selection of this tile
             if (selected) {
