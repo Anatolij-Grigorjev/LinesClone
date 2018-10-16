@@ -35,13 +35,13 @@ open class TilesGridStage(
 
     val gridGroup = Group()
 
-    var ballMoving = false
+    private var gridGraph: IndexedGridGraph
 
     val grid: Array<Array<TileBallGroup>> = (tileWidth to tileHeight).let { (tileWidth, tileHeight) ->
 
         Array(numRows) { rowIdx ->
             Array(numCols) { colIdx ->
-                TileBallGroup(this, rowIdx to colIdx, Tile(tileWidth, tileHeight).apply {
+                TileBallGroup(rowIdx to colIdx, Tile(tileWidth, tileHeight).apply {
                     zIndex = 0
                 }).apply {
                     gridGroup.addActor(this)
@@ -64,6 +64,10 @@ open class TilesGridStage(
             keycode in MUSIC_CONTROL_KEYS
 
     init {
+
+        gridGraph = IndexedGridGraph(numRows, numCols, grid)
+        GameRuntime.pathFinder = IndexedAStarPathFinder(gridGraph)
+
         gridGroup.apply {
             x += offset.first
             if (offset.second > 0) {
@@ -74,6 +78,15 @@ open class TilesGridStage(
 
         AudioPlayer.playMusic()
         EventSystem.submitEvent(GameEventTypes.USED_MUSIC_CONTROLS)
+
+        EventSystem.addHandler(GameEventTypes.UPDATE_GRID) { event ->
+            val aroundTileBallGroup = event.data as TileBallGroup
+            this@TilesGridStage.checkGridUpdates(aroundTileBallGroup)
+        }
+        EventSystem.addHandler(GameEventTypes.GROUP_REMOVE_BALL) { event ->
+            val group = event.data as TileBallGroup
+            GridGlobals.removeBall(group, this@TilesGridStage)
+        }
 
         addListener(object : InputListener() {
 
@@ -125,9 +138,6 @@ open class TilesGridStage(
             }
         })
     }
-
-    val gridGraph = IndexedGridGraph(numRows, numCols, grid)
-    val pathFinder = IndexedAStarPathFinder(gridGraph)
 
     private fun tileGroupAt(point: Pair<Int, Int>): TileBallGroup? =
             if (point.first in (0 until numRows)

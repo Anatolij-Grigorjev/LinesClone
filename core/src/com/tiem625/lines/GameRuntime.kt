@@ -1,5 +1,6 @@
 package com.tiem625.lines
 
+import com.badlogic.gdx.ai.pfa.indexed.IndexedAStarPathFinder
 import com.tiem625.lines.actors.TileBallGroup
 import com.tiem625.lines.event.EventSystem
 import com.tiem625.lines.event.GameEventTypes
@@ -42,4 +43,6 @@ object GameRuntime {
 
 
     var justPoppedBalls = false
+    var ballMoving = false
+    lateinit var pathFinder: IndexedAStarPathFinder<TileBallGroup>
 }

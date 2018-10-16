@@ -3,6 +3,8 @@ package com.tiem625.lines.event
 enum class GameEventTypes {
 
     RECEIVE_POINTS,
+    UPDATE_GRID,
+    GROUP_REMOVE_BALL,
     CHANGE_MULTIPLIER,
     MENU_OPTION_SELECTED,
     OPTIONS_OPTION_SELECTED,

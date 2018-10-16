@@ -12,10 +12,11 @@ import com.tiem625.lines.GridGlobals
 import com.tiem625.lines.assets.AudioPlayer
 import com.tiem625.lines.constants.SoundFx
 import com.tiem625.lines.distanceTo
-import com.tiem625.lines.stages.TilesGridStage
+import com.tiem625.lines.event.EventSystem
+import com.tiem625.lines.event.GameEventTypes
 import com.tiem625.lines.toIndex
 
-class TileBallGroup(val grid: TilesGridStage, val gridPos: Pair<Int, Int>, val tile: Tile) : Group() {
+class TileBallGroup(val gridPos: Pair<Int, Int>, val tile: Tile) : Group() {
 
     private fun updateTileColor(selected: Boolean) {
         if (selected) {
@@ -57,8 +58,8 @@ class TileBallGroup(val grid: TilesGridStage, val gridPos: Pair<Int, Int>, val t
         addListener(object : InputListener() {
 
             override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
-                if (!grid.ballMoving)
-                    updateSelected(!isSelected)
+                if (!GameRuntime.ballMoving)
+                    updateIsSelected(!isSelected)
 
                 return true
             }
@@ -66,7 +67,7 @@ class TileBallGroup(val grid: TilesGridStage, val gridPos: Pair<Int, Int>, val t
     }
 
 
-    private fun updateSelected(selected: Boolean) {
+    private fun updateIsSelected(selected: Boolean) {
         //this is movement
         if (this.isSelected != selected) {
 
@@ -84,7 +85,7 @@ class TileBallGroup(val grid: TilesGridStage, val gridPos: Pair<Int, Int>, val t
 
                         val nodePath = DefaultGraphPath<TileBallGroup>()
 
-                        if (grid.pathFinder.searchNodePath(
+                        if (GameRuntime.pathFinder.searchNodePath(
                                         it,
                                         this,
                                         { start, end ->
@@ -100,11 +101,8 @@ class TileBallGroup(val grid: TilesGridStage, val gridPos: Pair<Int, Int>, val t
 
                             ball.addAction(Actions.sequence(
                                     Actions.run {
-                                        grid.ballMoving = true
-                                        GridGlobals.removeBall(
-                                                it,
-                                                grid
-                                        )
+                                        GameRuntime.ballMoving = true
+                                        EventSystem.submitEvent(GameEventTypes.GROUP_REMOVE_BALL, it)
                                     },
                                     *nodePath.map { node ->
                                         Actions.moveTo(
@@ -120,9 +118,9 @@ class TileBallGroup(val grid: TilesGridStage, val gridPos: Pair<Int, Int>, val t
                                                 ball,
                                                 tileTo = this
                                         )
-                                        grid.checkGridUpdates(this)
-                                        it.updateSelected(false)
-                                        grid.ballMoving = false
+                                        EventSystem.submitEvent(GameEventTypes.UPDATE_GRID, this)
+                                        it.updateIsSelected(false)
+                                        GameRuntime.ballMoving = false
                                     }
                             ))
 
@@ -131,7 +129,7 @@ class TileBallGroup(val grid: TilesGridStage, val gridPos: Pair<Int, Int>, val t
                             println("Path from ${it.gridPos} to ${this.gridPos} not found... :(")
                         }
                     }
-                    it.updateSelected(false)
+                    it.updateIsSelected(false)
                 }
                 GameRuntime.selectedTileGroup = this
             } else {
