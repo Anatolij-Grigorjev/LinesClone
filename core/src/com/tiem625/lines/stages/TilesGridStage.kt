@@ -35,7 +35,7 @@ open class TilesGridStage(
 
     val gridGroup = Group()
 
-    private var gridGraph: IndexedGridGraph
+    private val gridGraph: IndexedGridGraph
 
     val grid: Array<Array<TileBallGroup>> = (tileWidth to tileHeight).let { (tileWidth, tileHeight) ->
 
@@ -63,6 +63,10 @@ open class TilesGridStage(
     private fun keyIsMusicControl(keycode: Int) =
             keycode in MUSIC_CONTROL_KEYS
 
+    private val groupRemoveBallHandlerKey: String
+
+    private val updateGridHandlerKey: String
+
     init {
 
         gridGraph = IndexedGridGraph(numRows, numCols, grid)
@@ -79,11 +83,11 @@ open class TilesGridStage(
         AudioPlayer.playMusic()
         EventSystem.submitEvent(GameEventTypes.USED_MUSIC_CONTROLS)
 
-        EventSystem.addHandler(GameEventTypes.UPDATE_GRID) { event ->
+        updateGridHandlerKey = EventSystem.addHandler(GameEventTypes.UPDATE_GRID) { event ->
             val aroundTileBallGroup = event.data as TileBallGroup
             this@TilesGridStage.checkGridUpdates(aroundTileBallGroup)
         }
-        EventSystem.addHandler(GameEventTypes.GROUP_REMOVE_BALL) { event ->
+        groupRemoveBallHandlerKey = EventSystem.addHandler(GameEventTypes.GROUP_REMOVE_BALL) { event ->
             val group = event.data as TileBallGroup
             GridGlobals.removeBall(group, this@TilesGridStage)
         }
@@ -98,13 +102,7 @@ open class TilesGridStage(
                 }
 
                 when (keycode) {
-                    Input.Keys.SPACE -> {
-                        val haveBalls = addNewBalls()
-                        if (!haveBalls) {
-                            GridGlobals.refreshGridPositions()
-                            EventSystem.submitEvent(GameEventTypes.GAME_OVER, GameRuntime.currentPoints)
-                        }
-                    }
+                    
                     Input.Keys.ESCAPE -> {
                         EventSystem.submitEvent(GameEventTypes.STAGE_ESCAPE, GameScreens.GAME_GRID)
                     }
@@ -341,6 +339,8 @@ open class TilesGridStage(
 
     override fun dispose() {
         AudioPlayer.stopMusic()
+        EventSystem.removeHandler(groupRemoveBallHandlerKey)
+        EventSystem.removeHandler(updateGridHandlerKey)
         super.dispose()
     }
 }

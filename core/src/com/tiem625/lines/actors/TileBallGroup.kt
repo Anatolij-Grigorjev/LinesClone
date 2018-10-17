@@ -32,6 +32,8 @@ class TileBallGroup(val gridPos: Pair<Int, Int>, val tile: Tile) : Group() {
 
     var isSelected = false
 
+    val SINGLE_TILE_MOVE_TIME = 0.16f;
+
 
     var ball: Ball? = null
     // perform actor manipulations when ball changes
@@ -108,7 +110,7 @@ class TileBallGroup(val gridPos: Pair<Int, Int>, val tile: Tile) : Group() {
                                         Actions.moveTo(
                                                 node.tile.width * node.gridPos.second.toFloat(),
                                                 node.tile.height * node.gridPos.first.toFloat(),
-                                                Gdx.graphics.deltaTime * 10,
+                                                SINGLE_TILE_MOVE_TIME,
                                                 Interpolation.linear
                                         )
                                     }.toTypedArray(),
