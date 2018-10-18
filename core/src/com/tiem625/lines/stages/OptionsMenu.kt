@@ -11,7 +11,10 @@ import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.tiem625.lines.GameRuntime
 import com.tiem625.lines.GridGlobals
+import com.tiem625.lines.actors.Ball
+import com.tiem625.lines.actors.Tile
 import com.tiem625.lines.actors.TileBallGroup
+import com.tiem625.lines.clamp
 import com.tiem625.lines.constants.GameScreens
 import com.tiem625.lines.constants.OptionsItems
 import com.tiem625.lines.event.EventSystem
@@ -25,6 +28,7 @@ class OptionsMenu(viewport: Viewport) : Stage(viewport) {
     val LABEL_HEIGHT = 30.0f
     val SPACING = 20.0f
     val FONT_SCALE = 1.5f
+    val OPTION_LENGTH = viewport.worldWidth / 2
 
     val menuOptions = mapOf<OptionsItems, Actor>(
             OptionsItems.TOGGLE_MUSIC to toggleOptionGroup(OptionsItems.TOGGLE_MUSIC, GameRuntime::musicOn),
@@ -35,7 +39,6 @@ class OptionsMenu(viewport: Viewport) : Stage(viewport) {
     private fun ballColorsChoiceGroup(): HorizontalGroup {
 
         return HorizontalGroup().apply {
-            userObject = GameRuntime.usedBallColors
             //label
             addActor(Label(OptionsItems.NUM_BALLS.menuLine, Label.LabelStyle(
                     GridGlobals.skinRegularFont, Color.YELLOW
@@ -45,9 +48,40 @@ class OptionsMenu(viewport: Viewport) : Stage(viewport) {
                 setAlignment(Align.left)
             })
             //balls group
-            //TODO: add decoupled tileballgroups
+            val TILE_HEIGHT = 100f
+            val TILE_WIDTH = Math.min(TILE_HEIGHT, OPTION_LENGTH / GridGlobals.BALL_COLORS.size)
+            val tilesLine = HorizontalGroup().apply {
+                width = TILE_WIDTH * GridGlobals.BALL_COLORS.size
+                height = TILE_HEIGHT
+                align(Align.center)
+                space(5f)
+                y = TILE_HEIGHT / 2f
+                debugAll()
+            }
+            (0 until GridGlobals.BALL_COLORS.size).map { idx ->
+                TileBallGroup((0 to idx),
+                        Tile(
+                        TILE_WIDTH,
+                        TILE_HEIGHT)
+                ).apply {
+                    ball = Ball(TILE_WIDTH * 0.95f,
+                            TILE_HEIGHT * 0.95f,
+                            GridGlobals.BALL_COLORS[idx],
+                            this.gridPos.first,
+                            this.gridPos.second
+                    )
+                    x = TILE_WIDTH * idx
+                    y = TILE_HEIGHT / 2f
+                    width = TILE_WIDTH
+                    height = TILE_HEIGHT
+                }
 
-
+            }.let { groupsList ->
+                //save groups in user object for easy access
+                userObject = listOf(*groupsList.toTypedArray())
+                groupsList
+            }.forEach { group ->  tilesLine.addActor(group) }
+            addActor(tilesLine)
             commonOptionsItemProps()
         }
     }
@@ -142,10 +176,16 @@ class OptionsMenu(viewport: Viewport) : Stage(viewport) {
                         if (selectedOption in setOf(OptionsItems.TOGGLE_MUSIC, OptionsItems.TOGGLE_SFX)) {
                             toggleBooleanProp(selectedOption)
                         }
+                        if (selectedOption == OptionsItems.NUM_BALLS) {
+                            changeBallCount(-1)
+                        }
                     }
                     Input.Keys.RIGHT -> {
                         if (selectedOption in setOf(OptionsItems.TOGGLE_MUSIC, OptionsItems.TOGGLE_SFX)) {
                             toggleBooleanProp(selectedOption)
+                        }
+                        if (selectedOption == OptionsItems.NUM_BALLS) {
+                            changeBallCount(1)
                         }
                     }
                     Input.Keys.ESCAPE -> {
@@ -162,6 +202,7 @@ class OptionsMenu(viewport: Viewport) : Stage(viewport) {
                 return true
             }
         })
+        updateBallsLine(GameRuntime.usedBallColors.size)
     }
 
     private fun toggleBooleanProp(selectedOption: OptionsItems) {
@@ -172,6 +213,38 @@ class OptionsMenu(viewport: Viewport) : Stage(viewport) {
 
             prop.set(newPropVal)
             (it.children.get(1) as Label).setText(newPropVal.toOptionsWord())
+        }
+    }
+
+    private fun changeBallCount(delta: Int) {
+        //ensure number of in-game balls between 2 and max colors
+        val newSize = clamp(GameRuntime.usedBallColors.size + delta, 2, GridGlobals.BALL_COLORS.size)
+        //clear current colors list
+        GameRuntime.usedBallColors.clear()
+        //re-insert needed amount
+        (0 until newSize).forEach { idx -> GameRuntime.usedBallColors.add(GridGlobals.BALL_COLORS[idx]) }
+        //refresh board view
+        updateBallsLine(newSize)
+    }
+
+    private fun updateBallsLine(newSize: Int) {
+
+        menuOptions[OptionsItems.NUM_BALLS]?.let {
+            val tileGroupsList = it.userObject as List<TileBallGroup>
+            (0 until newSize).forEach { idx ->
+                tileGroupsList[idx].ball?.let { ball ->
+                    if (!ball.isVisible) {
+                        ball.addAction(Actions.show())
+                    }
+                }
+            }
+            (newSize until tileGroupsList.size).forEach { idx ->
+                tileGroupsList[idx].ball?.let { ball ->
+                    if (ball.isVisible) {
+                        ball.addAction(Actions.hide())
+                    }
+                }
+            }
         }
     }
 

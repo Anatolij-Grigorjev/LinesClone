@@ -67,6 +67,9 @@ fun Pair<Int, Int>.distanceTo(other: Pair<Int, Int>): Pair<Int, Int> =
 fun clamp(value: Float, min: Float, max: Float): Float =
         Math.min(Math.max(value, min), max)
 
+fun clamp(value: Int, min: Int, max: Int): Int =
+        Math.min(Math.max(value, min), max)
+
 fun Texture.asDrawable(region: Rectangle = Rectangle(0f, 0f, this.width.toFloat(), this.height.toFloat())) =
         TextureRegionDrawable(TextureRegion(this,
                 region.x.toInt(),
