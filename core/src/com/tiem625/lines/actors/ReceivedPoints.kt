@@ -60,8 +60,8 @@ class ReceivedPoints(val pos: Pair<Float, Float>,
         val labelBLockWidth = labelSize.first * labelScale + (LABEL_PADDING * 2)
         val labelBlockHeight = labelSize.second * labelScale + (LABEL_PADDING * 2)
         //clamp this actor position to allow label display
-        x = clamp(x, 0.0f, GridGlobals.WORLD_WIDTH - labelBLockWidth)
-        y = clamp(y, 0.0f, GridGlobals.WORLD_HEIGHT - labelBlockHeight)
+        x = clamp(x, 0.0f, GridGlobals.WORLD_WIDTH - labelBLockWidth - GridGlobals.GRID_OFFSET.first)
+        y = clamp(y, 0.0f, GridGlobals.WORLD_HEIGHT - labelBlockHeight - GridGlobals.GRID_OFFSET.second)
 
         addActor(GridHUDBackground(
                 label.x - LABEL_PADDING,
