@@ -33,8 +33,26 @@ class OptionsMenu(viewport: Viewport) : Stage(viewport) {
     val menuOptions = mapOf<OptionsItems, Actor>(
             OptionsItems.TOGGLE_MUSIC to toggleOptionGroup(OptionsItems.TOGGLE_MUSIC, GameRuntime::musicOn),
             OptionsItems.TOGGLE_SFX to toggleOptionGroup(OptionsItems.TOGGLE_SFX, GameRuntime::sfxOn),
-            OptionsItems.NUM_BALLS to ballColorsChoiceGroup()
+            OptionsItems.NUM_BALLS to ballColorsChoiceGroup(),
+            OptionsItems.EXIT to exitButtonGroup()
     )
+
+    private fun exitButtonGroup(): HorizontalGroup {
+
+        return HorizontalGroup().apply {
+            //label
+            addActor(Label(OptionsItems.EXIT.menuLine, Label.LabelStyle(
+                    GridGlobals.skinRegularFont, Color.YELLOW
+            )).apply {
+                setFontScale(FONT_SCALE)
+                height = LABEL_HEIGHT
+                setAlignment(Align.center)
+            })
+            commonOptionsItemProps()
+            align(Align.bottom)
+            height = viewport.screenHeight - (OptionsItems.values().size - 1) * LABEL_HEIGHT
+        }
+    }
 
     private fun ballColorsChoiceGroup(): HorizontalGroup {
 
@@ -111,9 +129,11 @@ class OptionsMenu(viewport: Viewport) : Stage(viewport) {
         align(Align.center)
         height = LABEL_HEIGHT
         width = viewport.worldWidth
-        space(viewport.worldWidth - children.fold(1f) { acc, it ->
-            acc + it.width * FONT_SCALE
-        })
+        if (children.size > 1) {
+            space(viewport.worldWidth - children.fold(1f) { acc, it ->
+                acc + it.width * FONT_SCALE
+            })
+        }
         debugAll()
     }
 
@@ -163,7 +183,11 @@ class OptionsMenu(viewport: Viewport) : Stage(viewport) {
                 when (keycode) {
 
                     Input.Keys.ENTER -> {
-                        EventSystem.submitEvent(GameEventTypes.OPTIONS_OPTION_SELECTED, selectedOption)
+                        if (selectedOption == OptionsItems.EXIT) {
+                            EventSystem.submitEvent(GameEventTypes.STAGE_ESCAPE, GameScreens.OPTIONS)
+                        } else {
+                            EventSystem.submitEvent(GameEventTypes.OPTIONS_OPTION_SELECTED, selectedOption)
+                        }
                         return true
                     }
                     Input.Keys.DOWN -> {
