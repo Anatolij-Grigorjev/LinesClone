@@ -58,13 +58,14 @@ class OptionsMenu(viewport: Viewport) : Stage(viewport) {
 
         return HorizontalGroup().apply {
             //label
-            addActor(Label(OptionsItems.NUM_BALLS.menuLine, Label.LabelStyle(
+            val ballsPickLabel = Label(OptionsItems.NUM_BALLS.menuLine, Label.LabelStyle(
                     GridGlobals.skinRegularFont, Color.YELLOW
             )).apply {
                 setFontScale(FONT_SCALE)
                 height = LABEL_HEIGHT
                 setAlignment(Align.left)
-            })
+            }
+            addActor(ballsPickLabel)
             //balls group
             val TILE_HEIGHT = 100f
             val TILE_WIDTH = Math.min(TILE_HEIGHT, OPTION_LENGTH / GridGlobals.BALL_COLORS.size)
@@ -79,8 +80,8 @@ class OptionsMenu(viewport: Viewport) : Stage(viewport) {
             (0 until GridGlobals.BALL_COLORS.size).map { idx ->
                 TileBallGroup((0 to idx),
                         Tile(
-                        TILE_WIDTH,
-                        TILE_HEIGHT)
+                                TILE_WIDTH,
+                                TILE_HEIGHT)
                 ).apply {
                     ball = Ball(TILE_WIDTH * 0.95f,
                             TILE_HEIGHT * 0.95f,
@@ -98,9 +99,17 @@ class OptionsMenu(viewport: Viewport) : Stage(viewport) {
                 //save groups in user object for easy access
                 userObject = listOf(*groupsList.toTypedArray())
                 groupsList
-            }.forEach { group ->  tilesLine.addActor(group) }
+            }.forEach { group -> tilesLine.addActor(group) }
             addActor(tilesLine)
             commonOptionsItemProps()
+            space(viewport.worldWidth
+                    //label size
+                    - (ballsPickLabel.width * FONT_SCALE)
+                    //balls line size
+                    - (TILE_WIDTH * GridGlobals.BALL_COLORS.size
+                    //padding
+                    + 20f)
+            )
         }
     }
 
@@ -165,11 +174,13 @@ class OptionsMenu(viewport: Viewport) : Stage(viewport) {
 
                     textsGroup.apply {
                         space(SPACING)
-                        align(Align.center)
+                        align(Align.bottom)
                         width = viewport.worldWidth
                         x = 0f
                         val menuHeight = ((SPACING + LABEL_HEIGHT) * textsGroup.children.size) / 2 + LABEL_HEIGHT + SPACING
-                        y = viewport.worldHeight - menuHeight
+                        y = 0f
+//                        y = viewport.worldHeight - menuHeight
+                        height = viewport.worldHeight - menuHeight
                     }
                     selectedOption = OptionsItems.first
                 }
