@@ -1,7 +1,10 @@
 package com.tiem625.lines.stages
 
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Interpolation
+import com.badlogic.gdx.scenes.scene2d.InputEvent
+import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.tiem625.lines.GridGlobals
@@ -38,6 +41,9 @@ class SplashGridStage(
         ((viewport.worldWidth - GridGlobals.GRID_WIDTH) / 2 to viewport.worldHeight * 0.2f)) {
 
     val splashMoveTime = 1.5f
+
+    var splashAnimating = false
+
     val splashBalls = listOf(
             //L
             (1 to 1),
@@ -101,34 +107,99 @@ class SplashGridStage(
     init {
         AudioPlayer.stopMusic()
         //create drawing with positions list
-        gridGroup.addAction(Actions.sequence(*splashBalls.map { point ->
+        val sequenceAction = Actions.sequence(
+                Actions.run {
+                    splashAnimating = true
+                },
+                *splashBalls.map { point ->
 
-            Actions.delay(
-                    midBallDelay,
-                    Actions.run {
+                    Actions.delay(
+                            midBallDelay,
+                            Actions.run {
 
-                        //Y coordinate is inverted between array and screen
-                        grid[grid.size - (point.first + 1)][point.second].ball = Ball(
-                                tileWidth,
-                                tileHeight,
-                                Color.YELLOW,
-                                point.first,
-                                point.second
-                        )
-                    }
-            )
-        }.toTypedArray(),
+                                //Y coordinate is inverted between array and screen
+                                grid[grid.size - (point.first + 1)][point.second].ball = Ball(
+                                        tileWidth,
+                                        tileHeight,
+                                        Color.YELLOW,
+                                        point.first,
+                                        point.second
+                                )
+                            }
+                    )
+                }.toTypedArray(),
                 Actions.run {
                     //move the splash up when the balls are ready
-                    this@SplashGridStage.addAction(Actions.moveBy(
-                            0.0f,
-                            offset.second / 2,
-                            splashMoveTime,
-                            Interpolation.bounceOut
-                    ))
+                    this@SplashGridStage.addAction(Actions.sequence(
+                            Actions.moveBy(
+                                    0.0f,
+                                    offset.second / 2,
+                                    splashMoveTime,
+                                    Interpolation.bounceOut
+                            ), Actions.run {
+                        splashAnimating = false
+                    }))
                 }
-        ))
+        )
+        gridGroup.addAction(sequenceAction)
 
+        addListener(object : InputListener() {
 
+            override fun keyUp(event: InputEvent?, keycode: Int): Boolean {
+
+                return when (keycode) {
+
+                    Input.Keys.ESCAPE -> {
+                        if (splashAnimating) {
+
+                            println("Stopping splash...")
+
+                            //stop action
+                            gridGroup.removeAction(sequenceAction)
+
+                            //clear grid
+                            clearTilesGrid()
+
+                            //set all ball points at once
+                            splashBalls.forEach { point ->
+                                //Y coordinate is inverted between array and screen
+                                grid[grid.size - (point.first + 1)][point.second].ball = Ball(
+                                        tileWidth,
+                                        tileHeight,
+                                        Color.YELLOW,
+                                        point.first,
+                                        point.second
+                                )
+                            }
+
+                            //move stage where it needs to be
+                            this@SplashGridStage.addAction(Actions.moveTo(
+                                    offset.first,
+                                    offset.second * 1.5f)
+                            )
+
+                            //unset the animating flag
+                            splashAnimating = false
+
+                            return true
+                        } else {
+                            return false
+                        }
+                    }
+                    else -> false
+                }
+
+            }
+        })
+
+    }
+
+    private fun clearTilesGrid() {
+
+        grid.forEach { gridRow ->
+            gridRow.forEach { gridCell ->
+                gridCell.ball = null
+            }
+        }
     }
 }

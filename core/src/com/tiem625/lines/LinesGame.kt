@@ -2,6 +2,7 @@ package com.tiem625.lines
 
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
@@ -180,7 +181,7 @@ class LinesGame : ApplicationAdapter() {
                 splashGridStage.splashMoveTime
                         + splashGridStage.midBallDelay * splashGridStage.splashBalls.size
         )
-        Gdx.input.inputProcessor = mainMenuStage
+        Gdx.input.inputProcessor = InputMultiplexer(splashGridStage, mainMenuStage)
 
         //fresh means menu created first time not to get exception
         //for checking a lateinit
