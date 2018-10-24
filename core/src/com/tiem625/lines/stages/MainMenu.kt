@@ -43,9 +43,13 @@ class MainMenu(viewport: Viewport, appearDelay: Float) : Stage(viewport) {
             field = value
         }
 
+    val delayAppearAction = Actions.delay(appearDelay, Actions.run {
+        this@MainMenu.addActor(textsGroup)
+    })
+
     init {
 
-        textsGroup.addAction(Actions.delay(appearDelay,
+        textsGroup.addAction(
                 Actions.run {
                     menuOptions.keys
                             .sortedBy { it.order }
@@ -67,15 +71,15 @@ class MainMenu(viewport: Viewport, appearDelay: Float) : Stage(viewport) {
                     selectedOption = MenuItems.first
                     menuReady = true
                 }
-        ))
-        this.addActor(textsGroup)
+        )
+        this.addAction(delayAppearAction)
 
         addListener(object : InputListener() {
 
             override fun keyUp(event: InputEvent?, keycode: Int): Boolean {
 
                 //if there is dialog on stage we ignore input until it goes away
-                if (!menuReady) return true
+                if (!menuReady) return false
 
                 when (keycode) {
 
@@ -103,6 +107,10 @@ class MainMenu(viewport: Viewport, appearDelay: Float) : Stage(viewport) {
                 return true
             }
         })
+    }
+
+    public fun skip() {
+        delayAppearAction.finish()
     }
 
 }

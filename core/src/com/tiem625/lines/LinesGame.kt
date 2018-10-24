@@ -60,6 +60,11 @@ class LinesGame : ApplicationAdapter() {
 
 
     fun setupEventHandlers() {
+        EventSystem.addHandler(GameEventTypes.SKIP_INTRO) { gameEvent ->
+            splashGridStage.skip()
+            mainMenuStage.skip()
+        }
+
         //setup menu listener
         EventSystem.addHandler(GameEventTypes.MENU_OPTION_SELECTED) { gameEvent ->
 

@@ -67,6 +67,50 @@ open class TilesGridStage(
 
     private val updateGridHandlerKey: String
 
+    protected val gameGridInputListener = object : InputListener() {
+
+        override fun keyUp(event: InputEvent?, keycode: Int): Boolean {
+            //ignore input while any dialogs are showing
+            val keyMusicControl = keyIsMusicControl(keycode)
+            if (LinesGameDialog.dialogIsShowing && !keyMusicControl) {
+                return true
+            }
+
+            when (keycode) {
+
+                Input.Keys.ESCAPE -> {
+                    EventSystem.submitEvent(GameEventTypes.STAGE_ESCAPE, GameScreens.GAME_GRID)
+                }
+                Input.Keys.P -> {
+                    if (AudioPlayer.isMusicPlaying())
+                        AudioPlayer.pauseMusic()
+                    else
+                        AudioPlayer.playMusic()
+                }
+                Input.Keys.S -> {
+                    if (AudioPlayer.isMusicPlaying())
+                        AudioPlayer.stopMusic()
+                    else
+                        AudioPlayer.playMusic()
+                }
+                Input.Keys.PERIOD -> {
+                    AudioPlayer.playNextMusic()
+                }
+                Input.Keys.COMMA -> {
+                    AudioPlayer.playPrevMusic()
+                }
+                else -> {
+                    println("No handler for key $keycode")
+                }
+            }
+            if (keyMusicControl) {
+                //launch event about music controls
+                EventSystem.submitEvent(GameEventTypes.USED_MUSIC_CONTROLS)
+            }
+            return true
+        }
+    }
+
     init {
 
         gridGraph = IndexedGridGraph(numRows, numCols, grid)
@@ -92,49 +136,7 @@ open class TilesGridStage(
             GridGlobals.removeBall(group, this@TilesGridStage)
         }
 
-        addListener(object : InputListener() {
-
-            override fun keyUp(event: InputEvent?, keycode: Int): Boolean {
-                //ignore input while any dialogs are showing
-                val keyMusicControl = keyIsMusicControl(keycode)
-                if (LinesGameDialog.dialogIsShowing && !keyMusicControl) {
-                    return true
-                }
-
-                when (keycode) {
-                    
-                    Input.Keys.ESCAPE -> {
-                        EventSystem.submitEvent(GameEventTypes.STAGE_ESCAPE, GameScreens.GAME_GRID)
-                    }
-                    Input.Keys.P -> {
-                        if (AudioPlayer.isMusicPlaying())
-                            AudioPlayer.pauseMusic()
-                        else
-                            AudioPlayer.playMusic()
-                    }
-                    Input.Keys.S -> {
-                        if (AudioPlayer.isMusicPlaying())
-                            AudioPlayer.stopMusic()
-                        else
-                            AudioPlayer.playMusic()
-                    }
-                    Input.Keys.PERIOD -> {
-                        AudioPlayer.playNextMusic()
-                    }
-                    Input.Keys.COMMA -> {
-                        AudioPlayer.playPrevMusic()
-                    }
-                    else -> {
-                        println("No handler for key $keycode")
-                    }
-                }
-                if (keyMusicControl) {
-                    //launch event about music controls
-                    EventSystem.submitEvent(GameEventTypes.USED_MUSIC_CONTROLS)
-                }
-                return true
-            }
-        })
+        addListener(gameGridInputListener)
     }
 
     private fun tileGroupAt(point: Pair<Int, Int>): TileBallGroup? =

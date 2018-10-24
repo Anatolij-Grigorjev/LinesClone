@@ -10,6 +10,8 @@ import com.badlogic.gdx.utils.viewport.Viewport
 import com.tiem625.lines.GridGlobals
 import com.tiem625.lines.actors.Ball
 import com.tiem625.lines.assets.AudioPlayer
+import com.tiem625.lines.event.EventSystem
+import com.tiem625.lines.event.GameEventTypes
 
 
 /**
@@ -104,45 +106,50 @@ class SplashGridStage(
 
     val midBallDelay = 1f / splashBalls.size
 
+
+    val sequenceAction = Actions.sequence(
+            Actions.run {
+                splashAnimating = true
+            },
+            *splashBalls.map { point ->
+
+                Actions.delay(
+                        midBallDelay,
+                        Actions.run {
+
+                            //Y coordinate is inverted between array and screen
+                            grid[grid.size - (point.first + 1)][point.second].ball = Ball(
+                                    tileWidth,
+                                    tileHeight,
+                                    Color.YELLOW,
+                                    point.first,
+                                    point.second
+                            )
+                        }
+                )
+            }.toTypedArray(),
+            Actions.run {
+                //move the splash up when the balls are ready
+                this@SplashGridStage.addAction(Actions.sequence(
+                        Actions.moveBy(
+                                0.0f,
+                                offset.second / 2,
+                                splashMoveTime,
+                                Interpolation.bounceOut
+                        ), Actions.run {
+                    splashAnimating = false
+                }))
+            }
+    )
+
+
     init {
         AudioPlayer.stopMusic()
         //create drawing with positions list
-        val sequenceAction = Actions.sequence(
-                Actions.run {
-                    splashAnimating = true
-                },
-                *splashBalls.map { point ->
-
-                    Actions.delay(
-                            midBallDelay,
-                            Actions.run {
-
-                                //Y coordinate is inverted between array and screen
-                                grid[grid.size - (point.first + 1)][point.second].ball = Ball(
-                                        tileWidth,
-                                        tileHeight,
-                                        Color.YELLOW,
-                                        point.first,
-                                        point.second
-                                )
-                            }
-                    )
-                }.toTypedArray(),
-                Actions.run {
-                    //move the splash up when the balls are ready
-                    this@SplashGridStage.addAction(Actions.sequence(
-                            Actions.moveBy(
-                                    0.0f,
-                                    offset.second / 2,
-                                    splashMoveTime,
-                                    Interpolation.bounceOut
-                            ), Actions.run {
-                        splashAnimating = false
-                    }))
-                }
-        )
         gridGroup.addAction(sequenceAction)
 
+        //replace input listener
+        removeListener(gameGridInputListener)
         addListener(object : InputListener() {
 
             override fun keyUp(event: InputEvent?, keycode: Int): Boolean {
@@ -152,34 +159,7 @@ class SplashGridStage(
                     Input.Keys.ESCAPE -> {
                         if (splashAnimating) {
 
-                            println("Stopping splash...")
-
-                            //stop action
-                            gridGroup.removeAction(sequenceAction)
-
-                            //clear grid
-                            clearTilesGrid()
-
-                            //set all ball points at once
-                            splashBalls.forEach { point ->
-                                //Y coordinate is inverted between array and screen
-                                grid[grid.size - (point.first + 1)][point.second].ball = Ball(
-                                        tileWidth,
-                                        tileHeight,
-                                        Color.YELLOW,
-                                        point.first,
-                                        point.second
-                                )
-                            }
-
-                            //move stage where it needs to be
-                            this@SplashGridStage.addAction(Actions.moveTo(
-                                    offset.first,
-                                    offset.second * 1.5f)
-                            )
-
-                            //unset the animating flag
-                            splashAnimating = false
+                            EventSystem.submitEvent(GameEventTypes.SKIP_INTRO)
 
                             return true
                         } else {
@@ -192,6 +172,37 @@ class SplashGridStage(
             }
         })
 
+    }
+
+    fun skip() {
+        println("Stopping splash...")
+
+        //stop action
+        gridGroup.removeAction(sequenceAction)
+
+        //clear grid
+        clearTilesGrid()
+
+        //set all ball points at once
+        splashBalls.forEach { point ->
+            //Y coordinate is inverted between array and screen
+            grid[grid.size - (point.first + 1)][point.second].ball = Ball(
+                    tileWidth,
+                    tileHeight,
+                    Color.YELLOW,
+                    point.first,
+                    point.second
+            )
+        }
+
+        //move stage where it needs to be
+        this@SplashGridStage.addAction(Actions.moveTo(
+                0f,
+                offset.second * 0.5f)
+        )
+
+        //unset the animating flag
+        splashAnimating = false
     }
 
     private fun clearTilesGrid() {
