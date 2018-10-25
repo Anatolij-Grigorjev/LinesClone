@@ -45,7 +45,10 @@ object GridGlobals : Disposable {
     const val STREAK_MULTIPLIER_ADJUST = 0.5f
     //number of positions on the leaderboards
     const val LEADERBOARD_POSITIONS = 15
+
     const val LEADERBOARD_FILENAME = "leaderboards.json"
+
+    const val OPTIONS_FILENAME = "options.json"
 
     val gameSkin = Skin(Gdx.files.internal("skins/plain-james/plain-james-ui.json"))
 

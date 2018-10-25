@@ -1,12 +1,12 @@
 package com.tiem625.lines.constants
 
-enum class OptionsItems(val order: Int, val menuLine: String) {
+enum class OptionsItems(val order: Int, val menuLine: String, val configName: String) {
 
 
-    TOGGLE_MUSIC(1,"MUSIC: "),
-    TOGGLE_SFX(TOGGLE_MUSIC.order + 1,"SFX: "),
-    NUM_BALLS(TOGGLE_SFX.order + 1,"Ball Colors: "),
-    EXIT(NUM_BALLS.order + 1, "BACK TO MAIN");
+    TOGGLE_MUSIC(1,"MUSIC: ", "toggle_music"),
+    TOGGLE_SFX(TOGGLE_MUSIC.order + 1,"SFX: ", "toggle_sfx"),
+    NUM_BALLS(TOGGLE_SFX.order + 1,"Ball Colors: ", "num_balls"),
+    EXIT(NUM_BALLS.order + 1, "BACK TO MAIN", "");
 
     companion object {
         private val orderMap = values().map { (it.order to it) }.toMap()

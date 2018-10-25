@@ -1,5 +1,6 @@
 package com.tiem625.lines
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
@@ -7,8 +8,11 @@ import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
+import com.badlogic.gdx.utils.JsonReader
+import com.badlogic.gdx.utils.JsonValue
+import com.badlogic.gdx.utils.JsonWriter
+import java.io.StringWriter
 import java.util.*
-import javax.xml.soap.Text
 
 
 val rnd = Random()
@@ -92,3 +96,31 @@ fun Button.click() {
 fun Music.isNotPlaying() = !isPlaying
 
 fun Boolean.toOptionsWord() = if (this) "YES" else "NO"
+
+fun writeJSONFile(filename: String, storeDataActions: (JsonWriter) -> Unit) {
+
+    val dataFile = Gdx.files.local(filename)
+    dataFile.writeString(
+            JsonWriter(StringWriter())
+                    .apply(storeDataActions)
+                    .writer.toString(),
+            false,
+            Charsets.UTF_8.displayName()
+    )
+}
+
+fun <T> readJSONFile(filename: String, foundDataActions: (JsonValue) -> T): T? {
+
+    val dataFile = Gdx.files.local(filename)
+
+    if (!dataFile.exists()) return null
+
+    return try {
+        dataFile.readString(Charsets.UTF_8.displayName()).let {
+            JsonReader().parse(it).let(foundDataActions)
+        }
+    } catch (ex: Exception) {
+        ex.printStackTrace()
+        null
+    }
+}

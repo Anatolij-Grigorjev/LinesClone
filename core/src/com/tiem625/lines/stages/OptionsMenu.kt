@@ -9,17 +9,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.Viewport
-import com.tiem625.lines.GameRuntime
-import com.tiem625.lines.GridGlobals
+import com.tiem625.lines.*
 import com.tiem625.lines.actors.Ball
 import com.tiem625.lines.actors.Tile
 import com.tiem625.lines.actors.TileBallGroup
-import com.tiem625.lines.clamp
 import com.tiem625.lines.constants.GameScreens
 import com.tiem625.lines.constants.OptionsItems
 import com.tiem625.lines.event.EventSystem
 import com.tiem625.lines.event.GameEventTypes
-import com.tiem625.lines.toOptionsWord
 import kotlin.reflect.KMutableProperty0
 
 class OptionsMenu(viewport: Viewport) : Stage(viewport) {
@@ -162,6 +159,8 @@ class OptionsMenu(viewport: Viewport) : Stage(viewport) {
 
     init {
 
+        tryReadOptions()
+
         textsGroup.addAction(
                 Actions.run {
                     menuOptions.keys
@@ -225,6 +224,7 @@ class OptionsMenu(viewport: Viewport) : Stage(viewport) {
                     }
                     Input.Keys.ESCAPE -> {
                         //go to main on escape
+                        storeOptions()
                         EventSystem.submitEvent(GameEventTypes.STAGE_ESCAPE, GameScreens.OPTIONS)
                     }
 
@@ -278,6 +278,37 @@ class OptionsMenu(viewport: Viewport) : Stage(viewport) {
                     if (ball.isVisible) {
                         ball.addAction(Actions.hide())
                     }
+                }
+            }
+        }
+    }
+
+    private fun storeOptions() {
+
+        writeJSONFile(GridGlobals.OPTIONS_FILENAME) { writer ->
+
+            writer.`object`()
+            writer.set(OptionsItems.TOGGLE_MUSIC.configName, GameRuntime.musicOn)
+            writer.set(OptionsItems.TOGGLE_SFX.configName, GameRuntime.sfxOn)
+            writer.set(OptionsItems.NUM_BALLS.configName, GameRuntime.usedBallColors.size)
+            writer.pop()
+
+            writer.flush()
+        }
+    }
+
+    private fun tryReadOptions() {
+
+        readJSONFile(GridGlobals.OPTIONS_FILENAME) {
+
+            if (it.isObject) {
+
+                GameRuntime.musicOn = it.getBoolean(OptionsItems.TOGGLE_MUSIC.configName, true)
+                toggleBooleanProp(OptionsItems.TOGGLE_MUSIC)
+                GameRuntime.sfxOn = it.getBoolean(OptionsItems.TOGGLE_SFX.configName, true)
+                toggleBooleanProp(OptionsItems.TOGGLE_SFX)
+                it.getInt(OptionsItems.NUM_BALLS.configName, GridGlobals.BALL_COLORS.size).let { newSize ->
+                    changeBallCount(newSize - GridGlobals.BALL_COLORS.size)
                 }
             }
         }

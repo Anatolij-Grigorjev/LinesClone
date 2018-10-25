@@ -1,6 +1,5 @@
 package com.tiem625.lines.leaderboards
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
@@ -9,14 +8,15 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Value
 import com.badlogic.gdx.scenes.scene2d.ui.Window
-import com.badlogic.gdx.utils.*
+import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.tiem625.lines.GameRuntime
 import com.tiem625.lines.GridGlobals
 import com.tiem625.lines.constants.GameScreens
 import com.tiem625.lines.event.EventSystem
 import com.tiem625.lines.event.GameEventTypes
-import java.io.StringWriter
+import com.tiem625.lines.readJSONFile
+import com.tiem625.lines.writeJSONFile
 import java.text.DecimalFormat
 
 class LeaderboardStage(viewport: Viewport) : Stage(viewport) {
@@ -31,29 +31,21 @@ class LeaderboardStage(viewport: Viewport) : Stage(viewport) {
 
         fun loadStoredRecords(): Array<LeaderboardRecord>? {
 
-            val leaderBoardsFile = Gdx.files.local(GridGlobals.LEADERBOARD_FILENAME)
-
-            if (!leaderBoardsFile.exists()) return null
-
-            val data = leaderBoardsFile.readString(Charsets.UTF_8.displayName())
-            return try {
-                JsonReader().parse(data).let {
-                    if (!it.isArray) return null
+            return readJSONFile(GridGlobals.LEADERBOARD_FILENAME) {
+                if (!it.isArray) {
 
                     it.map { jsonValue ->
                         LeaderboardRecord(
-                                name = jsonValue["name"]?.asString() ?: return null,
-                                score = jsonValue["score"]?.asInt() ?: return null
+                                name = jsonValue["name"]?.asString() ?: "",
+                                score = jsonValue["score"]?.asInt() ?: 0
                         )
                     }
-                }.toTypedArray().apply {
-                    //calculate records current hash
-                    GameRuntime.recordsHash = calcRecordsHash(this)
-                }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                return null
+                } else null
+            }?.toTypedArray()?.apply {
+                //calculate records current hash
+                GameRuntime.recordsHash = calcRecordsHash(this)
             }
+
         }
 
         private fun calcRecordsHash(records: Array<LeaderboardRecord>): String =
@@ -131,24 +123,17 @@ class LeaderboardStage(viewport: Viewport) : Stage(viewport) {
             GameRuntime.recordsHash = hash
         }
 
-        val leaderBoardsFile = Gdx.files.local(GridGlobals.LEADERBOARD_FILENAME)
-
-        leaderBoardsFile.writeString(
-                JsonWriter(StringWriter()).let { writer ->
-                    writer.array()
-                    GameRuntime.records.forEach { record ->
-                        writer.`object`()
-                        writer.set("name", record.name)
-                        writer.set("score", record.score)
-                        writer.pop()
-                    }
-                    writer.pop()
-                    writer.flush()
-                    writer.writer.toString()
-                },
-                false,
-                Charsets.UTF_8.displayName()
-        )
+        writeJSONFile(GridGlobals.LEADERBOARD_FILENAME) { writer ->
+            writer.array()
+            GameRuntime.records.forEach { record ->
+                writer.`object`()
+                writer.set("name", record.name)
+                writer.set("score", record.score)
+                writer.pop()
+            }
+            writer.pop()
+            writer.flush()
+        }
     }
 
     override fun dispose() {
