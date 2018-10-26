@@ -7,14 +7,11 @@ import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
-import com.tiem625.lines.GameRuntime
-import com.tiem625.lines.GridGlobals
+import com.tiem625.lines.*
 import com.tiem625.lines.assets.AudioPlayer
 import com.tiem625.lines.constants.SoundFx
-import com.tiem625.lines.distanceTo
 import com.tiem625.lines.event.EventSystem
 import com.tiem625.lines.event.GameEventTypes
-import com.tiem625.lines.toIndex
 
 class TileBallGroup(val gridPos: Pair<Int, Int>, val tile: Tile) : Group() {
 
@@ -123,6 +120,15 @@ class TileBallGroup(val gridPos: Pair<Int, Int>, val tile: Tile) : Group() {
                                         EventSystem.submitEvent(GameEventTypes.UPDATE_GRID, this)
                                         it.updateIsSelected(false)
                                         GameRuntime.ballMoving = false
+                                        //this was not a combo-creating addition
+                                        if (!GameRuntime.justPoppedBalls && GameRuntime.currentPointsMultiplier > 1f) {
+                                            //reduce multiplier by step
+                                            GameRuntime.currentPointsMultiplier = clamp(
+                                                    GameRuntime.currentPointsMultiplier - GridGlobals.STREAK_MULTIPLIER_ADJUST,
+                                                    1f,
+                                                    Float.MAX_VALUE
+                                            )
+                                        }
                                     }
                             ))
 

@@ -241,7 +241,7 @@ open class TilesGridStage(
                 if (markedSurroundGroups.size >= GridGlobals.POP_NUM_BALLS) {
                     if (!GameRuntime.justPoppedBalls) {
                         GameRuntime.justPoppedBalls = true
-                        GameRuntime.currentPointsMultiplier = 1.0f
+//                        GameRuntime.currentPointsMultiplier = 1.0f
                     } else {
                         GameRuntime.currentPointsMultiplier += GridGlobals.STREAK_MULTIPLIER_ADJUST
                     }
@@ -263,7 +263,6 @@ open class TilesGridStage(
                 } else {
                     //not enough balls, resetting streak
                     GameRuntime.justPoppedBalls = false
-                    GameRuntime.currentPointsMultiplier = 1.0f
 
                     if (addNewBalls) {
                         //if this was false, its game over man!
@@ -279,6 +278,7 @@ open class TilesGridStage(
                 }
             }
         }
+
     }
 
     /**
