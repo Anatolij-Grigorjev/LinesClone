@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.viewport.Viewport
 import com.tiem625.lines.GameRuntime
 import com.tiem625.lines.GridGlobals
 import com.tiem625.lines.actors.ui.GridHUDBackground
+import com.tiem625.lines.actors.ui.MultiplierProgressBar
 import com.tiem625.lines.assets.AudioPlayer
 import com.tiem625.lines.event.EventSystem
 import com.tiem625.lines.event.GameEventTypes
@@ -146,6 +147,15 @@ class GridHUD(viewport: Viewport) : Stage(viewport) {
     }
 
     val eventHandlerKeys = mutableListOf<String>()
+
+    val multiplierProgressBar: MultiplierProgressBar = MultiplierProgressBar(
+            0f,
+            viewport.worldHeight,
+            viewport.worldWidth - GridGlobals.GRID_WIDTH,
+            viewport.worldHeight - GridGlobals.HUD_HEIGHT
+    ).apply {
+        this@GridHUD.addActor(this)
+    }
 
     init {
 
