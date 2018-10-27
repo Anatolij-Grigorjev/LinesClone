@@ -32,7 +32,7 @@ class LeaderboardStage(viewport: Viewport) : Stage(viewport) {
         fun loadStoredRecords(): Array<LeaderboardRecord>? {
 
             return readJSONFile(GridGlobals.LEADERBOARD_FILENAME) {
-                if (!it.isArray) {
+                if (it.isArray) {
 
                     it.map { jsonValue ->
                         LeaderboardRecord(
