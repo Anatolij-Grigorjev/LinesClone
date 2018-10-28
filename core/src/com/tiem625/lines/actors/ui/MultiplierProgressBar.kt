@@ -2,19 +2,54 @@ package com.tiem625.lines.actors.ui
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Pixmap
-import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable
+import com.tiem625.lines.GridGlobals
 import com.tiem625.lines.asTextureDrawable
+import com.tiem625.lines.event.EventSystem
+import com.tiem625.lines.event.GameEventTypes
+
+fun pixmapTextureRegion(color: Color,
+                        width: Int,
+                        height: Int
+): Drawable {
+
+    val pixmap = Pixmap(
+            width,
+            height,
+            Pixmap.Format.RGB888).apply {
+        setColor(color)
+        fill()
+    }
+
+    return pixmap.asTextureDrawable()
+}
 
 class MultiplierProgressBar(
         x: Float,
         y: Float,
         width: Float,
         height: Float
-) : Actor() {
+) : ProgressBar(0f, GridGlobals.MAX_BAR_PROGRESS, 1f, true,
+        ProgressBar.ProgressBarStyle().apply {
+            this.background = pixmapTextureRegion(
+                    color = Color.BLACK,
+                    width = width.toInt(),
+                    height = height.toInt()
+            )
+            this.knob = pixmapTextureRegion(
+                    color = Color.BLUE,
+                    width = width.toInt(),
+                    height = 0
+            )
+            this.knobBefore = pixmapTextureRegion(
+                    Color.BLUE,
+                    width = width.toInt(),
+                    height = height.toInt()
+            )
+        }
 
-    private val progressBar: ProgressBar
+) {
 
     init {
 
@@ -23,36 +58,21 @@ class MultiplierProgressBar(
         this.width = width
         this.height = height
 
-        progressBar = ProgressBar(0f, 2000f, 1f, true,
-                ProgressBar.ProgressBarStyle().apply {
-                    this.background = pixmapTextureRegion(Color.BLACK)
-                    this.knob = pixmapTextureRegion(
-                            color = Color.BLUE,
-                            height = 0
-                    )
-                    this.knobBefore = pixmapTextureRegion(Color.BLUE)
-                }).apply {
+        value = 0f
+        setAnimateDuration(0.7f)
+        setBounds(x, y, width, height)
+        debug()
 
-            value = maxValue / 2
-            setAnimateDuration(0.7f)
-        }
     }
 
+    public fun addProgress(amount: Float) {
 
-    private fun pixmapTextureRegion(color: Color,
-                                    width: Int = this.width.toInt(),
-                                    height: Int = this.height.toInt()
-    ): Drawable {
+        val newTotal = (value + amount) % GridGlobals.MAX_BAR_PROGRESS
 
-        val pixmap = Pixmap(
-                width,
-                height,
-                Pixmap.Format.RGB888).apply {
-            setColor(color)
-            fill()
+        if (newTotal < value + amount) {
+            EventSystem.submitEvent(GameEventTypes.SCORE_PROGRESS_FULL)
         }
 
-        return pixmap.asTextureDrawable()
+        value = newTotal
     }
-
 }

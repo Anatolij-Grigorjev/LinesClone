@@ -154,7 +154,7 @@ class GridHUD(viewport: Viewport) : Stage(viewport) {
             viewport.worldWidth - GridGlobals.GRID_WIDTH,
             viewport.worldHeight - GridGlobals.HUD_HEIGHT
     ).apply {
-        this@GridHUD.addActor(this)
+        addProgress(1250f)
     }
 
     init {
@@ -163,9 +163,20 @@ class GridHUD(viewport: Viewport) : Stage(viewport) {
         updateMultiplierLabel()
         updateMusicLabel()
 
+        addActor(multiplierProgressBar)
+
         eventHandlerKeys.add(EventSystem.addHandler(GameEventTypes.RECEIVE_POINTS) { event -> updatePointsLabel() })
         eventHandlerKeys.add(EventSystem.addHandler(GameEventTypes.CHANGE_MULTIPLIER) { event -> updateMultiplierLabel() })
         eventHandlerKeys.add(EventSystem.addHandler(GameEventTypes.USED_MUSIC_CONTROLS) { event -> updateMusicLabel() })
+        eventHandlerKeys.add(EventSystem.addHandler(GameEventTypes.SCORE_PROGRESS_FULL) {event -> freezeLargeMultiplier() })
+    }
+
+    private fun freezeLargeMultiplier() {
+
+        GameRuntime.currentPointsMultiplier = GridGlobals.FREEZ_MULTIPLIER_VALUE
+        updateMultiplierLabel()
+        multiplierLabel.color = Color.WHITE
+        multiplierBg.color = Color.BLUE
     }
 
     private fun updatePointsLabel() {

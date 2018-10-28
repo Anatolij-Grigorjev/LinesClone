@@ -43,6 +43,9 @@ object GridGlobals : Disposable {
     const val POINTS_PER_EXTRA_BALL = 150
     //multiplier addition when on popping streak
     const val STREAK_MULTIPLIER_ADJUST = 0.5f
+    //amount of multiplier frozen when progress bar is filled
+    const val FREEZ_MULTIPLIER_VALUE = 5f
+    const val MAX_BAR_PROGRESS = 2500f
     //number of positions on the leaderboards
     const val LEADERBOARD_POSITIONS = 15
 
