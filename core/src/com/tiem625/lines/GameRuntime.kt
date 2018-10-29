@@ -14,10 +14,17 @@ object GameRuntime {
     val usedBallColors = mutableListOf(*GridGlobals.BALL_COLORS.toTypedArray())
 
     var selectedTileGroup: TileBallGroup? = null
+
+    data class PointsChange(
+            val delta: Int,
+            val newPoints: Int
+    )
+
     var currentPoints: Int = 0
         set(value) {
+            val prev = field
             field = value
-            EventSystem.submitEvent(GameEventTypes.RECEIVE_POINTS, value)
+            EventSystem.submitEvent(GameEventTypes.RECEIVE_POINTS, PointsChange(value - prev, value))
         }
 
     //lowest current highscore, barrier for name entry

@@ -150,7 +150,7 @@ class GridHUD(viewport: Viewport) : Stage(viewport) {
 
     val multiplierProgressBar: MultiplierProgressBar = MultiplierProgressBar(
             0f,
-            viewport.worldHeight,
+            0f,
             viewport.worldWidth - GridGlobals.GRID_WIDTH,
             viewport.worldHeight - GridGlobals.HUD_HEIGHT
     ).apply {
@@ -165,10 +165,18 @@ class GridHUD(viewport: Viewport) : Stage(viewport) {
 
         addActor(multiplierProgressBar)
 
-        eventHandlerKeys.add(EventSystem.addHandler(GameEventTypes.RECEIVE_POINTS) { event -> updatePointsLabel() })
+        eventHandlerKeys.add(EventSystem.addHandler(GameEventTypes.RECEIVE_POINTS) { event ->
+
+            val pointsInfo = event.data as GameRuntime.PointsChange
+
+            updatePointsLabel(pointsInfo.newPoints)
+            updateProgressBar(pointsInfo.delta)
+        })
         eventHandlerKeys.add(EventSystem.addHandler(GameEventTypes.CHANGE_MULTIPLIER) { event -> updateMultiplierLabel() })
         eventHandlerKeys.add(EventSystem.addHandler(GameEventTypes.USED_MUSIC_CONTROLS) { event -> updateMusicLabel() })
         eventHandlerKeys.add(EventSystem.addHandler(GameEventTypes.SCORE_PROGRESS_FULL) {event -> freezeLargeMultiplier() })
+
+        isDebugAll = true
     }
 
     private fun freezeLargeMultiplier() {
@@ -179,9 +187,13 @@ class GridHUD(viewport: Viewport) : Stage(viewport) {
         multiplierBg.color = Color.BLUE
     }
 
-    private fun updatePointsLabel() {
+    private fun updateProgressBar(pointsDelta: Int) {
+        multiplierProgressBar.addProgress(pointsDelta.toFloat())
+    }
 
-        pointsLabel.setText(pointsFormat.format(GameRuntime.currentPoints))
+    private fun updatePointsLabel(newValue: Int = GameRuntime.currentPoints) {
+
+        pointsLabel.setText(pointsFormat.format(newValue))
     }
 
     private fun updateMultiplierLabel() {

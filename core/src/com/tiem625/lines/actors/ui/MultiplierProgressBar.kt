@@ -31,17 +31,21 @@ class MultiplierProgressBar(
         width: Float,
         height: Float
 ) : ProgressBar(0f, GridGlobals.MAX_BAR_PROGRESS, 1f, true,
-        ProgressBar.ProgressBarStyle().apply {
-            this.background = pixmapTextureRegion(
-                    color = Color.BLACK,
-                    width = width.toInt(),
-                    height = height.toInt()
-            )
-            this.knob = pixmapTextureRegion(
-                    color = Color.BLUE,
-                    width = width.toInt(),
-                    height = 0
-            )
+        ProgressBar.ProgressBarStyle(
+                //background drawable
+                pixmapTextureRegion(
+                        color = Color.BLACK,
+                        width = width.toInt(),
+                        height = height.toInt()
+                ),
+                //knob drawable
+                pixmapTextureRegion(
+                        color = Color.BLUE,
+                        width = width.toInt(),
+                        height = 5
+                )
+        ).apply {
+
             this.knobBefore = pixmapTextureRegion(
                     Color.BLUE,
                     width = width.toInt(),
@@ -61,8 +65,8 @@ class MultiplierProgressBar(
         value = 0f
         setAnimateDuration(0.7f)
         setBounds(x, y, width, height)
+        setSize(width, height)
         debug()
-
     }
 
     public fun addProgress(amount: Float) {
