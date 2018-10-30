@@ -153,9 +153,7 @@ class GridHUD(viewport: Viewport) : Stage(viewport) {
             0f,
             viewport.worldWidth - GridGlobals.GRID_WIDTH,
             viewport.worldHeight - GridGlobals.HUD_HEIGHT
-    ).apply {
-        addProgress(1250f)
-    }
+    )
 
     init {
 
