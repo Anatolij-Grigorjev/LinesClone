@@ -45,8 +45,14 @@ object EventSystem {
 
     private fun submitEvent(event: GameEvent) {
 
-        eventHandlers[event.type]?.let { handlers ->
-            handlers.forEach { it.handler(event) }
+        val handlersList = eventHandlers[event.type]
+
+        println("submitting event ${event.type} to ${handlersList?.size ?: 0} handlers...")
+
+        handlersList?.let { handlers ->
+            handlers.forEach { handler ->
+                handler.handler(event)
+            }
         }
     }
 

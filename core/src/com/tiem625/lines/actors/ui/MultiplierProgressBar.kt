@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import com.tiem625.lines.GridGlobals
 import com.tiem625.lines.asTextureDrawable
+import com.tiem625.lines.clamp
 import com.tiem625.lines.event.EventSystem
 import com.tiem625.lines.event.GameEventTypes
 
@@ -71,9 +72,9 @@ class MultiplierProgressBar(
 
     public fun addProgress(amount: Float) {
 
-        val newTotal = (value + amount) % GridGlobals.MAX_BAR_PROGRESS
+        val newTotal = clamp(amount + value, minValue, maxValue)
 
-        if (newTotal < value + amount) {
+        if (newTotal >= maxValue && value != newTotal) {
             EventSystem.submitEvent(GameEventTypes.SCORE_PROGRESS_FULL)
         }
 

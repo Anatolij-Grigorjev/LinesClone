@@ -121,6 +121,14 @@ class GridHUD(viewport: Viewport) : Stage(viewport) {
     ).apply {
         multiplierGroup.addActor(this)
     }
+    val multiplierBgFrozen = GridHUDBackground(
+            x = multiplierBg.x,
+            y = multiplierBg.y,
+            width = multiplierBg.width,
+            height = multiplierBg.height,
+            color = Color.BLUE
+    )
+
     val musicStateLabel = Label("M", Label.LabelStyle(
             GridGlobals.skinRegularFont,
             Color.WHITE)).apply {
@@ -162,6 +170,7 @@ class GridHUD(viewport: Viewport) : Stage(viewport) {
         updateMusicLabel()
 
         addActor(multiplierProgressBar)
+        multiplierProgressBar.addProgress(2400f)
 
         eventHandlerKeys.add(EventSystem.addHandler(GameEventTypes.RECEIVE_POINTS) { event ->
 
@@ -182,7 +191,11 @@ class GridHUD(viewport: Viewport) : Stage(viewport) {
         GameRuntime.currentPointsMultiplier = GridGlobals.FREEZ_MULTIPLIER_VALUE
         updateMultiplierLabel()
         multiplierLabel.color = Color.WHITE
-        multiplierBg.color = Color.BLUE
+        //change multiplier bg
+        multiplierGroup.removeActor(multiplierLabel)
+        multiplierGroup.removeActor(multiplierBg)
+        multiplierGroup.addActor(multiplierBgFrozen)
+        multiplierGroup.addActor(multiplierLabel)
     }
 
     private fun updateProgressBar(pointsDelta: Int) {
