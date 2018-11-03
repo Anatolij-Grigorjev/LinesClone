@@ -181,20 +181,35 @@ class GridHUD(viewport: Viewport) : Stage(viewport) {
         })
         eventHandlerKeys.add(EventSystem.addHandler(GameEventTypes.CHANGE_MULTIPLIER) { event -> updateMultiplierLabel() })
         eventHandlerKeys.add(EventSystem.addHandler(GameEventTypes.USED_MUSIC_CONTROLS) { event -> updateMusicLabel() })
-        eventHandlerKeys.add(EventSystem.addHandler(GameEventTypes.SCORE_PROGRESS_FULL) {event -> freezeLargeMultiplier() })
+        eventHandlerKeys.add(EventSystem.addHandler(GameEventTypes.SCORE_PROGRESS_FULL) { event -> freezeMultiplier() })
+        eventHandlerKeys.add(EventSystem.addHandler(GameEventTypes.MULTIPLIER_BONUS_OVER) { event -> unfreezeMultiplier() })
 
         isDebugAll = true
     }
 
-    private fun freezeLargeMultiplier() {
+    private fun freezeMultiplier() {
 
-        GameRuntime.currentPointsMultiplier = GridGlobals.FREEZ_MULTIPLIER_VALUE
+        GameRuntime.freezeMultiplier()
         updateMultiplierLabel()
-        multiplierLabel.color = Color.WHITE
+
         //change multiplier bg
+        multiplierLabel.color = Color.WHITE
         multiplierGroup.removeActor(multiplierLabel)
         multiplierGroup.removeActor(multiplierBg)
         multiplierGroup.addActor(multiplierBgFrozen)
+        multiplierGroup.addActor(multiplierLabel)
+    }
+
+    private fun unfreezeMultiplier() {
+        //reset multiplier bar
+        multiplierProgressBar.value = multiplierProgressBar.minValue
+        //update label
+        updateMultiplierLabel()
+        //redo label BG
+        multiplierLabel.color = Color.WHITE
+        multiplierGroup.removeActor(multiplierLabel)
+        multiplierGroup.removeActor(multiplierBgFrozen)
+        multiplierGroup.addActor(multiplierBg)
         multiplierGroup.addActor(multiplierLabel)
     }
 
@@ -208,7 +223,12 @@ class GridHUD(viewport: Viewport) : Stage(viewport) {
     }
 
     private fun updateMultiplierLabel() {
-        multiplierLabel.setText(multiplierFormat.format(GameRuntime.currentPointsMultiplier))
+        multiplierLabel.setText(
+                (if (GameRuntime.frozenMultiplier)
+                    GameRuntime.currentFrozenMultiplierMoves.toString()
+                else "") +
+                multiplierFormat.format(GameRuntime.currentPointsMultiplier)
+        )
     }
 
     private fun updateMusicLabel() {

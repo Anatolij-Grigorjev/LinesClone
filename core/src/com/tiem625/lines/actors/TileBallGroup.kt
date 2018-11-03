@@ -98,6 +98,7 @@ class TileBallGroup(val gridPos: Pair<Int, Int>, val tile: Tile) : Group() {
 
                             println("Moving ball ${ball.color} between ${it.gridPos} and ${this.gridPos} via ${nodePath.joinToString { it.gridPos.toString() }}")
 
+
                             ball.addAction(Actions.sequence(
                                     Actions.run {
                                         GameRuntime.ballMoving = true
@@ -117,6 +118,7 @@ class TileBallGroup(val gridPos: Pair<Int, Int>, val tile: Tile) : Group() {
                                                 ball,
                                                 tileTo = this
                                         )
+                                        GameRuntime.decreaseFrozenMoves()
                                         EventSystem.submitEvent(GameEventTypes.UPDATE_GRID, this)
                                         it.updateIsSelected(false)
                                         GameRuntime.ballMoving = false

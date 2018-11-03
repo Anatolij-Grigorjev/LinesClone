@@ -37,6 +37,8 @@ object GridGlobals : Disposable {
     // num balls to align in a single pattern
     const val POP_NUM_BALLS = 4
     const val TILE_BALL_GUTTER = 0.0f
+    //num of moves you can do while the multiplier is frozen for it to remain frozen
+    const val MAX_FROZEN_MULTIPLIER_MOVES = 3
     //how many points you get for popping POP_NUM_BALLS amount of balls
     const val POINTS_PER_CHAIN = 150
     //how many points you get for every extra ball in chain above POP_NUM_BALLS
@@ -44,7 +46,7 @@ object GridGlobals : Disposable {
     //multiplier addition when on popping streak
     const val STREAK_MULTIPLIER_ADJUST = 0.5f
     //amount of multiplier frozen when progress bar is filled
-    const val FREEZ_MULTIPLIER_VALUE = 5f
+    const val FREEZE_MULTIPLIER_VALUE = 5f
     const val MAX_BAR_PROGRESS = 2500f
     //number of positions on the leaderboards
     const val LEADERBOARD_POSITIONS = 15
