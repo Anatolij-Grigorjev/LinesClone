@@ -191,7 +191,6 @@ open class TilesGridStage(
     private fun removePoppedBalls(markedSurroundGroups: List<TileBallGroup>) {
         println("Found remove sequence: ${markedSurroundGroups.joinToString { it.gridPos.toString() }}")
         val positions: MutableList<Pair<Int, Int>> = mutableListOf()
-        AudioPlayer.playSfx(SoundFx.BALLS_POP, GameRuntime.currentPointsMultiplier)
         //create removable group
         Group().apply {
             //remove ball references and create actor remove actions
@@ -245,6 +244,7 @@ open class TilesGridStage(
                     } else {
                         GameRuntime.currentPointsMultiplier += GridGlobals.STREAK_MULTIPLIER_ADJUST
                     }
+                    AudioPlayer.playSfx(SoundFx.BALLS_POP, GameRuntime.currentPointsMultiplier)
                     println("Creating received points at ${ball.gridPos}")
                     //create points float above this moved ball
                     gridGroup.addActor(ReceivedPoints(
@@ -257,6 +257,7 @@ open class TilesGridStage(
                             // that's applied globally later in object itself
                             GridGlobals.POINTS_PER_CHAIN +
                                     (markedSurroundGroups.size - GridGlobals.POP_NUM_BALLS) * GridGlobals.POINTS_PER_EXTRA_BALL,
+                            GameRuntime.currentPointsMultiplier,
                             ball.color)
                     )
                     removePoppedBalls(markedSurroundGroups)

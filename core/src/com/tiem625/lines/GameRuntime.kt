@@ -55,7 +55,7 @@ object GameRuntime {
             } else {
                 //NOP
             }
-            EventSystem.submitEvent(GameEventTypes.CHANGE_MULTIPLIER, field)
+            EventSystem.submitEvent(GameEventTypes.CHANGE_MULTIPLIER)
         }
     var recordsHash = ""
     val records = LeaderboardStage.loadStoredRecords() ?: arrayOf(*(0 until GridGlobals.LEADERBOARD_POSITIONS).map {
@@ -68,12 +68,13 @@ object GameRuntime {
     /**
      * Every adjustment of multiplier by ADJUST means additional 0.2 points to font scale
      */
-    fun multiplierScale(baseScale: Float): Float =
-            baseScale + ((GameRuntime.currentPointsMultiplier - 1.0f) / GridGlobals.STREAK_MULTIPLIER_ADJUST) * 0.2f
+    fun multiplierScale(baseScale: Float, multiplier: Float = currentPointsMultiplier): Float =
+            baseScale + ((multiplier - 1.0f) / GridGlobals.STREAK_MULTIPLIER_ADJUST) * 0.2f
 
     fun decreaseFrozenMoves() {
         if (frozenMultiplier) {
             currentFrozenMultiplierMoves = clamp(currentFrozenMultiplierMoves - 1, 0, Int.MAX_VALUE)
+            EventSystem.submitEvent(GameEventTypes.CHANGE_MULTIPLIER)
             if (currentFrozenMultiplierMoves <= 0) {
                 unfreezeMultiplier()
             }

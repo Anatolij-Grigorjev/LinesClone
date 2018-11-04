@@ -118,9 +118,12 @@ class TileBallGroup(val gridPos: Pair<Int, Int>, val tile: Tile) : Group() {
                                                 ball,
                                                 tileTo = this
                                         )
-                                        //TODO: this needs to somehow integrate into flow that would be more intuitive
-                                        GameRuntime.decreaseFrozenMoves()
+                                        val multiplierWasFrozen = GameRuntime.frozenMultiplier
                                         EventSystem.submitEvent(GameEventTypes.UPDATE_GRID, this)
+                                        //only decrease multiplier the move didnt create it
+                                        if (multiplierWasFrozen) {
+                                            GameRuntime.decreaseFrozenMoves()
+                                        }
                                         it.updateIsSelected(false)
                                         GameRuntime.ballMoving = false
                                         //this was not a combo-creating addition

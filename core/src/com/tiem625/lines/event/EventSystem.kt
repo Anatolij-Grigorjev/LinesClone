@@ -55,7 +55,7 @@ object EventSystem {
 
         val handlersList = eventHandlers[event.type]
 
-        println("submitting event ${event.type} ${event.data?.let { "with DATA of type ${it.javaClass.name}" }} " +
+        println("submitting event ${event.type} ${event.data?.let { "with DATA ${it.javaClass.name}" } ?: ""} " +
                 "to ${handlersList?.size ?: 0} handlers...")
 
         handlersList?.let { handlers ->

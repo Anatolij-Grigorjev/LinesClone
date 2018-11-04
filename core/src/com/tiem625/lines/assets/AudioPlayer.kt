@@ -33,6 +33,8 @@ object AudioPlayer {
 
         if (!GameRuntime.musicOn) return
 
+        println("Starting to play music idx $currentPlayingMusic...")
+
         withCurrentMusic {
             if (it.isNotPlaying()) {
                 it.play()

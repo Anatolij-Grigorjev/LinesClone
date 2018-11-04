@@ -12,7 +12,10 @@ import com.tiem625.lines.clamp
 
 class ReceivedPoints(val pos: Pair<Float, Float>,
                      val area: Pair<Float, Float>,
+        //prebaked points and multiplier since these may change
+        // from in-game events before the points label is made
                      val points: Int,
+                     val multiplier: Float,
                      ballColor: Color) : Group() {
 
     val label: Label
@@ -30,19 +33,19 @@ class ReceivedPoints(val pos: Pair<Float, Float>,
         width = targetWidth
         height = targetHeight
 
-        println("Points at point ${pos}")
+        println("Points at point $pos")
         //fires event internally
-        GameRuntime.currentPoints += (points * GameRuntime.currentPointsMultiplier).toInt()
+        GameRuntime.currentPoints += (points * multiplier).toInt()
 
         addAction(Actions.sequence(
                 Actions.moveBy(0.0f, floatDistance, Gdx.graphics.deltaTime * floatFrames),
                 Actions.removeActor()
         ))
 
-        val text = "+$points${if (GameRuntime.currentPointsMultiplier > 1.0f) " X ${GameRuntime.currentPointsMultiplier}" else ""}"
+        val text = "+$points${if (multiplier > 1.0f) " X $multiplier" else ""}"
         println("doing points text: $text")
         //label text hides multiplier if its not higher than normal
-        val labelScale = GameRuntime.multiplierScale(BASE_FONT_SCALE)
+        val labelScale = GameRuntime.multiplierScale(BASE_FONT_SCALE, multiplier)
         label = Label(text, Label.LabelStyle(
                 GridGlobals.skinRegularFont,
                 //white for blue balls due to background
