@@ -194,6 +194,7 @@ class OptionsMenu(viewport: Viewport) : Stage(viewport) {
 
                     Input.Keys.ENTER -> {
                         if (selectedOption == OptionsItems.EXIT) {
+                            storeOptions()
                             EventSystem.submitEvent(GameEventTypes.STAGE_ESCAPE, GameScreens.OPTIONS)
                         } else {
                             EventSystem.submitEvent(GameEventTypes.OPTIONS_OPTION_SELECTED, selectedOption)
@@ -304,9 +305,15 @@ class OptionsMenu(viewport: Viewport) : Stage(viewport) {
             if (it.isObject) {
 
                 GameRuntime.musicOn = it.getBoolean(OptionsItems.TOGGLE_MUSIC.configName, true)
+                //toggle option twice to retain same boolean value
                 toggleBooleanProp(OptionsItems.TOGGLE_MUSIC)
+                toggleBooleanProp(OptionsItems.TOGGLE_MUSIC)
+
                 GameRuntime.sfxOn = it.getBoolean(OptionsItems.TOGGLE_SFX.configName, true)
+                //toggle option twice to retain same boolean value
                 toggleBooleanProp(OptionsItems.TOGGLE_SFX)
+                toggleBooleanProp(OptionsItems.TOGGLE_SFX)
+
                 it.getInt(OptionsItems.NUM_BALLS.configName, GridGlobals.BALL_COLORS.size).let { newSize ->
                     changeBallCount(newSize - GridGlobals.BALL_COLORS.size)
                 }
